@@ -1,0 +1,7 @@
+Test some of the features of Dan's Consoluna library.
+
+Syntax: ConsolunaTest.exe [/wait][/?]
+
+    /wait       Wait for user keypress after processing and before ending the
+                application.
+    /?          Display this help file.
