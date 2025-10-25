@@ -25,25 +25,32 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleShapeType																												*
+	//*	ConsolunaInputMode																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of recognized shape types.
+	/// Enumeration of available input modes for ConsolePlus.
 	/// </summary>
-	public enum ConsoleShapeType
+	public enum ConsolunaInputMode
 	{
 		/// <summary>
-		/// No shape specified or unknown.
+		/// No input mode specified or unknown.
 		/// </summary>
 		None = 0,
 		/// <summary>
-		/// Text in the area.
+		/// Non-blocking immediate character. The caller will poll for input
+		/// directly on the host's schedule.
 		/// </summary>
-		Text,
+		DirectPoll,
 		/// <summary>
-		///	A box, with or without borders.
+		/// Blocking. The caller will wait for a specific value to be received,
+		/// discarding other non-matching values.
 		/// </summary>
-		Box
+		FilterWait,
+		/// <summary>
+		/// Non-blocking. The caller will register to receive input events
+		/// as they occur at the console.
+		/// </summary>
+		EventDriven
 	}
 	//*-------------------------------------------------------------------------*
 

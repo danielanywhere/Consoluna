@@ -25,12 +25,13 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputMouseEventArgs																							*
+	//*	ConsolunaInputResizeEventArgs																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for handling a mouse event on ConsolePlus.
+	/// Event arguments for handling a window resize event on Consoluna
+	/// applications.
 	/// </summary>
-	public class ConsoleInputMouseEventArgs : ConsoleInputEventArgs
+	public class ConsolunaInputResizeEventArgs : ConsolunaInputEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -45,45 +46,45 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsoleInputMouseEventArgs item.
+		/// Create a new instance of the ConsolunaInputResizeEventArgs item.
 		/// </summary>
-		public ConsoleInputMouseEventArgs()
+		public ConsolunaInputResizeEventArgs()
 		{
-			EventType = ConsoleInputEventType.Mouse;
+			EventType = ConsolunaInputEventType.Resize;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	MouseX																																*
+		//*	Height																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="MouseX">MouseX</see>.
+		/// Private member for <see cref="Height">Height</see>.
 		/// </summary>
-		private int mMouseX = 0;
+		private int mHeight = 0;
 		/// <summary>
-		/// Get/Set the mouse X position.
+		/// Get/Set the height of the terminal window.
 		/// </summary>
-		public int MouseX
+		public int Height
 		{
-			get { return mMouseX; }
-			set { mMouseX = value; }
+			get { return mHeight; }
+			set { mHeight = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	MouseY																																*
+		//*	Width																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="MouseY">MouseY</see>.
+		/// Private member for <see cref="Width">Width</see>.
 		/// </summary>
-		private int mMouseY = 0;
+		private int mWidth = 0;
 		/// <summary>
-		/// Get/Set the mouse Y position.
+		/// Get/Set the Width of the terminal window.
 		/// </summary>
-		public int MouseY
+		public int Width
 		{
-			get { return mMouseY; }
-			set { mMouseY = value; }
+			get { return mWidth; }
+			set { mWidth = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

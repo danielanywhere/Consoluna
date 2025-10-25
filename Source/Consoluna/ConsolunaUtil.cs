@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputResizeEventArgs																							*
+	//*	ConsolunaUtil																														*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for handling a window resize event on ConsolePlus.
+	/// Utility functionality for Consoluna applications.
 	/// </summary>
-	public class ConsoleInputResizeEventArgs : ConsoleInputEventArgs
+	public class ConsolunaUtil
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -42,50 +42,59 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	_Constructor																													*
+		//* GetPrintable																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsoleInputResizeEventArgs item.
+		/// Return the printable version of this character.
 		/// </summary>
-		public ConsoleInputResizeEventArgs()
+		/// <param name="character">
+		/// Reference to the character for which to retrieve the printable code.
+		/// </param>
+		/// <returns>
+		/// The printable version of the character.
+		/// </returns>
+		public static char GetPrintable(char character)
 		{
-			EventType = ConsoleInputEventType.Resize;
+			char result = ' ';
+			int value = 0;
+
+			value = ((int)character) & 0xff;
+			if(value == 9 || value == 10 || value == 13 ||
+				(value > 31 && value < 127))
+			{
+				result = (char)value;
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return the printable version of this character.
+		/// </summary>
+		/// <param name="character">
+		/// Reference to the console character item for which to retrieve the
+		/// printable code.
+		/// </param>
+		/// <returns>
+		/// The printable version of the item's Character property.
+		/// </returns>
+		public static char GetPrintable(ConsolunaCharacterItem character)
+		{
+			char result = ' ';
+			int value = 0;
+
+			if(character != null)
+			{
+				value = ((int)character.Character) & 0xff;
+				if(value == 9 || value == 10 || value == 13 ||
+					(value > 31 && value < 127))
+				{
+					result = (char)value;
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//*	Height																																*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Height">Height</see>.
-		/// </summary>
-		private int mHeight = 0;
-		/// <summary>
-		/// Get/Set the height of the terminal window.
-		/// </summary>
-		public int Height
-		{
-			get { return mHeight; }
-			set { mHeight = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	Width																																	*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Width">Width</see>.
-		/// </summary>
-		private int mWidth = 0;
-		/// <summary>
-		/// Get/Set the Width of the terminal window.
-		/// </summary>
-		public int Width
-		{
-			get { return mWidth; }
-			set { mWidth = value; }
-		}
-		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*

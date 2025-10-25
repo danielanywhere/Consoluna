@@ -18,22 +18,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
-
-using ConsolunaLib.Internal;
 
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleShapeCollectionEventArgs																					*
+	//*	ConsolunaPropertyChangeEventArgs																				*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for console character collections.
+	/// General panel property change event arguments.
 	/// </summary>
-	public class ConsoleShapeCollectionEventArgs
+	public class ConsolunaPropertyChangeEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -45,69 +40,6 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	_Constructor																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Create a new instance of the ConsoleShapeCollectionEventArgs item.
-		/// </summary>
-		public ConsoleShapeCollectionEventArgs()
-		{
-		}
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
-		/// <summary>
-		/// Create a new instance of the ConsoleShapeCollectionEventArgs item.
-		/// </summary>
-		/// <param name="e">
-		/// Reference to a generic event that has been captured.
-		/// </param>
-		public ConsoleShapeCollectionEventArgs(
-			CollectionChangeEventArgs<ConsoleShapeItem> e)
-		{
-			if(e != null)
-			{
-				mActionName = e.ActionName;
-				mAffectedItems.AddRange(e.AffectedItems);
-				mHandled = e.Handled;
-				mPropertyName = e.PropertyName;
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	ActionName																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="ActionName">ActionName</see>.
-		/// </summary>
-		private string mActionName = "";
-		/// <summary>
-		/// Get/Set the name of the action on the collection.
-		/// </summary>
-		public string ActionName
-		{
-			get { return mActionName; }
-			set { mActionName = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	AffectedItems																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="AffectedItems">AffectedItems</see>.
-		/// </summary>
-		private List<ConsoleShapeItem> mAffectedItems =
-			new List<ConsoleShapeItem>();
-		/// <summary>
-		/// Get a reference to the collection of items on the event.
-		/// </summary>
-		public List<ConsoleShapeItem> AffectedItems
-		{
-			get { return mAffectedItems; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	Handled																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -115,12 +47,46 @@ namespace ConsolunaLib
 		/// </summary>
 		private bool mHandled = false;
 		/// <summary>
-		/// Get/Set a value indicating whether this event has been handled.
+		/// Get/Set a value indicating whether this change has been handled.
 		/// </summary>
 		public bool Handled
 		{
 			get { return mHandled; }
 			set { mHandled = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	NewValue																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="NewValue">NewValue</see>.
+		/// </summary>
+		private object mNewValue = null;
+		/// <summary>
+		/// Get/Set a reference to the new value of the property.
+		/// </summary>
+		public object NewValue
+		{
+			get { return mNewValue; }
+			set { mNewValue = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	OldValue																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="OldValue">OldValue</see>.
+		/// </summary>
+		private object mOldValue = null;
+		/// <summary>
+		/// Get/Set a reference to the old value of the property.
+		/// </summary>
+		public object OldValue
+		{
+			get { return mOldValue; }
+			set { mOldValue = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -132,7 +98,7 @@ namespace ConsolunaLib
 		/// </summary>
 		private string mPropertyName = "";
 		/// <summary>
-		/// Get/Set the name of the affected property.
+		/// Get/Set the name of the property whose value has changed.
 		/// </summary>
 		public string PropertyName
 		{
@@ -140,7 +106,6 @@ namespace ConsolunaLib
 			set { mPropertyName = value; }
 		}
 		//*-----------------------------------------------------------------------*
-
 
 	}
 	//*-------------------------------------------------------------------------*

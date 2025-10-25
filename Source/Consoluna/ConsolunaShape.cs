@@ -27,13 +27,13 @@ using ConsolunaLib.Internal;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleShapeCollection																									*
+	//*	ConsolunaShapeCollection																								*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsoleShapeItem Items.
+	/// Collection of ConsolunaShapeItem Items.
 	/// </summary>
-	public class ConsoleShapeCollection :
-		ChangeObjectCollection<ConsoleShapeItem>
+	public class ConsolunaShapeCollection :
+		ChangeObjectCollection<ConsolunaShapeItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -50,13 +50,13 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleShapeItem																												*
+	//*	ConsolunaShapeItem																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about a shape directive that will be rendered as a set of
 	/// characters.
 	/// </summary>
-	public abstract class ConsoleShapeItem : ChangeObjectItem
+	public abstract class ConsolunaShapeItem : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -74,7 +74,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mBackColor_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("BackColor");
 		}
@@ -93,7 +93,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mForeColor_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("ForeColor");
 		}
@@ -112,7 +112,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mPosition_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("Position");
 		}
@@ -131,7 +131,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mSize_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("Size");
 		}
@@ -154,7 +154,7 @@ namespace ConsolunaLib
 		/// Property change event arguments.
 		/// </param>
 		protected override void OnPropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			if(e?.PropertyName != "Dirty")
 			{
@@ -171,9 +171,9 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsoleShapeItem item.
+		/// Create a new instance of the ConsolunaShapeItem item.
 		/// </summary>
-		public ConsoleShapeItem()
+		public ConsolunaShapeItem()
 		{
 			mBackColor = new ConsolunaColor();
 			mBackColor.PropertyChanged += mBackColor_PropertyChanged;
@@ -225,23 +225,24 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	CharacterStyle																												*
+		//*	CharacterStyleType																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
+		/// Private member for
+		/// <see cref="CharacterStyleType">CharacterStyleType</see>.
 		/// </summary>
-		private ConsoleCharacterStyle mCharacterStyle =
-			ConsoleCharacterStyle.Normal;
+		private ConsolunaCharacterStyleTypeEnum mCharacterStyleType =
+			ConsolunaCharacterStyleTypeEnum.Normal;
 		/// <summary>
 		/// Get/Set the current character style.
 		/// </summary>
-		public ConsoleCharacterStyle CharacterStyle
+		public ConsolunaCharacterStyleTypeEnum CharacterStyleType
 		{
-			get { return mCharacterStyle; }
+			get { return mCharacterStyleType; }
 			set
 			{
-				bool bChanged = (mCharacterStyle != value);
-				mCharacterStyle = value;
+				bool bChanged = (mCharacterStyleType != value);
+				mCharacterStyleType = value;
 				if(bChanged)
 				{
 					OnPropertyChanged();
@@ -343,16 +344,30 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Render																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render the character output of this shape to the screen buffer.
+		/// </summary>
+		/// <param name="screenBuffer">
+		/// Reference to the screen buffer to which the contents will be written.
+		/// </param>
+		public virtual void Render(ConsolunaScreenBuffer screenBuffer)
+		{
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ShapeType																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Private member for <see cref="ShapeType">ShapeType</see>.
 		/// </summary>
-		private ConsoleShapeType mShapeType = ConsoleShapeType.None;
+		private ConsolunaShapeType mShapeType = ConsolunaShapeType.None;
 		/// <summary>
 		///  Get/Set the type of shape to be displayed.
 		/// </summary>
-		public ConsoleShapeType ShapeType
+		public ConsolunaShapeType ShapeType
 		{
 			get { return mShapeType; }
 			set

@@ -76,7 +76,7 @@ namespace ConsolunaLib.Internal
 		/// Dock panel property change event arguments.
 		/// </param>
 		protected virtual void OnItemPropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			if(e != null && !e.Handled)
 			{
@@ -243,7 +243,7 @@ namespace ConsolunaLib.Internal
 		/// <summary>
 		/// Raised when the value of a property on an individual item has changed.
 		/// </summary>
-		public event EventHandler<ConsolePropertyChangeEventArgs>
+		public event EventHandler<ConsolunaPropertyChangeEventArgs>
 			ItemPropertyChanged;
 		//*-----------------------------------------------------------------------*
 
@@ -473,7 +473,7 @@ namespace ConsolunaLib.Internal
 		/// Property change event arguments.
 		/// </param>
 		protected virtual void OnPropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			if(sender != null && e != null)
 			{
@@ -493,7 +493,7 @@ namespace ConsolunaLib.Internal
 		{
 			if(propertyName?.Length > 0)
 			{
-				OnPropertyChanged(this, new ConsolePropertyChangeEventArgs()
+				OnPropertyChanged(this, new ConsolunaPropertyChangeEventArgs()
 				{
 					PropertyName = propertyName
 				});
@@ -516,7 +516,7 @@ namespace ConsolunaLib.Internal
 		protected virtual void OnPropertyChanged(
 			string propertyName, object oldValue, object newValue)
 		{
-			OnPropertyChanged(this, new ConsolePropertyChangeEventArgs()
+			OnPropertyChanged(this, new ConsolunaPropertyChangeEventArgs()
 			{
 				PropertyName = propertyName,
 				OldValue = oldValue,
@@ -534,7 +534,7 @@ namespace ConsolunaLib.Internal
 		/// <summary>
 		/// Raised when the value of a property has changed.
 		/// </summary>
-		public event EventHandler<ConsolePropertyChangeEventArgs> PropertyChanged;
+		public event EventHandler<ConsolunaPropertyChangeEventArgs> PropertyChanged;
 		//*-----------------------------------------------------------------------*
 
 

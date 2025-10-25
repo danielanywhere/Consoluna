@@ -25,54 +25,34 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleCharacterStyle																										*
+	//*	ConsolunaShapeType																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of available character styles on ConsolePlus applications.
+	/// Enumeration of recognized shape types.
 	/// </summary>
-	[Flags]
-	public enum ConsoleCharacterStyle
+	public enum ConsolunaShapeType
 	{
 		/// <summary>
-		/// No style specified or unknown.
+		/// No shape specified or unknown.
 		/// </summary>
-		None =      0x0000,
+		None = 0,
 		/// <summary>
-		/// Normal style.
+		/// Text in the area.
 		/// </summary>
-		Normal =    0x0001,
+		Text,
 		/// <summary>
-		/// Bold style.
+		///	A box, with or without borders.
 		/// </summary>
-		Bold =      0x0002,
+		Box,
 		/// <summary>
-		/// Faint or dim.
+		/// A dialog box with border, close icon, optional maximize icon,
+		/// and optional button.
 		/// </summary>
-		Faint =     0x0004,
+		Dialog,
 		/// <summary>
-		/// Italic.
+		/// A custom shape using a series of character sequences.
 		/// </summary>
-		Italic =    0x0008,
-		/// <summary>
-		/// Underline.
-		/// </summary>
-		Underline = 0x0010,
-		/// <summary>
-		/// Blinking.
-		/// </summary>
-		Blink =     0x0020,
-		/// <summary>
-		/// Inverse color.
-		/// </summary>
-		Inverse =   0x0040,
-		/// <summary>
-		/// Invisible or hidden.
-		/// </summary>
-		Hidden =    0x0080,
-		/// <summary>
-		/// Strikethrough.
-		/// </summary>
-		Strike =    0x0100
+		Custom
 	}
 	//*-------------------------------------------------------------------------*
 

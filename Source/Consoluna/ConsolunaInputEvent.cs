@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputEventArgs																										*
+	//*	ConsolunaInputEventArgs																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Input event arguments for ConsolePlus.
+	/// Input event arguments for Consoluna applications.
 	/// </summary>
-	public abstract class ConsoleInputEventArgs
+	public abstract class ConsolunaInputEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,11 +47,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="EventType">EventType</see>.
 		/// </summary>
-		private ConsoleInputEventType mEventType = ConsoleInputEventType.None;
+		private ConsolunaInputEventType mEventType = ConsolunaInputEventType.None;
 		/// <summary>
 		/// Get/Set the type of event that occurred.
 		/// </summary>
-		public ConsoleInputEventType EventType
+		public ConsolunaInputEventType EventType
 		{
 			get { return mEventType; }
 			set { mEventType = value; }

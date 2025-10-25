@@ -46,16 +46,16 @@ namespace ConsolunaTest
 		/// <param name="e">
 		/// Console input event arguments.
 		/// </param>
-		private void console_InputReceived(object sender, ConsoleInputEventArgs e)
+		private void console_InputReceived(object sender, ConsolunaInputEventArgs e)
 		{
 			int asc = 0;
-			ConsoleCharacterItem character = null;
+			ConsolunaCharacterItem character = null;
 			int width = 0;
 			int height = 0;
 
 			if(e != null)
 			{
-				if(e is ConsoleInputKeyboardEventArgs keyEvent)
+				if(e is ConsolunaInputKeyboardEventArgs keyEvent)
 				{
 					asc = (int)keyEvent.KeyCharacter;
 					if(asc > 31 && asc < 127)
@@ -90,12 +90,12 @@ namespace ConsolunaTest
 					}
 					mConsole.Update();
 				}
-				else if(e is ConsoleInputMouseEventArgs mouseEvent)
+				else if(e is ConsolunaInputMouseEventArgs mouseEvent)
 				{
 					Console.WriteLine(
 						$" Mouse: {mouseEvent.MouseX}, {mouseEvent.MouseY} ");
 				}
-				else if(e is ConsoleInputResizeEventArgs resizeEvent)
+				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
 				{
 					Console.WriteLine(
 						$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
@@ -178,7 +178,7 @@ namespace ConsolunaTest
 		{
 			mConsole = new Consoluna()
 			{
-				InputMode = ConsoleInputMode.EventDriven,
+				InputMode = ConsolunaInputMode.EventDriven,
 				PollInterval = 100
 			};
 			mConsole.InputReceived += console_InputReceived;
@@ -186,7 +186,7 @@ namespace ConsolunaTest
 			mConsole.ForeColor = new ConsolunaColor("#d0d000");
 			mConsole.ClearScreen();
 			mConsole.SetCursorPosition(10, 10);
-			mConsole.SetCursorShape(ConsoleCursorShapeEnum.None);
+			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
 			mConsole.Write("Start writing here: ");
 			mConsole.Update();
 		}

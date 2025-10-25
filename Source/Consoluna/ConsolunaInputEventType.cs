@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputEventType																										*
+	//*	ConsolunaInputEventType																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of event types recognized in ConsolePlus.
+	/// Enumeration of event types recognized in Consoluna applications.
 	/// </summary>
-	public enum ConsoleInputEventType
+	public enum ConsolunaInputEventType
 	{
 		/// <summary>
 		/// No event type specified or unknown.

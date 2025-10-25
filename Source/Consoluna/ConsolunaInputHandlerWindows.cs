@@ -26,12 +26,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	WindowsConsoleInputHandler																							*
+	//*	ConsolunaInputHandlerWindows																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// User input handler specifically for Windows Console.
 	/// </summary>
-	public class ConsoleInputHandlerWindows : IConsoleInputHandler
+	public class ConsolunaInputHandlerWindows : IConsolunaInputHandler
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -168,7 +168,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Create a new instance of the WindowsConsoleInputHandler item.
 		/// </summary>
-		public ConsoleInputHandlerWindows()
+		public ConsolunaInputHandlerWindows()
 		{
 			uint windowConsoleMode = 0;
 			IntPtr windowOutputHandle = default(IntPtr);
@@ -186,7 +186,7 @@ namespace ConsolunaLib
 		/// <param name="WindowConsoleMode">
 		/// The starting window console mode.
 		/// </param>
-		public ConsoleInputHandlerWindows(uint windowConsoleMode)
+		public ConsolunaInputHandlerWindows(uint windowConsoleMode)
 		{
 			mWindowConsoleMode = windowConsoleMode;
 		}
@@ -235,13 +235,13 @@ namespace ConsolunaLib
 		///// <summary>
 		///// Private member for <see cref="InputInfo">InputInfo</see>.
 		///// </summary>
-		//private List<ConsoleInputEventArgs> mInputInfo =
-		//	new List<ConsoleInputEventArgs>();
+		//private List<ConsolunaInputEventArgs> mInputInfo =
+		//	new List<ConsolunaInputEventArgs>();
 		///// <summary>
 		///// Get/Set a reference to the input info collection assigned to this
 		///// instance.
 		///// </summary>
-		//public List<ConsoleInputEventArgs> InputInfo
+		//public List<ConsolunaInputEventArgs> InputInfo
 		//{
 		//	get { return mInputInfo; }
 		//	set { mInputInfo = value; }
@@ -258,13 +258,13 @@ namespace ConsolunaLib
 		/// Reference to a single event read from the input, if present. Otherwise,
 		/// null.
 		/// </returns>
-		public ConsoleInputEventArgs ReadInput()
+		public ConsolunaInputEventArgs ReadInput()
 		{
 			int colCount = 0;
 			KEY_EVENT_RECORD keyEvent = default(KEY_EVENT_RECORD);
 			MOUSE_EVENT_RECORD mouseEvent = default(MOUSE_EVENT_RECORD);
 			INPUT_RECORD record = default(INPUT_RECORD);
-			ConsoleInputEventArgs result = null;
+			ConsolunaInputEventArgs result = null;
 			int rowCount = 0;
 			uint windowEventCount = 0;
 			uint windowReadCount = 0;
@@ -291,7 +291,7 @@ namespace ConsolunaLib
 							//	);
 							if(keyEvent.KeyDown == 1)
 							{
-								result = new ConsoleInputKeyboardEventArgs()
+								result = new ConsolunaInputKeyboardEventArgs()
 								{
 									KeyCharacter = keyEvent.UnicodeChar,
 									KeyCode = (int)keyEvent.UnicodeChar
@@ -308,7 +308,7 @@ namespace ConsolunaLib
 							//	$"ButtonState: {mouseEvent.ButtonState}");
 							if(mouseEvent.ButtonState == 1)
 							{
-								result = new ConsoleInputMouseEventArgs()
+								result = new ConsolunaInputMouseEventArgs()
 								{
 									MouseX = mouseEvent.MousePosition.X,
 									MouseY = mouseEvent.MousePosition.Y

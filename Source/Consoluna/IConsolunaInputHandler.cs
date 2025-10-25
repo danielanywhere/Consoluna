@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	IConsoleInputHandler																										*
+	//*	IConsolunaInputHandler																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Input handler interface for ConsolePlus.
+	/// Input handler interface for Consoluna applications.
 	/// </summary>
-	public interface IConsoleInputHandler
+	public interface IConsolunaInputHandler
 	{
 		//*-----------------------------------------------------------------------*
 		//* Close																																	*
@@ -50,16 +50,6 @@ namespace ConsolunaLib
 		void Initialize();
 		//*-----------------------------------------------------------------------*
 
-		////*-----------------------------------------------------------------------*
-		////*	InputInfo																															*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Get/Set a reference to the input info collection assigned to this
-		///// instance.
-		///// </summary>
-		//List<ConsoleInputEventArgs> InputInfo { get; set; }
-		////*-----------------------------------------------------------------------*
-
 		//*-----------------------------------------------------------------------*
 		//* ReadInput																															*
 		//*-----------------------------------------------------------------------*
@@ -69,7 +59,7 @@ namespace ConsolunaLib
 		/// <returns>
 		/// Reference to an input event, if found. Otherwise, null.
 		/// </returns>
-		ConsoleInputEventArgs ReadInput();
+		ConsolunaInputEventArgs ReadInput();
 		//*-----------------------------------------------------------------------*
 
 	}

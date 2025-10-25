@@ -25,32 +25,54 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputMode																												*
+	//*	ConsolunaCharacterStyleTypeEnum																					*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of available input modes for ConsolePlus.
+	/// Enumeration of available character styles on Consoluna applications.
 	/// </summary>
-	public enum ConsoleInputMode
+	[Flags]
+	public enum ConsolunaCharacterStyleTypeEnum
 	{
 		/// <summary>
-		/// No input mode specified or unknown.
+		/// No style specified or unknown.
 		/// </summary>
-		None = 0,
+		None =      0x0000,
 		/// <summary>
-		/// Non-blocking immediate character. The caller will poll for input
-		/// directly on the host's schedule.
+		/// Normal style.
 		/// </summary>
-		DirectPoll,
+		Normal =    0x0001,
 		/// <summary>
-		/// Blocking. The caller will wait for a specific value to be received,
-		/// discarding other non-matching values.
+		/// Bold style.
 		/// </summary>
-		FilterWait,
+		Bold =      0x0002,
 		/// <summary>
-		/// Non-blocking. The caller will register to receive input events
-		/// as they occur at the console.
+		/// Faint or dim.
 		/// </summary>
-		EventDriven
+		Faint =     0x0004,
+		/// <summary>
+		/// Italic.
+		/// </summary>
+		Italic =    0x0008,
+		/// <summary>
+		/// Underline.
+		/// </summary>
+		Underline = 0x0010,
+		/// <summary>
+		/// Blinking.
+		/// </summary>
+		Blink =     0x0020,
+		/// <summary>
+		/// Inverse color.
+		/// </summary>
+		Inverse =   0x0040,
+		/// <summary>
+		/// Invisible or hidden.
+		/// </summary>
+		Hidden =    0x0080,
+		/// <summary>
+		/// Strikethrough.
+		/// </summary>
+		Strike =    0x0100
 	}
 	//*-------------------------------------------------------------------------*
 

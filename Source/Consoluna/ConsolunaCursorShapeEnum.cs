@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleCursorShapeEnum																									*
+	//*	ConsolunaCursorShapeEnum																								*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Enumeration of possible cursor shapes.
 	/// </summary>
-	public enum ConsoleCursorShapeEnum
+	public enum ConsolunaCursorShapeEnum
 	{
 		/// <summary>
 		/// No cursor shape specified or unknown.

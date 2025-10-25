@@ -18,17 +18,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolePropertyChangeEventArgs																					*
+	//*	ConsolunaInputMouseEventArgs																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// General panel property change event arguments.
+	/// Event arguments for handling a mouse event on Consoluna applications.
 	/// </summary>
-	public class ConsolePropertyChangeEventArgs
+	public class ConsolunaInputMouseEventArgs : ConsolunaInputEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -40,70 +42,48 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	Handled																																*
+		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Handled">Handled</see>.
+		/// Create a new instance of the ConsolunaInputMouseEventArgs item.
 		/// </summary>
-		private bool mHandled = false;
-		/// <summary>
-		/// Get/Set a value indicating whether this change has been handled.
-		/// </summary>
-		public bool Handled
+		public ConsolunaInputMouseEventArgs()
 		{
-			get { return mHandled; }
-			set { mHandled = value; }
+			EventType = ConsolunaInputEventType.Mouse;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	NewValue																															*
+		//*	MouseX																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="NewValue">NewValue</see>.
+		/// Private member for <see cref="MouseX">MouseX</see>.
 		/// </summary>
-		private object mNewValue = null;
+		private int mMouseX = 0;
 		/// <summary>
-		/// Get/Set a reference to the new value of the property.
+		/// Get/Set the mouse X position.
 		/// </summary>
-		public object NewValue
+		public int MouseX
 		{
-			get { return mNewValue; }
-			set { mNewValue = value; }
+			get { return mMouseX; }
+			set { mMouseX = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	OldValue																															*
+		//*	MouseY																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="OldValue">OldValue</see>.
+		/// Private member for <see cref="MouseY">MouseY</see>.
 		/// </summary>
-		private object mOldValue = null;
+		private int mMouseY = 0;
 		/// <summary>
-		/// Get/Set a reference to the old value of the property.
+		/// Get/Set the mouse Y position.
 		/// </summary>
-		public object OldValue
+		public int MouseY
 		{
-			get { return mOldValue; }
-			set { mOldValue = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	PropertyName																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="PropertyName">PropertyName</see>.
-		/// </summary>
-		private string mPropertyName = "";
-		/// <summary>
-		/// Get/Set the name of the property whose value has changed.
-		/// </summary>
-		public string PropertyName
-		{
-			get { return mPropertyName; }
-			set { mPropertyName = value; }
+			get { return mMouseY; }
+			set { mMouseY = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

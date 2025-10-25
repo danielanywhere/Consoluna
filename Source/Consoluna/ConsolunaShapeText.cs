@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputKeyboardEventArgs																						*
+	//*	ConsolunaShapeText																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for handling a keyboard event on ConsolePlus.
+	/// Information about a general text shape with optional hot key definition.
 	/// </summary>
-	public class ConsoleInputKeyboardEventArgs : ConsoleInputEventArgs
+	public class ConsolunaShapeText : ConsolunaShapeItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -45,47 +45,71 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsoleInputKeyboardEventArgs item.
+		/// Create a new instance of the ConsolunaShapeText item.
 		/// </summary>
-		public ConsoleInputKeyboardEventArgs()
+		public ConsolunaShapeText()
 		{
-			EventType = ConsoleInputEventType.Keyboard;
+			ShapeType = ConsolunaShapeType.Text;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	KeyCharacter																													*
+		//*	Render																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="KeyCharacter">KeyCharacter</see>.
+		/// Render the character output of this shape to the screen buffer.
 		/// </summary>
-		private char mKeyCharacter = char.MinValue;
-		/// <summary>
-		/// Get/Set the printable keyboard character.
-		/// </summary>
-		public char KeyCharacter
+		/// <param name="screenBuffer">
+		/// Reference to the screen buffer to which the contents will be written.
+		/// </param>
+		public override void Render(ConsolunaScreenBuffer screenBuffer)
 		{
-			get { return mKeyCharacter; }
-			set { mKeyCharacter = value; }
+			int height = 0;
+			int hotKeyIndex = 0;
+			int width = 0;
+
+			base.Render(screenBuffer);
+			if(screenBuffer != null)
+			{
+				width = screenBuffer.Width;
+				height = screenBuffer.Height;
+				hotKeyIndex = mText.IndexOf('_');
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	KeyCode																																*
+		//*	Text																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="KeyCode">KeyCode</see>.
+		/// Private member for <see cref="Text">Text</see>.
 		/// </summary>
-		private int mKeyCode = 0;
+		private string mText = "";
 		/// <summary>
-		/// Get/Set the key code received.
+		/// Get/Set the content of this control.
 		/// </summary>
-		public int KeyCode
+		public string Text
 		{
-			get { return mKeyCode; }
-			set { mKeyCode = value; }
+			get { return mText; }
+			set
+			{
+				bool bChanged = (mText != value);
+				if(value == null)
+				{
+					mText = "";
+				}
+				else
+				{
+					mText = value;
+				}
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
+
 
 	}
 	//*-------------------------------------------------------------------------*

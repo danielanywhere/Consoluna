@@ -21,19 +21,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
-
-using ConsolunaLib.Internal;
 
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleCharacterCollectionEventArgs																			*
+	//*	ConsolunaCharacterStyle																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for console character collections.
+	/// Generic styling for one or more characters, typically of a given group.
 	/// </summary>
-	public class ConsoleCharacterCollectionEventArgs
+	public class ConsolunaCharacterStyle
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -45,99 +42,80 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	_Constructor																													*
+		//*	BackColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsoleCharacterCollectionEventArgs item.
+		/// Private member for <see cref="BackColor">BackColor</see>.
 		/// </summary>
-		public ConsoleCharacterCollectionEventArgs()
-		{
-		}
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		private ConsolunaColor mBackColor = null;
 		/// <summary>
-		/// Create a new instance of the ConsoleCharacterCollectionEventArgs item.
+		/// Get/Set a reference to the background color for this character.
 		/// </summary>
-		/// <param name="e">
-		/// Reference to a generic event that has been captured.
-		/// </param>
-		public ConsoleCharacterCollectionEventArgs(
-			CollectionChangeEventArgs<ConsoleCharacterItem> e)
+		public ConsolunaColor BackColor
 		{
-			if(e != null)
+			get { return mBackColor; }
+			set
 			{
-				mActionName = e.ActionName;
-				mAffectedItems.AddRange(e.AffectedItems);
-				mHandled = e.Handled;
-				mPropertyName = e.PropertyName;
+				mBackColor = value;
 			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ActionName																														*
+		//*	CharacterStyle																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="ActionName">ActionName</see>.
+		/// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
 		/// </summary>
-		private string mActionName = "";
+		private ConsolunaCharacterStyleTypeEnum mCharacterStyle =
+			ConsolunaCharacterStyleTypeEnum.Normal;
 		/// <summary>
-		/// Get/Set the name of the action on the collection.
+		/// Get/Set the current character style.
 		/// </summary>
-		public string ActionName
+		public ConsolunaCharacterStyleTypeEnum CharacterStyle
 		{
-			get { return mActionName; }
-			set { mActionName = value; }
+			get { return mCharacterStyle; }
+			set
+			{
+				mCharacterStyle = value;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	AffectedItems																													*
+		//*	ForeColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="AffectedItems">AffectedItems</see>.
+		/// Private member for <see cref="ForeColor">ForeColor</see>.
 		/// </summary>
-		private List<ConsoleCharacterItem> mAffectedItems =
-			new List<ConsoleCharacterItem>();
+		private ConsolunaColor mForeColor = null;
 		/// <summary>
-		/// Get a reference to the collection of items on the event.
+		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>
-		public List<ConsoleCharacterItem> AffectedItems
+		public ConsolunaColor ForeColor
 		{
-			get { return mAffectedItems; }
+			get { return mForeColor; }
+			set
+			{
+				mForeColor = value;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Handled																																*
+		//*	Properties																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Handled">Handled</see>.
+		/// Private member for <see cref="Properties">Properties</see>.
 		/// </summary>
-		private bool mHandled = false;
+		private ConsolunaPropertyCollection mProperties =
+			new ConsolunaPropertyCollection();
 		/// <summary>
-		/// Get/Set a value indicating whether this event has been handled.
+		/// Get a reference to the collection of custom properties for this style.
 		/// </summary>
-		public bool Handled
+		public ConsolunaPropertyCollection Properties
 		{
-			get { return mHandled; }
-			set { mHandled = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	PropertyName																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="PropertyName">PropertyName</see>.
-		/// </summary>
-		private string mPropertyName = "";
-		/// <summary>
-		/// Get/Set the name of the affected property.
-		/// </summary>
-		public string PropertyName
-		{
-			get { return mPropertyName; }
-			set { mPropertyName = value; }
+			get { return mProperties; }
 		}
 		//*-----------------------------------------------------------------------*
 

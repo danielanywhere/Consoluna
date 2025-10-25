@@ -25,6 +25,8 @@ using System.Threading;
 
 using ConsolunaLib.Internal;
 
+using static ConsolunaLib.ConsolunaUtil;
+
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
@@ -82,7 +84,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Reference to the platform-specific input handler currently active.
 		/// </summary>
-		private IConsoleInputHandler mInputHandler = null;
+		private IConsolunaInputHandler mInputHandler = null;
 		/// <summary>
 		/// The last-known height of the display.
 		/// </summary>
@@ -131,10 +133,10 @@ namespace ConsolunaLib
 		/// <returns>
 		/// Reference to the single event, if found. Otherwise, null.
 		/// </returns>
-		private ConsoleInputEventArgs GetInput()
+		private ConsolunaInputEventArgs GetInput()
 		{
 			bool bChanged = false;
-			ConsoleInputEventArgs e = null;
+			ConsolunaInputEventArgs e = null;
 			int value = 0;
 
 			e = mInputHandler.ReadInput();
@@ -144,7 +146,7 @@ namespace ConsolunaLib
 				mHeight = Console.WindowHeight;
 				if(mWidth != mLastWidth || mHeight != mLastHeight)
 				{
-					e = new ConsoleInputResizeEventArgs()
+					e = new ConsolunaInputResizeEventArgs()
 					{
 						Width = mWidth,
 						Height = mHeight
@@ -170,7 +172,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mBackColor_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnBackColorChanged();
 		}
@@ -189,7 +191,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mForeColor_PropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnForeColorChanged();
 		}
@@ -208,10 +210,10 @@ namespace ConsolunaLib
 		/// Console character collection change event arguments.
 		/// </param>
 		private void mScreenCharacters_CollectionChanged(object sender,
-			CollectionChangeEventArgs<ConsoleCharacterItem> e)
+			CollectionChangeEventArgs<ConsolunaCharacterItem> e)
 		{
 			OnScreenCharacterCollectionChanged(
-				new ConsoleCharacterCollectionEventArgs(e));
+				new ConsolunaCharacterCollectionEventArgs(e));
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -228,7 +230,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mScreenCharacters_ItemPropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnScreenCharacterItemChanged(sender, e);
 		}
@@ -247,10 +249,10 @@ namespace ConsolunaLib
 		/// Console shape collection change event arguments.
 		/// </param>
 		private void mScreenShapes_CollectionChanged(object sender,
-			CollectionChangeEventArgs<ConsoleShapeItem> e)
+			CollectionChangeEventArgs<ConsolunaShapeItem> e)
 		{
 			OnScreenShapeCollectionChanged(
-				new ConsoleShapeCollectionEventArgs(e));
+				new ConsolunaShapeCollectionEventArgs(e));
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -267,7 +269,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mScreenShapes_ItemPropertyChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			OnScreenShapeItemChanged(sender, e);
 		}
@@ -285,7 +287,7 @@ namespace ConsolunaLib
 		/// </param>
 		private void PollingLoop(CancellationTokenSource cancellationToken)
 		{
-			ConsoleInputEventArgs e = null;
+			ConsolunaInputEventArgs e = null;
 
 			while(true)
 			{
@@ -320,17 +322,19 @@ namespace ConsolunaLib
 			int newHeight)
 		{
 			bool bCharacterEvents = mCharacterEventsActive;
+			List<ConsolunaCharacterItem> characters;
 			int colIndex = 0;
 			int minHeight = 0;
 			int minWidth = 0;
-			List<ConsoleCharacterItem> newDisplay = null;
+			List<ConsolunaCharacterItem> newDisplay = null;
 			int rowIndex = 0;
 
+			characters = mScreenBuffer.Characters;
 			if(oldWidth != newWidth || oldHeight != newHeight)
 			{
 				newDisplay =
 				Enumerable.Range(0, newHeight * newWidth)
-					.Select(i => new ConsoleCharacterItem()
+					.Select(i => new ConsolunaCharacterItem()
 					{
 						BackColor = mBackColor,
 						ForeColor = mForeColor,
@@ -344,13 +348,13 @@ namespace ConsolunaLib
 					for(colIndex = 0; colIndex < minWidth; colIndex ++)
 					{
 						newDisplay[rowIndex * newWidth + colIndex] =
-							mScreenCharacters[rowIndex * oldWidth + colIndex];
+							characters[rowIndex * oldWidth + colIndex];
 					}
 				}
 			}
 			mCharacterEventsActive = false;
-			mScreenCharacters.Clear();
-			mScreenCharacters.AddRange(newDisplay);
+			characters.Clear();
+			characters.AddRange(newDisplay);
 			mCharacterEventsActive = bCharacterEvents;
 		}
 		//*-----------------------------------------------------------------------*
@@ -402,9 +406,9 @@ namespace ConsolunaLib
 		/// <returns>
 		/// Reference to the generated input event.
 		/// </returns>
-		private ConsoleInputEventArgs WaitForInput()
+		private ConsolunaInputEventArgs WaitForInput()
 		{
-			ConsoleInputEventArgs e = null;
+			ConsolunaInputEventArgs e = null;
 
 			while(e == null)
 			{
@@ -458,7 +462,7 @@ namespace ConsolunaLib
 		/// Console input keyboard event arguments.
 		/// </param>
 		protected virtual void OnKeyboardInputReceived(
-			ConsoleInputKeyboardEventArgs e)
+			ConsolunaInputKeyboardEventArgs e)
 		{
 			KeyboardInputReceived?.Invoke(this, e);
 		}
@@ -474,20 +478,20 @@ namespace ConsolunaLib
 		/// <param name="e">
 		/// Console input event arguments.
 		/// </param>
-		protected virtual void OnInputReceived(ConsoleInputEventArgs e)
+		protected virtual void OnInputReceived(ConsolunaInputEventArgs e)
 		{
 			InputReceived?.Invoke(this, e);
 			if(e != null)
 			{
-				if(e is ConsoleInputKeyboardEventArgs keyEvent)
+				if(e is ConsolunaInputKeyboardEventArgs keyEvent)
 				{
 					OnKeyboardInputReceived(keyEvent);
 				}
-				else if(e is ConsoleInputMouseEventArgs mouseEvent)
+				else if(e is ConsolunaInputMouseEventArgs mouseEvent)
 				{
 					OnMouseInputReceived(mouseEvent);
 				}
-				else if(e is ConsoleInputResizeEventArgs resizeEvent)
+				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
 				{
 					OnTerminalResized(resizeEvent);
 				}
@@ -505,7 +509,7 @@ namespace ConsolunaLib
 		/// <param name="e">
 		/// Console input mouse event arguments.
 		/// </param>
-		protected virtual void OnMouseInputReceived(ConsoleInputMouseEventArgs e)
+		protected virtual void OnMouseInputReceived(ConsolunaInputMouseEventArgs e)
 		{
 			MouseInputReceived?.Invoke(this, e);
 		}
@@ -521,7 +525,7 @@ namespace ConsolunaLib
 		/// Console character collection event arguments.
 		/// </param>
 		protected virtual void OnScreenCharacterCollectionChanged(
-			ConsoleCharacterCollectionEventArgs e)
+			ConsolunaCharacterCollectionEventArgs e)
 		{
 			if(mCharacterEventsActive)
 			{
@@ -543,7 +547,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		protected virtual void OnScreenCharacterItemChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			if(mCharacterEventsActive)
 			{
@@ -563,7 +567,7 @@ namespace ConsolunaLib
 		/// Console shape collection event arguments.
 		/// </param>
 		protected virtual void OnScreenShapeCollectionChanged(
-			ConsoleShapeCollectionEventArgs e)
+			ConsolunaShapeCollectionEventArgs e)
 		{
 			if(mShapeEventsActive)
 			{
@@ -586,7 +590,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		protected virtual void OnScreenShapeItemChanged(object sender,
-			ConsolePropertyChangeEventArgs e)
+			ConsolunaPropertyChangeEventArgs e)
 		{
 			if(mShapeEventsActive)
 			{
@@ -604,7 +608,7 @@ namespace ConsolunaLib
 		/// <param name="e">
 		/// Console input resize event arguments.
 		/// </param>
-		protected virtual void OnTerminalResized(ConsoleInputResizeEventArgs e)
+		protected virtual void OnTerminalResized(ConsolunaInputResizeEventArgs e)
 		{
 			TerminalResized?.Invoke(this, e);
 		}
@@ -626,11 +630,11 @@ namespace ConsolunaLib
 
 			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				mInputHandler = new ConsoleInputHandlerWindows();
+				mInputHandler = new ConsolunaInputHandlerWindows();
 			}
 			else
 			{
-				mInputHandler = new ConsoleInputHandlerNCurses();
+				mInputHandler = new ConsolunaInputHandlerNCurses();
 			}
 			if(mInputHandler != null)
 			{
@@ -648,12 +652,12 @@ namespace ConsolunaLib
 			mBackColor = new ConsolunaColor();
 			mBackColor.PropertyChanged += mBackColor_PropertyChanged;
 
-			mScreenCharacters = new ConsoleCharacterCollection();
-			mScreenCharacters.CollectionChanged +=
+			mScreenBuffer.Characters.CollectionChanged +=
 				mScreenCharacters_CollectionChanged;
-			mScreenCharacters.ItemPropertyChanged +=
+			mScreenBuffer.Characters.ItemPropertyChanged +=
 				mScreenCharacters_ItemPropertyChanged;
-			mScreenShapes = new ConsoleShapeCollection();
+
+			mScreenShapes = new ConsolunaShapeCollection();
 			mScreenShapes.CollectionChanged +=
 				mScreenShapes_CollectionChanged;
 			mScreenShapes.ItemPropertyChanged +=
@@ -833,41 +837,49 @@ namespace ConsolunaLib
 		/// <returns>
 		/// The ANSI escape code representing the provided style.
 		/// </returns>
-		public static string AnsiStyleStart(ConsoleCharacterStyle style)
+		public static string AnsiStyleStart(ConsolunaCharacterStyleTypeEnum style)
 		{
 			StringBuilder builder = new StringBuilder();
 
-			if(style != ConsoleCharacterStyle.None)
+			if(style != ConsolunaCharacterStyleTypeEnum.None)
 			{
-				if((style & ConsoleCharacterStyle.Blink) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Blink) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[5m");
 				}
-				if((style & ConsoleCharacterStyle.Bold) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Bold) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[1m");
 				}
-				if((style & ConsoleCharacterStyle.Faint) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Faint) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[2m");
 				}
-				if((style & ConsoleCharacterStyle.Hidden) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Hidden) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[8m");
 				}
-				if((style & ConsoleCharacterStyle.Inverse) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Inverse) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[7m");
 				}
-				if((style & ConsoleCharacterStyle.Italic) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Italic) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[3m");
 				}
-				if((style & ConsoleCharacterStyle.Strike) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Strike) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[9m");
 				}
-				if((style & ConsoleCharacterStyle.Underline) != ConsoleCharacterStyle.None)
+				if((style & ConsolunaCharacterStyleTypeEnum.Underline) !=
+					ConsolunaCharacterStyleTypeEnum.None)
 				{
 					builder.Append("\x1b[4m");
 				}
@@ -929,7 +941,8 @@ namespace ConsolunaLib
 		/// </param>
 		public void Backspace(int count)
 		{
-			ConsoleCharacterItem character = null;
+			ConsolunaCharacterItem character = null;
+			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
 			int endIndex = 0;
 			int index = 0;
 			int startIndex = 0;
@@ -939,7 +952,7 @@ namespace ConsolunaLib
 			endIndex = startIndex - count;
 			for(index = startIndex; index > -1 && index > endIndex; index --)
 			{
-				character = mScreenCharacters[index];
+				character = characters[index];
 				character.Character = char.MinValue;
 				mCursorPosition.X--;
 			}
@@ -973,7 +986,7 @@ namespace ConsolunaLib
 		/// </summary>
 		public void ClearScreen()
 		{
-			mScreenCharacters.Clear();
+			mScreenBuffer.Characters.Clear();
 			Update();
 		}
 		//*-----------------------------------------------------------------------*
@@ -1143,17 +1156,17 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="InputMode">InputMode</see>.
 		/// </summary>
-		private ConsoleInputMode mInputMode = ConsoleInputMode.DirectPoll;
+		private ConsolunaInputMode mInputMode = ConsolunaInputMode.DirectPoll;
 		/// <summary>
 		/// Get/Set the active input mode for this instance.
 		/// </summary>
-		public ConsoleInputMode InputMode
+		public ConsolunaInputMode InputMode
 		{
 			get { return mInputMode; }
 			set
 			{
 				mInputMode = value;
-				if(mInputMode == ConsoleInputMode.EventDriven)
+				if(mInputMode == ConsolunaInputMode.EventDriven)
 				{
 					StartThread();
 				}
@@ -1172,7 +1185,7 @@ namespace ConsolunaLib
 		/// Fired when any input has been received from the terminal, including
 		/// keyboard, mouse, or terminal window resize.
 		/// </summary>
-		public event EventHandler<ConsoleInputEventArgs> InputReceived;
+		public event EventHandler<ConsolunaInputEventArgs> InputReceived;
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -1181,7 +1194,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when input has been received from the keyboard.
 		/// </summary>
-		public event EventHandler<ConsoleInputKeyboardEventArgs>
+		public event EventHandler<ConsolunaInputKeyboardEventArgs>
 			KeyboardInputReceived;
 		//*-----------------------------------------------------------------------*
 
@@ -1209,7 +1222,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when input has been received from the mouse.
 		/// </summary>
-		public event EventHandler<ConsoleInputMouseEventArgs> MouseInputReceived;
+		public event EventHandler<ConsolunaInputMouseEventArgs> MouseInputReceived;
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -1237,12 +1250,12 @@ namespace ConsolunaLib
 		/// Return the result of reading a single event from input.
 		/// </summary>
 		/// <returns>
-		/// Reference to a ConsoleInputEventArgs representing the read event,
+		/// Reference to a ConsolunaInputEventArgs representing the read event,
 		/// if found. Otherwise, null.
 		/// </returns>
-		public ConsoleInputEventArgs Read()
+		public ConsolunaInputEventArgs Read()
 		{
-			ConsoleInputEventArgs result = GetInput();
+			ConsolunaInputEventArgs result = GetInput();
 			return result;
 		}
 		//*-----------------------------------------------------------------------*
@@ -1254,7 +1267,7 @@ namespace ConsolunaLib
 		/// Fired when the contents of the ScreenCharacters collection have
 		/// changed.
 		/// </summary>
-		public event EventHandler<ConsoleCharacterCollectionEventArgs>
+		public event EventHandler<ConsolunaCharacterCollectionEventArgs>
 			ScreenCharacterCollectionChanged;
 		//*-----------------------------------------------------------------------*
 
@@ -1264,25 +1277,41 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when the contents of a Screen Character have changed.
 		/// </summary>
-		public event EventHandler<ConsolePropertyChangeEventArgs>
+		public event EventHandler<ConsolunaPropertyChangeEventArgs>
 			ScreenCharacterItemChanged;
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ScreenCharacters																											*
+		//*	ScreenBuffer																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="ScreenCharacters">ScreenCharacters</see>.
+		/// Private member for <see cref="ScreenBuffer">ScreenBuffer</see>.
 		/// </summary>
-		private ConsoleCharacterCollection mScreenCharacters = null;
+		private ConsolunaScreenBuffer mScreenBuffer = new ConsolunaScreenBuffer();
 		/// <summary>
-		/// Get a reference to the character-based screen cache layer.
+		/// Get a reference to the screen buffer for this instance.
 		/// </summary>
-		public ConsoleCharacterCollection ScreenCharacters
+		public ConsolunaScreenBuffer ScreenBuffer
 		{
-			get { return mScreenCharacters; }
+			get { return mScreenBuffer; }
 		}
 		//*-----------------------------------------------------------------------*
+
+		////*-----------------------------------------------------------------------*
+		////*	ScreenCharacters																											*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for <see cref="ScreenCharacters">ScreenCharacters</see>.
+		///// </summary>
+		//private ConsolunaCharacterCollection mScreenCharacters = null;
+		///// <summary>
+		///// Get a reference to the character-based screen cache layer.
+		///// </summary>
+		//public ConsolunaCharacterCollection ScreenCharacters
+		//{
+		//	get { return mScreenCharacters; }
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* ScreenShapeCollectionChanged																					*
@@ -1290,7 +1319,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when the contents of the screen shapes collection have changed.
 		/// </summary>
-		public event EventHandler<ConsoleShapeCollectionEventArgs>
+		public event EventHandler<ConsolunaShapeCollectionEventArgs>
 			ScreenShapeCollectionChanged;
 		//*-----------------------------------------------------------------------*
 
@@ -1300,7 +1329,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when a single value of a screen shape has been changed.
 		/// </summary>
-		public event EventHandler<ConsolePropertyChangeEventArgs>
+		public event EventHandler<ConsolunaPropertyChangeEventArgs>
 			ScreenShapeItemChanged;
 		//*-----------------------------------------------------------------------*
 
@@ -1310,11 +1339,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ScreenShapes">ScreenShapes</see>.
 		/// </summary>
-		private ConsoleShapeCollection mScreenShapes = null;
+		private ConsolunaShapeCollection mScreenShapes = null;
 		/// <summary>
 		/// Get a reference to the collection of shapes in this instance.
 		/// </summary>
-		public ConsoleShapeCollection ScreenShapes
+		public ConsolunaShapeCollection ScreenShapes
 		{
 			get { return mScreenShapes; }
 		}
@@ -1348,29 +1377,29 @@ namespace ConsolunaLib
 		/// <param name="cursorShape">
 		/// The shape of the cursor. If None, the cursor will be hidden.
 		/// </param>
-		public void SetCursorShape(ConsoleCursorShapeEnum cursorShape)
+		public void SetCursorShape(ConsolunaCursorShapeEnum cursorShape)
 		{
 			switch(cursorShape)
 			{
-				case ConsoleCursorShapeEnum.Bar:
+				case ConsolunaCursorShapeEnum.Bar:
 					Console.Write("\x1b[5q");
 					break;
-				case ConsoleCursorShapeEnum.BlinkingBar:
+				case ConsolunaCursorShapeEnum.BlinkingBar:
 					Console.Write("\x1b[6q");
 					break;
-				case ConsoleCursorShapeEnum.BlinkingBlock:
+				case ConsolunaCursorShapeEnum.BlinkingBlock:
 					Console.Write("\x1b[2q");
 					break;
-				case ConsoleCursorShapeEnum.BlinkingUnderline:
+				case ConsolunaCursorShapeEnum.BlinkingUnderline:
 					Console.Write("\x1b[4q");
 					break;
-				case ConsoleCursorShapeEnum.Block:
+				case ConsolunaCursorShapeEnum.Block:
 					Console.Write("\x1b[1q");
 					break;
-				case ConsoleCursorShapeEnum.None:
+				case ConsolunaCursorShapeEnum.None:
 					CursorHide();
 					break;
-				case ConsoleCursorShapeEnum.Underline:
+				case ConsolunaCursorShapeEnum.Underline:
 					Console.Write("\x1b[3q");
 					break;
 			}
@@ -1401,7 +1430,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Fired when the terminal has been resized.
 		/// </summary>
-		public event EventHandler<ConsoleInputResizeEventArgs> TerminalResized;
+		public event EventHandler<ConsolunaInputResizeEventArgs> TerminalResized;
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -1421,12 +1450,12 @@ namespace ConsolunaLib
 		/// In this version, non-matching input leading up to the filter is
 		/// discarded.
 		/// </remarks>
-		public ConsoleInputEventArgs WaitForFilter(ConsoleInputEventArgs filter)
+		public ConsolunaInputEventArgs WaitForFilter(ConsolunaInputEventArgs filter)
 		{
-			ConsoleInputEventArgs e = null;
-			ConsoleInputEventArgs result = null;
+			ConsolunaInputEventArgs e = null;
+			ConsolunaInputEventArgs result = null;
 
-			if(filter != null && mInputMode == ConsoleInputMode.FilterWait)
+			if(filter != null && mInputMode == ConsolunaInputMode.FilterWait)
 			{
 				while(result == null)
 				{
@@ -1458,21 +1487,23 @@ namespace ConsolunaLib
 			bool bFound = false;
 			bool bFullRefresh = false;
 			StringBuilder builder = new StringBuilder();
-			ConsoleCharacterItem character = null;
+			ConsolunaCharacterItem character = null;
+			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
 			int colCount = 0;
 			int colIndex = 0;
 			int count = 0;
-			List<ConsoleCharacterItem> dirties = null;
+			List<ConsolunaCharacterItem> dirties = null;
 			int endIndex = 0;
 			//int height = Console.WindowHeight;
 			int index = 0;
 			ConsolunaColor lastBackColor = null;
 			ConsolunaColor lastForeColor = null;
-			ConsoleCharacterStyle lastStyle = ConsoleCharacterStyle.None;
+			ConsolunaCharacterStyleTypeEnum lastStyle =
+				ConsolunaCharacterStyleTypeEnum.None;
 			int lastX = 0;
 			int min = 0;
 			int row = 0;
-			//List<ConsoleCharacterItem> rowContent = null;
+			//List<ConsolunaCharacterItem> rowContent = null;
 			int rowCount = 0;
 			int rowIndex = 0;
 			List<int> rows = null;
@@ -1481,9 +1512,11 @@ namespace ConsolunaLib
 
 			mWidth = Console.WindowWidth;
 			mHeight = Console.WindowHeight;
+			mScreenBuffer.Width = mWidth;
+			mScreenBuffer.Height = mHeight;
 
 			mCharacterEventsActive = false;
-			count = mScreenCharacters.Count;
+			count = characters.Count;
 			if(count > 0)
 			{
 				if(count != mWidth * mHeight)
@@ -1492,75 +1525,16 @@ namespace ConsolunaLib
 					RemapDisplay(mLastUpdateWidth, mLastUpdateHeight,
 						mWidth, mHeight);
 
-					//colCount = mScreenCharacters.Max(x => x.Position.X) + 1;
-					//rowCount = mScreenCharacters.Max(y => y.Position.Y) + 1;
-					//if(colCount != mWidth)
-					//{
-					//	min = Math.Min(rowCount, mHeight);
-					//	if(colCount < mWidth)
-					//	{
-					//		//	Add columns to existing rows.
-					//		for(colIndex = colCount; colIndex < mWidth; colIndex ++)
-					//		{
-					//			for(rowIndex = 0; rowIndex < min; rowIndex++)
-					//			{
-					//				//	Add a new character at this row and column.
-					//				character = new ConsoleCharacterItem()
-					//				{
-					//					BackColor = this.mBackColor,
-					//					ForeColor = this.mForeColor
-					//				};
-					//				character.Position.X = colIndex;
-					//				character.Position.Y = rowIndex;
-					//				character.Dirty = false;
-					//				mScreenCharacters.Add(character);
-					//			}
-					//		}
-					//	}
-					//	else
-					//	{
-					//		//	Remove columns from existing rows.
-					//		mScreenCharacters.RemoveAll(x => x.Position.X >= mWidth);
-					//	}
-					//}
-					//if(rowCount != mHeight)
-					//{
-					//	if(rowCount < mHeight)
-					//	{
-					//		//	Add rows.
-					//		for(colIndex = 0; colIndex < mWidth; colIndex ++)
-					//		{
-					//			for(rowIndex = rowCount; rowIndex < mHeight; rowIndex ++)
-					//			{
-					//				//	Add a new character at this row and column.
-					//				character = new ConsoleCharacterItem()
-					//				{
-					//					BackColor = this.mBackColor,
-					//					ForeColor = this.mForeColor
-					//				};
-					//				character.Position.X = colIndex;
-					//				character.Position.Y = rowIndex;
-					//				character.Dirty = false;
-					//				mScreenCharacters.Add(character);
-					//			}
-					//		}
-					//	}
-					//	else
-					//	{
-					//		//	Remove rows.
-					//		mScreenCharacters.RemoveAll(y => y.Position.Y >= mHeight);
-					//	}
-					//}
 					bFullRefresh = true;
 				}
 			}
 			else
 			{
 				//	Rebuild grid.
-				mScreenCharacters.Clear();
-				mScreenCharacters.AddRange(
+				characters.Clear();
+				characters.AddRange(
 					Enumerable.Range(0, mHeight * mWidth)
-						.Select(i => new ConsoleCharacterItem()
+						.Select(i => new ConsolunaCharacterItem()
 						{
 							BackColor = mBackColor,
 							ForeColor = mForeColor,
@@ -1587,10 +1561,10 @@ namespace ConsolunaLib
 			//	.ToList();
 			rows = new List<int>();
 			index = 0;
-			count = mScreenCharacters.Count;
+			count = characters.Count;
 			for(index = 0; index < count; index ++)
 			{
-				character = mScreenCharacters[index];
+				character = characters[index];
 				if(character.Dirty)
 				{
 					row = (index / mWidth);
@@ -1610,7 +1584,7 @@ namespace ConsolunaLib
 					endIndex = index + mWidth;
 					index < endIndex; index ++, colIndex ++)
 				{
-					character = mScreenCharacters[index];
+					character = characters[index];
 					if(bFound)
 					{
 						//	Check to see if the current style still matches.
@@ -1621,7 +1595,7 @@ namespace ConsolunaLib
 							lastStyle == character.CharacterStyle &&
 							lastX == colIndex - 1)
 						{
-							builder.Append(ConsoleCharacterItem.GetPrintable(character));
+							builder.Append(GetPrintable(character));
 							lastX = colIndex;
 						}
 						else if(builder.Length > 0)
@@ -1645,7 +1619,7 @@ namespace ConsolunaLib
 						lastStyle = character.CharacterStyle;
 						lastX = colIndex;
 						startX = colIndex;
-						builder.Append(ConsoleCharacterItem.GetPrintable(character));
+						builder.Append(GetPrintable(character));
 						bFound = true;
 					}
 					character.Dirty = false;
@@ -1710,11 +1684,12 @@ namespace ConsolunaLib
 		/// </param>
 		public void Write(char value)
 		{
-			ConsoleCharacterItem character = null;
+			ConsolunaCharacterItem character = null;
 
 			EnsureLegalCursor();
 			character =
-				mScreenCharacters[mCursorPosition.Y * mWidth + mCursorPosition.X];
+				mScreenBuffer.Characters[
+					mCursorPosition.Y * mWidth + mCursorPosition.X];
 			if(character != null)
 			{
 				character.Character = value;
@@ -1732,7 +1707,8 @@ namespace ConsolunaLib
 		/// </param>
 		public void Write(string value)
 		{
-			ConsoleCharacterItem character = null;
+			ConsolunaCharacterItem character = null;
+			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
 			char[] chars = null;
 			int index = 0;
 
@@ -1740,10 +1716,10 @@ namespace ConsolunaLib
 			if(value?.Length > 0)
 			{
 				character =
-					mScreenCharacters[mCursorPosition.Y * mWidth + mCursorPosition.X];
+					characters[mCursorPosition.Y * mWidth + mCursorPosition.X];
 				if(character != null)
 				{
-					index = mScreenCharacters.IndexOf(character);
+					index = characters.IndexOf(character);
 					if(index > -1)
 					{
 						chars = value.ToCharArray();
@@ -1753,11 +1729,11 @@ namespace ConsolunaLib
 							character.BackColor = mBackColor;
 							character.ForeColor = mForeColor;
 							index++;
-							if(index >= mScreenCharacters.Count)
+							if(index >= characters.Count)
 							{
 								index = 0;
 							}
-							character = mScreenCharacters[index];
+							character = characters[index];
 							mCursorPosition.X++;
 						}
 						EnsureLegalCursor();

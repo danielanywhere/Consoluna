@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputKeyModifierType																							*
+	//*	ConsolunaInputKeyModifierType																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of known key modifier types in ConsolePlus.
+	/// Enumeration of known key modifier types in Consoluna applications.
 	/// </summary>
-	public enum ConsoleInputKeyModifierType
+	public enum ConsolunaInputKeyModifierType
 	{
 		/// <summary>
 		/// No modifier specified or unknown.

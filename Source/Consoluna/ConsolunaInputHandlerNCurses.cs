@@ -28,12 +28,12 @@ using Mindmagma.Curses;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsoleInputHandlerNCurses																							*
+	//*	ConsolunaInputHandlerNCurses																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Console input handler for processing NCurses activity in ConsolePlus.
+	/// Console input handler for processing NCurses activity in Consoluna.
 	/// </summary>
-	public class ConsoleInputHandlerNCurses : IConsoleInputHandler
+	public class ConsolunaInputHandlerNCurses : IConsolunaInputHandler
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -350,13 +350,13 @@ namespace ConsolunaLib
 		///// <summary>
 		///// Private member for <see cref="InputInfo">InputInfo</see>.
 		///// </summary>
-		//private List<ConsoleInputEventArgs> mInputInfo =
-		//	new List<ConsoleInputEventArgs>();
+		//private List<ConsolunaInputEventArgs> mInputInfo =
+		//	new List<ConsolunaInputEventArgs>();
 		///// <summary>
 		///// Get/Set a reference to the input info collection assigned to this
 		///// instance.
 		///// </summary>
-		//public List<ConsoleInputEventArgs> InputInfo
+		//public List<ConsolunaInputEventArgs> InputInfo
 		//{
 		//	get { return mInputInfo; }
 		//	set { mInputInfo = value; }
@@ -373,7 +373,7 @@ namespace ConsolunaLib
 		/// Reference to the current console input event arguments, if an event
 		/// was created. Otherwise, null.
 		/// </returns>
-		public ConsoleInputEventArgs ReadInput()
+		public ConsolunaInputEventArgs ReadInput()
 		{
 			int ch = -1;
 			bool hasMouseCoords = false;
@@ -382,7 +382,7 @@ namespace ConsolunaLib
 			int cols = 0;
 			bool sawResize = false;
 			int rows = 0;
-			ConsoleInputEventArgs result = null;
+			ConsolunaInputEventArgs result = null;
 
 			try
 			{
@@ -407,7 +407,7 @@ namespace ConsolunaLib
 							hasMouseCoords = GetMouseCoords(out mx, out my);
 							if(hasMouseCoords)
 							{
-								result = new ConsoleInputMouseEventArgs()
+								result = new ConsolunaInputMouseEventArgs()
 								{
 									MouseX = mx,
 									MouseY = my
@@ -415,12 +415,12 @@ namespace ConsolunaLib
 							}
 							else
 							{
-								result = new ConsoleInputMouseEventArgs();
+								result = new ConsolunaInputMouseEventArgs();
 							}
 						}
 						else
 						{
-							result = new ConsoleInputKeyboardEventArgs()
+							result = new ConsolunaInputKeyboardEventArgs()
 							{
 								KeyCode = ch
 							};
