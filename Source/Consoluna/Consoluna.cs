@@ -130,9 +130,7 @@ namespace ConsolunaLib
 		/// </returns>
 		private ConsolunaInputEventArgs GetInput()
 		{
-			bool bChanged = false;
 			ConsolunaInputEventArgs e = null;
-			int value = 0;
 
 			if(mCharacterEventsActive)
 			{
@@ -320,14 +318,12 @@ namespace ConsolunaLib
 			int newHeight)
 		{
 			bool bCharacterEvents = mCharacterEventsActive;
-			List<ConsolunaCharacterItem> characters;
 			int colIndex = 0;
 			int minHeight = 0;
 			int minWidth = 0;
 			List<ConsolunaCharacterItem> newDisplay = null;
 			int rowIndex = 0;
 
-			characters = mScreenBuffer.Characters;
 			if(oldWidth != newWidth || oldHeight != newHeight)
 			{
 				newDisplay =
@@ -346,13 +342,13 @@ namespace ConsolunaLib
 					for(colIndex = 0; colIndex < minWidth; colIndex ++)
 					{
 						newDisplay[rowIndex * newWidth + colIndex] =
-							characters[rowIndex * oldWidth + colIndex];
+							mCharacters[rowIndex * oldWidth + colIndex];
 					}
 				}
 			}
 			mCharacterEventsActive = false;
-			characters.Clear();
-			characters.AddRange(newDisplay);
+			mCharacters.Clear();
+			mCharacters.AddRange(newDisplay);
 			mCharacterEventsActive = bCharacterEvents;
 		}
 		//*-----------------------------------------------------------------------*
@@ -623,6 +619,74 @@ namespace ConsolunaLib
 		/// </summary>
 		public Consoluna()
 		{
+			//	Set the default styles.
+			mStyles = new ConsolunaScreenStyleCollection();
+			mStyles.AddRange(new ConsolunaScreenStyleItem[]
+			{
+				new ConsolunaScreenStyleItem("ScreenColor",
+					foreColor: new ConsolunaColor("#b0aedd"),
+					backColor: new ConsolunaColor("#0b0938")),
+
+				new ConsolunaScreenStyleItem("ButtonColor",
+					foreColor: new ConsolunaColor("#003300"),
+					backColor: new ConsolunaColor("#01af00")),
+				new ConsolunaScreenStyleItem("ButtonColorDefault",
+					foreColor: new ConsolunaColor("#5cffb1"),
+					backColor: new ConsolunaColor("#01af00")),
+				new ConsolunaScreenStyleItem("ButtonShortcutColor",
+					foreColor: new ConsolunaColor("#333300"),
+					backColor: new ConsolunaColor("#01af00")),
+
+				new ConsolunaScreenStyleItem("DialogColor",
+					foreColor: new ConsolunaColor("#010101"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("DialogBorderColor",
+					foreColor: new ConsolunaColor("#fffeff"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("DialogListBoxColor",
+					foreColor: new ConsolunaColor("#002427"),
+					backColor: new ConsolunaColor("#03b1ba")),
+				new ConsolunaScreenStyleItem("DialogListBoxHighlightColor",
+					foreColor: new ConsolunaColor("#eeffe1"),
+					backColor: new ConsolunaColor("#01ae04")),
+				new ConsolunaScreenStyleItem("DialogTextBoxColor",
+					foreColor: new ConsolunaColor("#f2fcff"),
+					backColor: new ConsolunaColor("#0001ab")),
+
+				new ConsolunaScreenStyleItem("MenuColor",
+					foreColor: new ConsolunaColor("#0b0708"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("MenuHighlightColor",
+					backColor: new ConsolunaColor("#01af00")),
+				new ConsolunaScreenStyleItem("MenuPanelBorderColor",
+					foreColor: new ConsolunaColor("#010101"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("MenuShortcutColor",
+					foreColor: new ConsolunaColor("#912120")),
+
+				new ConsolunaScreenStyleItem("ShortcutColor",
+					foreColor: new ConsolunaColor("#912120")),
+
+				new ConsolunaScreenStyleItem("TextColor",
+					foreColor: new ConsolunaColor("#f2fcff"),
+					backColor: new ConsolunaColor("#0001ab")),
+
+				new ConsolunaScreenStyleItem("WindowColor",
+					foreColor: new ConsolunaColor("#002593"),
+					backColor: new ConsolunaColor("#04b0b0")),
+				new ConsolunaScreenStyleItem("WindowBorderColor",
+					foreColor: new ConsolunaColor("#b2ffff"),
+					backColor: new ConsolunaColor("#04b0b0")),
+				new ConsolunaScreenStyleItem("WindowListBoxColor",
+					foreColor: new ConsolunaColor("#bfffff"),
+					backColor: new ConsolunaColor("#0300ac")),
+				new ConsolunaScreenStyleItem("WindowListBoxHighlightColor",
+					foreColor: new ConsolunaColor("#ffc3a1"),
+					backColor: new ConsolunaColor("#ad0100"))
+
+			});
+
+
 			//// TODO: Set the console's output encoding to Code Page 437
 			//Console.OutputEncoding = Encoding.GetEncoding(437);
 
@@ -650,9 +714,9 @@ namespace ConsolunaLib
 			mBackColor = new ConsolunaColor();
 			mBackColor.PropertyChanged += mBackColor_PropertyChanged;
 
-			mScreenBuffer.Characters.CollectionChanged +=
+			mCharacters.CollectionChanged +=
 				mScreenCharacters_CollectionChanged;
-			mScreenBuffer.Characters.ItemPropertyChanged +=
+			mCharacters.ItemPropertyChanged +=
 				mScreenCharacters_ItemPropertyChanged;
 
 			mShapes = new ConsolunaShapeCollection();
@@ -913,8 +977,7 @@ namespace ConsolunaLib
 					{
 						mBackColor.PropertyChanged += mBackColor_PropertyChanged;
 					}
-					mScreenBuffer.Styles.SetProperty("ScreenColor",
-						"BackColor", mBackColor);
+					mStyles.SetProperty("ScreenColor", "BackColor", mBackColor);
 					OnBackColorChanged();
 				}
 			}
@@ -942,7 +1005,7 @@ namespace ConsolunaLib
 		public void Backspace(int count)
 		{
 			ConsolunaCharacterItem character = null;
-			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
+			List<ConsolunaCharacterItem> characters = mCharacters;
 			int endIndex = 0;
 			int index = 0;
 			int startIndex = 0;
@@ -979,6 +1042,23 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Characters																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Characters">Characters</see>.
+		/// </summary>
+		private ConsolunaCharacterCollection mCharacters =
+			new ConsolunaCharacterCollection();
+		/// <summary>
+		/// Get a reference to the collection of characters in the buffer.
+		/// </summary>
+		public ConsolunaCharacterCollection Characters
+		{
+			get { return mCharacters; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ClearScreen																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -986,7 +1066,7 @@ namespace ConsolunaLib
 		/// </summary>
 		public void ClearScreen()
 		{
-			mScreenBuffer.Characters.Clear();
+			mCharacters.Clear();
 			Update();
 		}
 		//*-----------------------------------------------------------------------*
@@ -1074,8 +1154,7 @@ namespace ConsolunaLib
 					{
 						mForeColor.PropertyChanged += mForeColor_PropertyChanged;
 					}
-					mScreenBuffer.Styles.SetProperty("ScreenColor",
-						"ForeColor", mForeColor);
+					mStyles.SetProperty("ScreenColor", "ForeColor", mForeColor);
 					OnForeColorChanged();
 				}
 			}
@@ -1089,6 +1168,86 @@ namespace ConsolunaLib
 		/// Fired when the default foreground color has changed.
 		/// </summary>
 		public event EventHandler<EventArgs> ForeColorChanged;
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetCharactersInArea																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return an array of characters from the indicated cartesian area of the
+		/// screen buffer.
+		/// </summary>
+		/// <param name="columnIndex">
+		/// Starting column index.
+		/// </param>
+		/// <param name="rowIndex">
+		/// Starting row index.
+		/// </param>
+		/// <param name="width">
+		/// Width of area, in characters.
+		/// </param>
+		/// <param name="height">
+		/// Height of area, in characters.
+		/// </param>
+		/// <returns>
+		/// Reference to a 2-dimensional, 0-based array of characters found in
+		/// the specified source area of the screen buffer. Any characters outside
+		/// the boundaries of the logical screen buffer space are filled with
+		/// dummy elements. If either width or height are less than 1, an empty
+		/// array is returned.
+		/// </returns>
+		/// <remarks>
+		/// Column and row indices should have legal values prior to calling this
+		/// method. Any indicators that fall outside the logical bounds of the
+		/// buffer's cartesian space will be filled with dummy elements.
+		/// </remarks>
+		public ConsolunaCharacterItem[,] GetCharactersInArea(int column,
+			int row, int width, int height)
+		{
+			int bufferIndex = 0;
+			int colIndex = 0;
+			ConsolunaCharacterItem[,] result = null;
+			int rowIndex = 0;
+			int xIndex = 0;
+			int xEnd = 0;
+			int xStart = column;
+			int yIndex = 0;
+			int yEnd = 0;
+			int yStart = row;
+
+			if(width > 0 && height > 0)
+			{
+				xEnd = xStart + width;
+				yEnd = yStart + height;
+				result = new ConsolunaCharacterItem[width, height];
+				for(yIndex = yStart, rowIndex = 0;
+					yIndex < yEnd;
+					yIndex++, rowIndex++)
+				{
+					for(xIndex = xStart, colIndex = 0;
+						xIndex < xEnd;
+						xIndex++, colIndex++)
+					{
+						if(xIndex >= 0 && xIndex < mWidth &&
+							yIndex >= 0 && yIndex < mHeight)
+						{
+							bufferIndex = GetBufferIndex(mWidth, mHeight, xIndex, yIndex);
+							result[colIndex, rowIndex] = mCharacters[bufferIndex];
+						}
+						else
+						{
+							result[colIndex, rowIndex] = new ConsolunaCharacterItem();
+						}
+					}
+				}
+			}
+
+			if(result == null)
+			{
+				result = new ConsolunaCharacterItem[0, 0];
+			}
+			return result;
+		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -1289,22 +1448,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ScreenBuffer																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="ScreenBuffer">ScreenBuffer</see>.
-		/// </summary>
-		private ConsolunaScreenBuffer mScreenBuffer = new ConsolunaScreenBuffer();
-		/// <summary>
-		/// Get a reference to the screen buffer for this instance.
-		/// </summary>
-		public ConsolunaScreenBuffer ScreenBuffer
-		{
-			get { return mScreenBuffer; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//* ScreenShapeCollectionChanged																					*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1382,6 +1525,27 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* SetDirty																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set all of the characters of a dedicated character window to dirty.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to dirty.
+		/// </param>
+		public void SetDirty(ConsolunaCharacterItem[,] characterWindow)
+		{
+			if(characterWindow?.Length > 0)
+			{
+				foreach(ConsolunaCharacterItem characterItem in characterWindow)
+				{
+					characterItem.Dirty = true;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Shapes																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1407,6 +1571,23 @@ namespace ConsolunaLib
 		{
 			Console.Write(AnsiCursorShow());
 			mCursorVisible = true;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Styles																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Styles">Styles</see>.
+		/// </summary>
+		private ConsolunaScreenStyleCollection mStyles = null;
+		/// <summary>
+		/// Get a reference to the collection of styles associated with this screen
+		/// buffer.
+		/// </summary>
+		public ConsolunaScreenStyleCollection Styles
+		{
+			get { return mStyles; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1493,7 +1674,6 @@ namespace ConsolunaLib
 			bool bFullRefresh = false;
 			StringBuilder builder = new StringBuilder();
 			ConsolunaCharacterItem character = null;
-			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
 			int colCount = 0;
 			int colIndex = 0;
 			int count = 0;
@@ -1535,15 +1715,13 @@ namespace ConsolunaLib
 						Console.BufferHeight = Console.WindowHeight;
 					}
 				}
-				mScreenBuffer.Width = mWidth;
-				mScreenBuffer.Height = mHeight;
 
 				if(bCursorVisible)
 				{
 					HideCursor();
 				}
 				mCharacterEventsActive = false;
-				count = characters.Count;
+				count = mCharacters.Count;
 				if(count > 0)
 				{
 					if(count != mWidth * mHeight)
@@ -1558,8 +1736,8 @@ namespace ConsolunaLib
 				else
 				{
 					//	Rebuild grid.
-					characters.Clear();
-					characters.AddRange(
+					mCharacters.Clear();
+					mCharacters.AddRange(
 						Enumerable.Range(0, mHeight * mWidth)
 							.Select(i => new ConsolunaCharacterItem()
 							{
@@ -1571,7 +1749,10 @@ namespace ConsolunaLib
 				}
 				//	The screen pattern matches the display pattern.
 				rowCount = mHeight;
-				//	TODO: Draw shapes over the character map.
+				foreach(ConsolunaShapeItem shapeItem in mShapes)
+				{
+					shapeItem.Render(this);
+				}
 				//	Render the characters in every row.
 				if(bFullRefresh)
 				{
@@ -1588,10 +1769,10 @@ namespace ConsolunaLib
 				//	.ToList();
 				rows = new List<int>();
 				index = 0;
-				count = characters.Count;
+				count = mCharacters.Count;
 				for(index = 0; index < count; index++)
 				{
-					character = characters[index];
+					character = mCharacters[index];
 					if(bFullRefresh || character.Dirty)
 					{
 						row = (index / mWidth);
@@ -1611,7 +1792,7 @@ namespace ConsolunaLib
 						endIndex = index + mWidth;
 						index < endIndex; index++, colIndex++)
 					{
-						character = characters[index];
+						character = mCharacters[index];
 						if(bFound)
 						{
 							//	Check to see if the current style still matches.
@@ -1722,8 +1903,7 @@ namespace ConsolunaLib
 
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			character =
-				mScreenBuffer.Characters[
-					mCursorPosition.Y * mWidth + mCursorPosition.X];
+				mCharacters[mCursorPosition.Y * mWidth + mCursorPosition.X];
 			if(character != null)
 			{
 				character.Character = value;
@@ -1742,18 +1922,17 @@ namespace ConsolunaLib
 		public void Write(string value)
 		{
 			ConsolunaCharacterItem character = null;
-			List<ConsolunaCharacterItem> characters = mScreenBuffer.Characters;
 			char[] chars = null;
 			int index = 0;
 
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
-			if(value?.Length > 0 && characters?.Count > 0)
+			if(value?.Length > 0 && mCharacters?.Count > 0)
 			{
 				character =
-					characters[mCursorPosition.Y * mWidth + mCursorPosition.X];
+					mCharacters[mCursorPosition.Y * mWidth + mCursorPosition.X];
 				if(character != null)
 				{
-					index = characters.IndexOf(character);
+					index = mCharacters.IndexOf(character);
 					if(index > -1)
 					{
 						chars = value.ToCharArray();
@@ -1763,11 +1942,11 @@ namespace ConsolunaLib
 							character.BackColor = mBackColor;
 							character.ForeColor = mForeColor;
 							index++;
-							if(index >= characters.Count)
+							if(index >= mCharacters.Count)
 							{
 								index = 0;
 							}
-							character = characters[index];
+							character = mCharacters[index];
 							mCursorPosition.X++;
 						}
 						EnsureLegal(mWidth, mHeight, mCursorPosition);

@@ -63,6 +63,15 @@ namespace ConsolunaLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		/// <summary>
+		/// The position at the last render.
+		/// </summary>
+		private ConsolunaPosition mLastPosition = null;
+		/// <summary>
+		/// The size at the last render.
+		/// </summary>
+		private ConsolunaSize mLastSize = null;
+
 		//*-----------------------------------------------------------------------*
 		//* mBackColor_PropertyChanged																						*
 		//*-----------------------------------------------------------------------*
@@ -208,6 +217,37 @@ namespace ConsolunaLib
 			mPosition.PropertyChanged += mPosition_PropertyChanged;
 			mSize = new ConsolunaSize();
 			mSize.PropertyChanged += mSize_PropertyChanged;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaShapeText item.
+		/// </summary>
+		/// <param name="name">
+		/// Unique name of the shape.
+		/// </param>
+		/// <param name="x">
+		/// The horizontal starting position of the shape.
+		/// </param>
+		/// <param name="y">
+		/// The vertical starting position of the shape.
+		/// </param>
+		/// <param name="width">
+		/// The width of the shape, in characters.
+		/// </param>
+		/// <param name="height">
+		/// The height of the shape, in characters.
+		/// </param>
+		public ConsolunaShapeItem(string name, int x = 0, int y = 0,
+			int width = 1, int height = 1) : this()
+		{
+			if(name?.Length > 0)
+			{
+				mName = name;
+			}
+			mPosition.X = x;
+			mPosition.Y = y;
+			mSize.Width = width;
+			mSize.Height = height;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -389,14 +429,13 @@ namespace ConsolunaLib
 		/// <param name="screenBuffer">
 		/// Reference to the screen buffer to which the contents will be written.
 		/// </param>
-		public virtual void Render(ConsolunaScreenBuffer screenBuffer)
+		public virtual void Render(Consoluna screenBuffer)
 		{
 			ConsolunaCharacterItem character = null;
 			int colCount = 0;
 			int colIndex = 0;
 			int rowCount = 0;
 			int rowIndex = 0;
-
 
 			if(screenBuffer != null && mPosition != null &&
 				ConsolunaSize.HasVolume(mSize))
@@ -413,28 +452,41 @@ namespace ConsolunaLib
 						mPosition.X, mPosition.Y, mSize.Width, mSize.Height);
 				}
 
-				//	Draw shadow.
+				colCount = mCharacterWindow.GetLength(0);
+				rowCount = mCharacterWindow.GetLength(1);
+
 				if(mVisible)
 				{
-					colCount = mCharacterWindow.GetLength(0);
-					rowCount = mCharacterWindow.GetLength(1);
-					colIndex = colCount - 1;
-					for(rowIndex = 1; rowIndex < rowCount; rowIndex ++)
+					//	Draw shadow.
+					if(mShadow)
 					{
-						mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+						colIndex = colCount - 1;
+						for(rowIndex = 1; rowIndex < rowCount; rowIndex++)
+						{
+							mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+						}
+						rowIndex = rowCount - 1;
+						colCount--;
+						for(colIndex = 1; colIndex < colCount; colIndex++)
+						{
+							mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+						}
 					}
-					rowIndex = rowCount - 1;
-					colCount--;
-					for(colIndex = 1; colIndex < colCount; colIndex ++)
-					{
-						mCharacterWindow[colIndex, rowIndex].Shadowed = true;
-					}
+				}
+				else if(mDirty && mLastPosition != null &&
+					ConsolunaSize.HasVolume(mLastSize))
+				{
+					//	Erase this level after going invisible.
+					screenBuffer.SetDirty(mCharacterWindow);
 				}
 			}
 			else
 			{
 				mCharacterWindow = new ConsolunaCharacterItem[0, 0];
 			}
+			mLastPosition = mPosition;
+			mLastSize = mSize;
+			mDirty = false;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -526,9 +578,18 @@ namespace ConsolunaLib
 		public bool Visible
 		{
 			get { return mVisible; }
-			set { mVisible = value; }
+			set
+			{
+				bool bChanged = (mVisible != value);
+				mVisible = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
+
 
 
 	}

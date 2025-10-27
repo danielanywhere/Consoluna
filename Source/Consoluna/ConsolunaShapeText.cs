@@ -18,11 +18,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 using static ConsolunaLib.ConsolunaUtil;
 
@@ -62,6 +60,9 @@ namespace ConsolunaLib
 		/// <param name="name">
 		/// Unique name of the shape.
 		/// </param>
+		/// <param name="text">
+		/// The text to place in the control.
+		/// </param>
 		/// <param name="x">
 		/// The horizontal starting position of the shape.
 		/// </param>
@@ -74,20 +75,18 @@ namespace ConsolunaLib
 		/// <param name="height">
 		/// The height of the shape, in characters.
 		/// </param>
-		public ConsolunaShapeText(string name, int x = 0, int y = 0,
-			int width = 1, int height = 1) : this()
+		public ConsolunaShapeText(string name, string text = "",
+			int x = 0, int y = 0,
+			int width = 1, int height = 1, bool wordWrap = false) :
+			base(name, x, y, width, height)
 		{
-			if(name?.Length > 0)
+			if(text?.Length > 0)
 			{
-				Name = name;
+				mText = text;
 			}
-			Position.X = x;
-			Position.Y = y;
-			Size.Width = width;
-			Size.Height = height;
+			mWordWrap = wordWrap;
 		}
 		//*-----------------------------------------------------------------------*
-
 
 		//*-----------------------------------------------------------------------*
 		//*	Render																																*
@@ -98,7 +97,7 @@ namespace ConsolunaLib
 		/// <param name="screenBuffer">
 		/// Reference to the screen buffer to which the contents will be written.
 		/// </param>
-		public override void Render(ConsolunaScreenBuffer screenBuffer)
+		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
 			ConsolunaCharacterItem character = null;
@@ -117,7 +116,8 @@ namespace ConsolunaLib
 			ConsolunaTokenItem token = null;
 			ConsolunaTokenCollection tokens = null;
 
-			//	TODO: Test of text.
+			//	TODO: !1 - Stopped here...
+			//	TODO: Text is full background. Label will be content only.
 			base.Render(screenBuffer);
 			if(Visible && mCharacterWindow.GetLength(0) > 0)
 			{
@@ -166,6 +166,10 @@ namespace ConsolunaLib
 									colIndex > 0)
 								{
 									//	Place the word on the next line.
+									if(token.TokenType == ConsolunaTokenType.Whitespace)
+									{
+										token.Value = "\n";
+									}
 									if(token.Value != "\n")
 									{
 										token = new ConsolunaTokenItem()
@@ -211,7 +215,7 @@ namespace ConsolunaLib
 										break;
 									}
 								}
-								else
+								else if(colIndex < colCount)
 								{
 									character = mCharacterWindow[colIndex, rowIndex];
 									if(index == shortcutKeyIndex && shortcutStyle != null)
@@ -237,13 +241,13 @@ namespace ConsolunaLib
 										}
 									}
 									character.Character = charItem;
+									colIndex++;
+								}
+								else
+								{
+									colIndex++;
 								}
 								index++;
-								colIndex++;
-								if(colIndex >= colCount)
-								{
-									break;
-								}
 							}
 						}
 						else

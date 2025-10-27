@@ -201,9 +201,11 @@ namespace ConsolunaTest
 			mConsole.InputReceived += console_InputReceived;
 			mConsole.BackColor = new ConsolunaColor("#000050");
 			mConsole.ForeColor = new ConsolunaColor("#d0d000");
-			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis", 10, 10, 20, 1));
+			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
+				"Here is a whole bunch of text to place in this area...",
+				10, 10, 10, 5, wordWrap: true));
 			mConsole.ClearScreen();
-			mConsole.SetCursorPosition(10, 11);
+			mConsole.SetCursorPosition(10, 9);
 			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
 			mConsole.Write("Start writing here: ");
 

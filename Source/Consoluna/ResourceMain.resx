@@ -122,7 +122,7 @@
     <comment>Regular expression to extract shortcut key characters.</comment>
   </data>
   <data name="rxWordToken" xml:space="preserve">
-    <value>(?i:(?&lt;token&gt;(?&lt;text&gt;[0-9a-z]+)|(?&lt;whitespace&gt;\s)|(?&lt;punctuation&gt;[\!\"\#\$\%\&amp;\'\(\)\*\+,-\./\:\;\&lt;\=\&gt;\?\@\[\\\]\^_`])))</value>
+    <value>(?i:(?&lt;token&gt;(?&lt;text&gt;[0-9a-z]+(\.|,){0,1})|(?&lt;whitespace&gt;\s)|(?&lt;punctuation&gt;[\!\"\#\$\%\&amp;\'\(\)\*\+,-\./\:\;\&lt;\=\&gt;\?\@\[\\\]\^_`])))</value>
     <comment>Regular expression to extract word tokens from text.</comment>
   </data>
 </root>
