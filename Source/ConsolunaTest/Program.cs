@@ -18,7 +18,7 @@
 
 using System;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 using ConsolunaLib;
 
 namespace ConsolunaTest
@@ -69,10 +69,13 @@ namespace ConsolunaTest
 							case 8:
 								//	Backspace.
 								mConsole.Backspace(1);
+								mConsole.ShowCursor();
 								break;
 							case 9:
 								//	Tab.
 								mConsole.Tab(1);
+								mConsole.SetCursorShape(
+									ConsolunaCursorShapeEnum.BlinkingBlock);
 								break;
 							case 10:
 								//	Line feed.
@@ -97,8 +100,21 @@ namespace ConsolunaTest
 				}
 				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
 				{
-					Console.WriteLine(
+					mConsole.SaveCursorPosition();
+					mConsole.SetCursorPosition(0, 0);
+					mConsole.Write(
 						$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
+					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					{
+						mConsole.Write("Win");
+					}
+					else
+					{
+						mConsole.Write("Non-Win");
+					}
+					mConsole.Update();
+					mConsole.RestoreCursorPosition();
+					mConsole.HideCursor();
 				}
 				e.Handled = true;
 			}
@@ -176,6 +192,7 @@ namespace ConsolunaTest
 		/// </summary>
 		public void Run()
 		{
+			Console.Clear();
 			mConsole = new Consoluna()
 			{
 				InputMode = ConsolunaInputMode.EventDriven,
@@ -184,10 +201,12 @@ namespace ConsolunaTest
 			mConsole.InputReceived += console_InputReceived;
 			mConsole.BackColor = new ConsolunaColor("#000050");
 			mConsole.ForeColor = new ConsolunaColor("#d0d000");
+			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis", 10, 10, 20, 1));
 			mConsole.ClearScreen();
-			mConsole.SetCursorPosition(10, 10);
+			mConsole.SetCursorPosition(10, 11);
 			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
 			mConsole.Write("Start writing here: ");
+
 			mConsole.Update();
 		}
 		//*-----------------------------------------------------------------------*

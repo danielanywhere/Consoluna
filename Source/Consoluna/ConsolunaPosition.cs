@@ -43,6 +43,47 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ConsolunaPosition item.
+		/// </summary>
+		public ConsolunaPosition()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaPosition item.
+		/// </summary>
+		/// <param name="position">
+		/// Reference to a position whose member values will be copied.
+		/// </param>
+		public ConsolunaPosition(ConsolunaPosition position)
+		{
+			if(position != null)
+			{
+				mX = position.X;
+				mY = position.Y;
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaPosition item.
+		/// </summary>
+		/// <param name="x">
+		/// The initial X value of the new position.
+		/// </param>
+		/// <param name="y">
+		/// The initial Y value of the new position.
+		/// </param>
+		public ConsolunaPosition(int x, int y)
+		{
+			mX = x;
+			mY = y;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Equals																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -81,6 +122,55 @@ namespace ConsolunaLib
 			result *= (factor + mX.GetHashCode());
 			result *= (factor + mY.GetHashCode());
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsEmpty																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified position object is
+		/// empty.
+		/// </summary>
+		/// <param name="size">
+		/// Reference to the position object to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the object is null or empty. Otherwise, false.
+		/// </returns>
+		public static bool IsEmpty(ConsolunaPosition position)
+		{
+			bool result = true;
+
+			if(position != null &&
+				(position.mX != 0 || position.mY != 0))
+			{
+				result = false;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferValues																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer values from the source object to the target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source object to be copied.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target object receiving the values.
+		/// </param>
+		public static void TransferValues(ConsolunaPosition source,
+			ConsolunaPosition target)
+		{
+			if(source != null && target != null)
+			{
+				target.mX = source.mX;
+				target.mY = source.mY;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 

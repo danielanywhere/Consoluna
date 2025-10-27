@@ -20,7 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
+using static ConsolunaLib.ConsolunaUtil;
 
 namespace ConsolunaLib
 {
@@ -42,6 +43,49 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 
+		//*-----------------------------------------------------------------------*
+		//* SetProperty																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the value of the specified property on the specified style.
+		/// </summary>
+		/// <param name="styleName">
+		/// Name of the style to access.
+		/// </param>
+		/// <param name="propertyName">
+		/// Name of the property to set.
+		/// </param>
+		/// <param name="propertyValue">
+		/// Object to be written to the target property.
+		/// </param>
+		/// <param name="createStyle">
+		/// Value indicating whether to create the style object if not found.
+		/// </param>
+		public void SetProperty(string styleName, string propertyName,
+			object propertyValue, bool createStyle = true)
+		{
+			ConsolunaScreenStyleItem style = null;
+			string styleNameLower = "";
+
+			if(styleName?.Length > 0 && propertyName?.Length > 0)
+			{
+				styleNameLower = styleName.ToLower();
+				style = this.FirstOrDefault(x => x.Name.ToLower() == styleNameLower);
+				if(style == null && createStyle)
+				{
+					style = new ConsolunaScreenStyleItem()
+					{
+						Name = styleName
+					};
+					this.Add(style);
+				}
+				if(style != null)
+				{
+					SetPropertyByName(style, propertyName, propertyValue);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*
@@ -103,21 +147,56 @@ namespace ConsolunaLib
 				(characterStyle != ConsolunaCharacterStyleTypeEnum.None &&
 				characterStyle != ConsolunaCharacterStyleTypeEnum.Normal))
 			{
-				mCharacterStyle = new ConsolunaCharacterStyle()
+				mBackColor = backColor;
+				mForeColor = foreColor;
+				mCharacterStyle = characterStyle;
+			}
+
+			if(propertyValues?.Length > 0)
+			{
+				foreach((string name, string value) nameValueItem in
+					propertyValues)
 				{
-					BackColor = backColor,
-					ForeColor = foreColor,
-					CharacterStyle = characterStyle
-				};
-				if(propertyValues?.Length > 0)
-				{
-					foreach((string name, string value) nameValueItem in
-						propertyValues)
-					{
-						mCharacterStyle.Properties.Add(
-							nameValueItem.name, nameValueItem.value);
-					}
+					mProperties.Add(
+						nameValueItem.name, nameValueItem.value);
 				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		////*-----------------------------------------------------------------------*
+		////*	CharacterStyle																												*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
+		///// </summary>
+		//private ConsolunaCharacterStyle mCharacterStyle = null;
+		///// <summary>
+		///// Get/Set the character styling for this style.
+		///// </summary>
+		//public ConsolunaCharacterStyle CharacterStyle
+		//{
+		//	get { return mCharacterStyle; }
+		//	set { mCharacterStyle = value; }
+		//}
+		////*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	BackColor																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="BackColor">BackColor</see>.
+		/// </summary>
+		private ConsolunaColor mBackColor = null;
+		/// <summary>
+		/// Get/Set a reference to the background color for this character.
+		/// </summary>
+		public ConsolunaColor BackColor
+		{
+			get { return mBackColor; }
+			set
+			{
+				mBackColor = value;
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -128,14 +207,38 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
 		/// </summary>
-		private ConsolunaCharacterStyle mCharacterStyle = null;
+		private ConsolunaCharacterStyleTypeEnum mCharacterStyle =
+			ConsolunaCharacterStyleTypeEnum.Normal;
 		/// <summary>
-		/// Get/Set the character styling for this style.
+		/// Get/Set the current character style.
 		/// </summary>
-		public ConsolunaCharacterStyle CharacterStyle
+		public ConsolunaCharacterStyleTypeEnum CharacterStyle
 		{
 			get { return mCharacterStyle; }
-			set { mCharacterStyle = value; }
+			set
+			{
+				mCharacterStyle = value;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ForeColor																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ForeColor">ForeColor</see>.
+		/// </summary>
+		private ConsolunaColor mForeColor = null;
+		/// <summary>
+		/// Get/Set a reference to the foreground color for this character.
+		/// </summary>
+		public ConsolunaColor ForeColor
+		{
+			get { return mForeColor; }
+			set
+			{
+				mForeColor = value;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -153,6 +256,23 @@ namespace ConsolunaLib
 		{
 			get { return mName; }
 			set { mName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Properties																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Properties">Properties</see>.
+		/// </summary>
+		private ConsolunaPropertyCollection mProperties =
+			new ConsolunaPropertyCollection();
+		/// <summary>
+		/// Get a reference to the collection of custom properties for this style.
+		/// </summary>
+		public ConsolunaPropertyCollection Properties
+		{
+			get { return mProperties; }
 		}
 		//*-----------------------------------------------------------------------*
 

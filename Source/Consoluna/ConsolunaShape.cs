@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 
 using ConsolunaLib.Internal;
 
+using static ConsolunaLib.ConsolunaUtil;
+
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
@@ -140,6 +142,24 @@ namespace ConsolunaLib
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
+		/// <summary>
+		/// <para>
+		/// Pre-sized window of target character references allow the inherited
+		/// class to apply changes directly to a relative area the size of this
+		/// item's box.
+		/// </para>
+		/// <para>
+		/// If a shadow is active, the width and height of the array are each one
+		/// greater than the base dimension.
+		/// </para>
+		/// <para>
+		/// This area is called during the base.Render call from any inherited
+		/// class.
+		/// </para>
+		/// </summary>
+		protected ConsolunaCharacterItem[,] mCharacterWindow =
+			new ConsolunaCharacterItem[0, 0];
+
 		//*-----------------------------------------------------------------------*
 		//* OnPropertyChanged																											*
 		//*-----------------------------------------------------------------------*
@@ -278,6 +298,23 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Name																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Name">Name</see>.
+		/// </summary>
+		private string mName = "";
+		/// <summary>
+		/// Get/Set the name of this shape.
+		/// </summary>
+		public string Name
+		{
+			get { return mName; }
+			set { mName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ForeColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -354,6 +391,67 @@ namespace ConsolunaLib
 		/// </param>
 		public virtual void Render(ConsolunaScreenBuffer screenBuffer)
 		{
+			ConsolunaCharacterItem character = null;
+			int colCount = 0;
+			int colIndex = 0;
+			int rowCount = 0;
+			int rowIndex = 0;
+
+
+			if(screenBuffer != null && mPosition != null &&
+				ConsolunaSize.HasVolume(mSize))
+			{
+				//	Any inherited class can use this window.
+				if(mShadow)
+				{
+					mCharacterWindow = screenBuffer.GetCharactersInArea(
+						mPosition.X, mPosition.Y, mSize.Width + 1, mSize.Height + 1);
+				}
+				else
+				{
+					mCharacterWindow = screenBuffer.GetCharactersInArea(
+						mPosition.X, mPosition.Y, mSize.Width, mSize.Height);
+				}
+
+				//	Draw shadow.
+				if(mVisible)
+				{
+					colCount = mCharacterWindow.GetLength(0);
+					rowCount = mCharacterWindow.GetLength(1);
+					colIndex = colCount - 1;
+					for(rowIndex = 1; rowIndex < rowCount; rowIndex ++)
+					{
+						mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+					}
+					rowIndex = rowCount - 1;
+					colCount--;
+					for(colIndex = 1; colIndex < colCount; colIndex ++)
+					{
+						mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+					}
+				}
+			}
+			else
+			{
+				mCharacterWindow = new ConsolunaCharacterItem[0, 0];
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Shadow																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Shadow">Shadow</see>.
+		/// </summary>
+		private bool mShadow = false;
+		/// <summary>
+		/// Get/Set a value indicating whether this shape throws a shadow.
+		/// </summary>
+		public bool Shadow
+		{
+			get { return mShadow; }
+			set { mShadow = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -415,6 +513,22 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//*	Visible																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Visible">Visible</see>.
+		/// </summary>
+		private bool mVisible = true;
+		/// <summary>
+		/// Get/Set a value indicating whether this shape is visible.
+		/// </summary>
+		public bool Visible
+		{
+			get { return mVisible; }
+			set { mVisible = value; }
+		}
+		//*-----------------------------------------------------------------------*
 
 
 	}

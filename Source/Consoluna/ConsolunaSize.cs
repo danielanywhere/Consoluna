@@ -43,6 +43,32 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ConsolunaSize item.
+		/// </summary>
+		public ConsolunaSize()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaSize item.
+		/// </summary>
+		/// <param name="width">
+		/// Width dimension.
+		/// </param>
+		/// <param name="height">
+		/// Height dimension.
+		/// </param>
+		public ConsolunaSize(int width, int height)
+		{
+			mWidth = width;
+			mHeight = height;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Equals																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -106,6 +132,57 @@ namespace ConsolunaLib
 					OnPropertyChanged();
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsEmpty																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified size object is empty.
+		/// </summary>
+		/// <param name="size">
+		/// Reference to the size object to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the object is null or empty. Otherwise, false.
+		/// </returns>
+		public static bool IsEmpty(ConsolunaSize size)
+		{
+			bool result = true;
+
+			if(size != null &&
+				(size.mHeight != 0 || size.mWidth != 0))
+			{
+				result = false;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasVolume																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified size object has a
+		/// volume.
+		/// </summary>
+		/// <param name="size">
+		/// Reference to the size object to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the object is has a volume. Otherwise, false.
+		/// </returns>
+		public static bool HasVolume(ConsolunaSize size)
+		{
+			bool result = false;
+
+			if(size != null &&
+				(size.mHeight != 0 && size.mWidth != 0))
+			{
+				result = true;
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

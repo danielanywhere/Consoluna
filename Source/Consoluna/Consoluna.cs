@@ -82,6 +82,10 @@ namespace ConsolunaLib
 		/// </summary>
 		private bool mCharacterEventsActive = true;
 		/// <summary>
+		/// Value indicating whether the cursor is visible.
+		/// </summary>
+		private bool mCursorVisible = true;
+		/// <summary>
 		/// Reference to the platform-specific input handler currently active.
 		/// </summary>
 		private IConsolunaInputHandler mInputHandler = null;
@@ -94,6 +98,11 @@ namespace ConsolunaLib
 		/// </summary>
 		private int mLastWidth = 0;
 		/// <summary>
+		/// List of saved cursor positions for this instance.
+		/// </summary>
+		private List<ConsolunaPosition> mSavedCursorPositions =
+			new List<ConsolunaPosition>();
+		/// <summary>
 		/// Cancellation token for stopping the self-hosting thread.
 		/// </summary>
 		private CancellationTokenSource mSelfHostingCancelToken = null;
@@ -105,24 +114,10 @@ namespace ConsolunaLib
 		/// Value indicating whether the shape list events are active.
 		/// </summary>
 		private bool mShapeEventsActive = true;
-
-		//*-----------------------------------------------------------------------*
-		//* Clear																																	*
-		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Clear the contents of the caller's string builder.
+		/// Value indicating whether the update method is busy.
 		/// </summary>
-		/// <param name="builder">
-		/// Reference to the builder to clear.
-		/// </param>
-		private static void Clear(StringBuilder builder)
-		{
-			if(builder?.Length > 0)
-			{
-				builder.Remove(0, builder.Length);
-			}
-		}
-		//*-----------------------------------------------------------------------*
+		private bool mUpdateBusy = false;
 
 		//*-----------------------------------------------------------------------*
 		//* GetInput																															*
@@ -139,20 +134,23 @@ namespace ConsolunaLib
 			ConsolunaInputEventArgs e = null;
 			int value = 0;
 
-			e = mInputHandler.ReadInput();
-			if(e == null)
+			if(mCharacterEventsActive)
 			{
-				mWidth = Console.WindowWidth;
-				mHeight = Console.WindowHeight;
-				if(mWidth != mLastWidth || mHeight != mLastHeight)
+				e = mInputHandler.ReadInput();
+				if(e == null)
 				{
-					e = new ConsolunaInputResizeEventArgs()
+					mWidth = Console.WindowWidth;
+					mHeight = Console.WindowHeight;
+					if(mWidth != mLastWidth || mHeight != mLastHeight)
 					{
-						Width = mWidth,
-						Height = mHeight
-					};
-					mLastWidth = mWidth;
-					mLastHeight = mHeight;
+						e = new ConsolunaInputResizeEventArgs()
+						{
+							Width = mWidth,
+							Height = mHeight
+						};
+						mLastWidth = mWidth;
+						mLastHeight = mHeight;
+					}
 				}
 			}
 			return e;
@@ -657,10 +655,10 @@ namespace ConsolunaLib
 			mScreenBuffer.Characters.ItemPropertyChanged +=
 				mScreenCharacters_ItemPropertyChanged;
 
-			mScreenShapes = new ConsolunaShapeCollection();
-			mScreenShapes.CollectionChanged +=
+			mShapes = new ConsolunaShapeCollection();
+			mShapes.CollectionChanged +=
 				mScreenShapes_CollectionChanged;
-			mScreenShapes.ItemPropertyChanged +=
+			mShapes.ItemPropertyChanged +=
 				mScreenShapes_ItemPropertyChanged;
 
 
@@ -702,7 +700,7 @@ namespace ConsolunaLib
 		public void AdvanceCursor(int spaces)
 		{
 			mCursorPosition.X += spaces;
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -915,6 +913,8 @@ namespace ConsolunaLib
 					{
 						mBackColor.PropertyChanged += mBackColor_PropertyChanged;
 					}
+					mScreenBuffer.Styles.SetProperty("ScreenColor",
+						"BackColor", mBackColor);
 					OnBackColorChanged();
 				}
 			}
@@ -947,7 +947,7 @@ namespace ConsolunaLib
 			int index = 0;
 			int startIndex = 0;
 
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			startIndex = mCursorPosition.Y * mWidth + mCursorPosition.X - 1;
 			endIndex = startIndex - count;
 			for(index = startIndex; index > -1 && index > endIndex; index --)
@@ -956,7 +956,7 @@ namespace ConsolunaLib
 				character.Character = char.MinValue;
 				mCursorPosition.X--;
 			}
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
@@ -972,7 +972,7 @@ namespace ConsolunaLib
 		/// </param>
 		public void CarriageReturn()
 		{
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.X = 0;
 			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
@@ -992,18 +992,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* CursorHide																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Hide the cursor at its current location.
-		/// </summary>
-		public void CursorHide()
-		{
-			Console.Write(AnsiCursorHide());
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	CursorPosition																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1016,18 +1004,6 @@ namespace ConsolunaLib
 		public ConsolunaPosition CursorPosition
 		{
 			get { return mCursorPosition; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//* CursorShow																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Show the cursor at its current location.
-		/// </summary>
-		public void CursorShow()
-		{
-			Console.Write(AnsiCursorShow());
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1072,22 +1048,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* EnsureLegalCursor																											*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Ensure that the cursor is in a legal position.
-		/// </summary>
-		public void EnsureLegalCursor()
-		{
-			int total = mCursorPosition.Y * mWidth + mCursorPosition.X;
-
-			mCursorPosition.X = total % mWidth;
-			mCursorPosition.Y = (total / mWidth) % mHeight;
-
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	ForeColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1114,6 +1074,8 @@ namespace ConsolunaLib
 					{
 						mForeColor.PropertyChanged += mForeColor_PropertyChanged;
 					}
+					mScreenBuffer.Styles.SetProperty("ScreenColor",
+						"ForeColor", mForeColor);
 					OnForeColorChanged();
 				}
 			}
@@ -1147,6 +1109,19 @@ namespace ConsolunaLib
 				mHeight = value;
 				Console.WindowHeight = value;
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HideCursor																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Hide the cursor at its current location.
+		/// </summary>
+		public void HideCursor()
+		{
+			Console.Write(AnsiCursorHide());
+			mCursorVisible = false;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1209,9 +1184,9 @@ namespace ConsolunaLib
 		/// </param>
 		public void LineFeed(int count)
 		{
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.Y += count;
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
@@ -1261,6 +1236,38 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RestoreCursorPosition																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Restore the most recently saved cursor position.
+		/// </summary>
+		public void RestoreCursorPosition()
+		{
+			int index = 0;
+
+			index = mSavedCursorPositions.Count - 1;
+			if(index > -1)
+			{
+				ConsolunaPosition.TransferValues(
+					mSavedCursorPositions[index], mCursorPosition);
+				mSavedCursorPositions.RemoveAt(index);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SaveCursorPosition																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Save the current cursor position.
+		/// </summary>
+		public void SaveCursorPosition()
+		{
+			mSavedCursorPositions.Add(new ConsolunaPosition(mCursorPosition));
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ScreenCharacterCollectionChanged																			*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1297,22 +1304,6 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		////*-----------------------------------------------------------------------*
-		////*	ScreenCharacters																											*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Private member for <see cref="ScreenCharacters">ScreenCharacters</see>.
-		///// </summary>
-		//private ConsolunaCharacterCollection mScreenCharacters = null;
-		///// <summary>
-		///// Get a reference to the character-based screen cache layer.
-		///// </summary>
-		//public ConsolunaCharacterCollection ScreenCharacters
-		//{
-		//	get { return mScreenCharacters; }
-		//}
-		////*-----------------------------------------------------------------------*
-
 		//*-----------------------------------------------------------------------*
 		//* ScreenShapeCollectionChanged																					*
 		//*-----------------------------------------------------------------------*
@@ -1331,22 +1322,6 @@ namespace ConsolunaLib
 		/// </summary>
 		public event EventHandler<ConsolunaPropertyChangeEventArgs>
 			ScreenShapeItemChanged;
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	ScreenShapes																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="ScreenShapes">ScreenShapes</see>.
-		/// </summary>
-		private ConsolunaShapeCollection mScreenShapes = null;
-		/// <summary>
-		/// Get a reference to the collection of shapes in this instance.
-		/// </summary>
-		public ConsolunaShapeCollection ScreenShapes
-		{
-			get { return mScreenShapes; }
-		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -1397,12 +1372,41 @@ namespace ConsolunaLib
 					Console.Write("\x1b[1q");
 					break;
 				case ConsolunaCursorShapeEnum.None:
-					CursorHide();
+					HideCursor();
 					break;
 				case ConsolunaCursorShapeEnum.Underline:
 					Console.Write("\x1b[3q");
 					break;
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Shapes																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Shapes">Shapes</see>.
+		/// </summary>
+		private ConsolunaShapeCollection mShapes = null;
+		/// <summary>
+		/// Get a reference to the collection of screen shapes in this instance.
+		/// </summary>
+		public ConsolunaShapeCollection Shapes
+		{
+			get { return mShapes; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ShowCursor																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Show the cursor at its current location.
+		/// </summary>
+		public void ShowCursor()
+		{
+			Console.Write(AnsiCursorShow());
+			mCursorVisible = true;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1417,9 +1421,9 @@ namespace ConsolunaLib
 		/// </param>
 		public void Tab(int count)
 		{
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.X += (count * 4);
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
@@ -1484,6 +1488,7 @@ namespace ConsolunaLib
 		public void Update()
 		{
 			bool bCharacterEventsActive = mCharacterEventsActive;
+			bool bCursorVisible = mCursorVisible;
 			bool bFound = false;
 			bool bFullRefresh = false;
 			StringBuilder builder = new StringBuilder();
@@ -1510,145 +1515,174 @@ namespace ConsolunaLib
 			int startX = 0;
 			//int width = Console.WindowWidth;
 
-			mWidth = Console.WindowWidth;
-			mHeight = Console.WindowHeight;
-			mScreenBuffer.Width = mWidth;
-			mScreenBuffer.Height = mHeight;
-
-			mCharacterEventsActive = false;
-			count = characters.Count;
-			if(count > 0)
+			if(!mUpdateBusy)
 			{
-				if(count != mWidth * mHeight)
+				mUpdateBusy = true;
+				mWidth = Console.WindowWidth;
+				mHeight = Console.WindowHeight;
+				if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
-					//	Remap the display.
-					RemapDisplay(mLastUpdateWidth, mLastUpdateHeight,
-						mWidth, mHeight);
+					//	There is a bug in System.Console where buffer maintenance
+					//	is only available in Windows.
+					if(Console.WindowWidth != Console.BufferWidth)
+					{
+						Console.SetCursorPosition(0, 0);
+						Console.BufferWidth = Console.WindowWidth;
+					}
+					if(Console.WindowHeight != Console.BufferHeight)
+					{
+						Console.SetCursorPosition(0, 0);
+						Console.BufferHeight = Console.WindowHeight;
+					}
+				}
+				mScreenBuffer.Width = mWidth;
+				mScreenBuffer.Height = mHeight;
 
+				if(bCursorVisible)
+				{
+					HideCursor();
+				}
+				mCharacterEventsActive = false;
+				count = characters.Count;
+				if(count > 0)
+				{
+					if(count != mWidth * mHeight)
+					{
+						//	Remap the display.
+						RemapDisplay(mLastUpdateWidth, mLastUpdateHeight,
+							mWidth, mHeight);
+
+						bFullRefresh = true;
+					}
+				}
+				else
+				{
+					//	Rebuild grid.
+					characters.Clear();
+					characters.AddRange(
+						Enumerable.Range(0, mHeight * mWidth)
+							.Select(i => new ConsolunaCharacterItem()
+							{
+								BackColor = mBackColor,
+								ForeColor = mForeColor,
+								Dirty = false
+							}));
 					bFullRefresh = true;
 				}
-			}
-			else
-			{
-				//	Rebuild grid.
-				characters.Clear();
-				characters.AddRange(
-					Enumerable.Range(0, mHeight * mWidth)
-						.Select(i => new ConsolunaCharacterItem()
-						{
-							BackColor = mBackColor,
-							ForeColor = mForeColor,
-							Dirty = false
-						}));
-				bFullRefresh = true;
-			}
-			//	The screen pattern matches the display pattern.
-			rowCount = mHeight;
-			//	TODO: Draw shapes over the character map.
-			//	Render the characters in every row.
-			if(bFullRefresh)
-			{
-				Console.Write(AnsiBackColorStart(mBackColor));
-				Console.Write(AnsiForeColorStart(mForeColor));
-				Console.Write(AnsiEraseInDisplay());
-				//Console.Write(AnsiCursorHide());
-				Console.SetCursorPosition(0, 0);
-			}
-			//rows = mScreenCharacters
-			//	.Where(x => x.Dirty)
-			//	.Select(y => y.Position.Y)
-			//	.Distinct()
-			//	.ToList();
-			rows = new List<int>();
-			index = 0;
-			count = characters.Count;
-			for(index = 0; index < count; index ++)
-			{
-				character = characters[index];
-				if(character.Dirty)
+				//	The screen pattern matches the display pattern.
+				rowCount = mHeight;
+				//	TODO: Draw shapes over the character map.
+				//	Render the characters in every row.
+				if(bFullRefresh)
 				{
-					row = (index / mWidth);
-					if(!rows.Contains(row))
-					{
-						rows.Add(row);
-					}
+					Console.Write(AnsiBackColorStart(mBackColor));
+					Console.Write(AnsiForeColorStart(mForeColor));
+					Console.Write(AnsiEraseInDisplay());
+					//Console.Write(AnsiCursorHide());
+					Console.SetCursorPosition(0, 0);
 				}
-			}
-			foreach(int rowItem in rows)
-			{
-				rowIndex = rowItem;
-				//	In this strategy, we'll get an entire row to keep the columns
-				//	aligned.
-				bFound = false;
-				for(index = rowItem * mWidth, colIndex = 0, lastX = -1,
-					endIndex = index + mWidth;
-					index < endIndex; index ++, colIndex ++)
+				//rows = mScreenCharacters
+				//	.Where(x => x.Dirty)
+				//	.Select(y => y.Position.Y)
+				//	.Distinct()
+				//	.ToList();
+				rows = new List<int>();
+				index = 0;
+				count = characters.Count;
+				for(index = 0; index < count; index++)
 				{
 					character = characters[index];
-					if(bFound)
+					if(bFullRefresh || character.Dirty)
 					{
-						//	Check to see if the current style still matches.
-						if(ConsolunaColor.Equals(
-								lastBackColor, character.BackColor) &&
-							ConsolunaColor.Equals(
-								lastForeColor, character.ForeColor) &&
-							lastStyle == character.CharacterStyle &&
-							lastX == colIndex - 1)
+						row = (index / mWidth);
+						if(!rows.Contains(row))
 						{
-							builder.Append(GetPrintable(character));
+							rows.Add(row);
+						}
+					}
+				}
+				foreach(int rowItem in rows)
+				{
+					rowIndex = rowItem;
+					//	In this strategy, we'll get an entire row to keep the columns
+					//	aligned.
+					bFound = false;
+					for(index = rowItem * mWidth, colIndex = 0, lastX = -1,
+						endIndex = index + mWidth;
+						index < endIndex; index++, colIndex++)
+					{
+						character = characters[index];
+						if(bFound)
+						{
+							//	Check to see if the current style still matches.
+							if(ConsolunaColor.Equals(
+									lastBackColor, character.BackColor) &&
+								ConsolunaColor.Equals(
+									lastForeColor, character.ForeColor) &&
+								lastStyle == character.CharacterStyle &&
+								lastX == colIndex - 1)
+							{
+								builder.Append(GetPrintable(character));
+								lastX = colIndex;
+							}
+							else if(builder.Length > 0)
+							{
+								//	Apply the style.
+								Console.SetCursorPosition(startX, rowIndex);
+								Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
+								Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
+								Console.Write(AnsiStyleStart(lastStyle));
+								Console.Write(builder.ToString());
+								Console.Write(AnsiResetStyles());
+								Clear(builder);
+								bFound = false;
+							}
+						}
+						if(!bFound)
+						{
+							//	Begin a new style.
+							lastBackColor = character.BackColor;
+							lastForeColor = character.ForeColor;
+							lastStyle = character.CharacterStyle;
 							lastX = colIndex;
+							startX = colIndex;
+							builder.Append(GetPrintable(character));
+							bFound = true;
 						}
-						else if(builder.Length > 0)
-						{
-							//	Apply the style.
-							Console.SetCursorPosition(startX, rowIndex);
-							Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
-							Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
-							Console.Write(AnsiStyleStart(lastStyle));
-							Console.Write(builder.ToString());
-							Console.Write(AnsiResetStyles());
-							Clear(builder);
-							bFound = false;
-						}
+						character.Dirty = false;
 					}
-					if(!bFound)
+					if(builder.Length > 0)
 					{
-						//	Begin a new style.
-						lastBackColor = character.BackColor;
-						lastForeColor = character.ForeColor;
-						lastStyle = character.CharacterStyle;
-						lastX = colIndex;
-						startX = colIndex;
-						builder.Append(GetPrintable(character));
-						bFound = true;
+						//	Apply the current style.
+						Console.SetCursorPosition(startX, rowIndex);
+						Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
+						Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
+						Console.Write(AnsiStyleStart(lastStyle));
+						Console.Write(builder.ToString());
+						Console.Write(AnsiResetStyles());
+						Clear(builder);
 					}
-					character.Dirty = false;
 				}
 				if(builder.Length > 0)
 				{
-					//	Apply the current style.
+					//	Apply any remaining style.
 					Console.SetCursorPosition(startX, rowIndex);
 					Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
 					Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
 					Console.Write(AnsiStyleStart(lastStyle));
 					Console.Write(builder.ToString());
 					Console.Write(AnsiResetStyles());
-					Clear(builder);
 				}
+				mCharacterEventsActive = bCharacterEventsActive;
+				mLastUpdateWidth = mWidth;
+				mLastUpdateHeight = mHeight;
+				if(bCursorVisible)
+				{
+					ShowCursor();
+					Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+				}
+				mUpdateBusy = false;
 			}
-			if(builder.Length > 0)
-			{
-				//	Apply any remaining style.
-				Console.SetCursorPosition(startX, rowIndex);
-				Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
-				Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
-				Console.Write(AnsiStyleStart(lastStyle));
-				Console.Write(builder.ToString());
-				Console.Write(AnsiResetStyles());
-			}
-			mCharacterEventsActive = bCharacterEventsActive;
-			mLastUpdateWidth = mWidth;
-			mLastUpdateHeight = mHeight;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1686,7 +1720,7 @@ namespace ConsolunaLib
 		{
 			ConsolunaCharacterItem character = null;
 
-			EnsureLegalCursor();
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			character =
 				mScreenBuffer.Characters[
 					mCursorPosition.Y * mWidth + mCursorPosition.X];
@@ -1712,8 +1746,8 @@ namespace ConsolunaLib
 			char[] chars = null;
 			int index = 0;
 
-			EnsureLegalCursor();
-			if(value?.Length > 0)
+			EnsureLegal(mWidth, mHeight, mCursorPosition);
+			if(value?.Length > 0 && characters?.Count > 0)
 			{
 				character =
 					characters[mCursorPosition.Y * mWidth + mCursorPosition.X];
@@ -1736,7 +1770,7 @@ namespace ConsolunaLib
 							character = characters[index];
 							mCursorPosition.X++;
 						}
-						EnsureLegalCursor();
+						EnsureLegal(mWidth, mHeight, mCursorPosition);
 					}
 				}
 			}

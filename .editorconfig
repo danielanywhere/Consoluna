@@ -44,8 +44,11 @@ dotnet_diagnostic.CA1822.severity = none
 # Avoid unnecessary zero-length array allocations.  Use Array.Empty<byte>() instead.
 dotnet_diagnostic.CA1825.severity = none
 # CS0219: The variable 'variableName' is assigned but its value is never used.
-# Set this to suggestion for cleanup.
-dotnet_diagnostic.CS0219.severity = none
+# On Visual Studio, this setting works correct on 'suggestion'.
+# However, on JetBrains Rider, a bug exists where affirmative action is taken
+# on any setting other than 'none'.
+# For safety, only set this to 'suggestion' for cleanup on JetBrains.
+dotnet_diagnostic.CS0219.severity = suggestion
 # CS8981: Lower-cased ascii characters. May become reserved for the language.
 dotnet_diagnostic.CS8981.severity = none
 # IDE0017: Initialization can be simplified.

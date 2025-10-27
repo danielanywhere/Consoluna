@@ -23,6 +23,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
+using static ConsolunaLib.ConsolunaUtil;
+
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
@@ -57,52 +59,64 @@ namespace ConsolunaLib
 				new ConsolunaScreenStyleItem("ScreenColor",
 					foreColor: new ConsolunaColor("#b0aedd"),
 					backColor: new ConsolunaColor("#0b0938")),
-				new ConsolunaScreenStyleItem("MenuColor",
-					foreColor: new ConsolunaColor("#0b0708"),
-					backColor: new ConsolunaColor("#b4b3b1")),
-				new ConsolunaScreenStyleItem("MenuHighlightColor",
+
+				new ConsolunaScreenStyleItem("ButtonColor",
+					foreColor: new ConsolunaColor("#003300"),
 					backColor: new ConsolunaColor("#01af00")),
-				new ConsolunaScreenStyleItem("MenuHotkeyColor",
-					foreColor: new ConsolunaColor("#912120")),
-				new ConsolunaScreenStyleItem("MenuPanelBorderColor",
-					foreColor: new ConsolunaColor("#010101"),
-					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("ButtonColorDefault",
+					foreColor: new ConsolunaColor("#5cffb1"),
+					backColor: new ConsolunaColor("#01af00")),
+				new ConsolunaScreenStyleItem("ButtonShortcutColor",
+					foreColor: new ConsolunaColor("#333300"),
+					backColor: new ConsolunaColor("#01af00")),
+
 				new ConsolunaScreenStyleItem("DialogColor",
 					foreColor: new ConsolunaColor("#010101"),
 					backColor: new ConsolunaColor("#b4b3b1")),
 				new ConsolunaScreenStyleItem("DialogBorderColor",
 					foreColor: new ConsolunaColor("#fffeff"),
 					backColor: new ConsolunaColor("#b4b3b1")),
-				new ConsolunaScreenStyleItem("DialogTextBoxColor",
-					foreColor: new ConsolunaColor("#f2fcff"),
-					backColor: new ConsolunaColor("#0001ab")),
 				new ConsolunaScreenStyleItem("DialogListBoxColor",
 					foreColor: new ConsolunaColor("#002427"),
 					backColor: new ConsolunaColor("#03b1ba")),
 				new ConsolunaScreenStyleItem("DialogListBoxHighlightColor",
 					foreColor: new ConsolunaColor("#eeffe1"),
 					backColor: new ConsolunaColor("#01ae04")),
-				new ConsolunaScreenStyleItem("ButtonColorDefault",
-					foreColor: new ConsolunaColor("#5cffb1"),
+				new ConsolunaScreenStyleItem("DialogTextBoxColor",
+					foreColor: new ConsolunaColor("#f2fcff"),
+					backColor: new ConsolunaColor("#0001ab")),
+
+				new ConsolunaScreenStyleItem("MenuColor",
+					foreColor: new ConsolunaColor("#0b0708"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("MenuHighlightColor",
 					backColor: new ConsolunaColor("#01af00")),
-				new ConsolunaScreenStyleItem("ButtonColor",
-					foreColor: new ConsolunaColor("#003300"),
-					backColor: new ConsolunaColor("#01af00")),
+				new ConsolunaScreenStyleItem("MenuPanelBorderColor",
+					foreColor: new ConsolunaColor("#010101"),
+					backColor: new ConsolunaColor("#b4b3b1")),
+				new ConsolunaScreenStyleItem("MenuShortcutColor",
+					foreColor: new ConsolunaColor("#912120")),
+
+				new ConsolunaScreenStyleItem("ShortcutColor",
+					foreColor: new ConsolunaColor("#912120")),
+
+				new ConsolunaScreenStyleItem("TextColor",
+					foreColor: new ConsolunaColor("#f2fcff"),
+					backColor: new ConsolunaColor("#0001ab")),
+
 				new ConsolunaScreenStyleItem("WindowColor",
 					foreColor: new ConsolunaColor("#002593"),
+					backColor: new ConsolunaColor("#04b0b0")),
+				new ConsolunaScreenStyleItem("WindowBorderColor",
+					foreColor: new ConsolunaColor("#b2ffff"),
 					backColor: new ConsolunaColor("#04b0b0")),
 				new ConsolunaScreenStyleItem("WindowListBoxColor",
 					foreColor: new ConsolunaColor("#bfffff"),
 					backColor: new ConsolunaColor("#0300ac")),
 				new ConsolunaScreenStyleItem("WindowListBoxHighlightColor",
 					foreColor: new ConsolunaColor("#ffc3a1"),
-					backColor: new ConsolunaColor("#ad0100")),
-				new ConsolunaScreenStyleItem("WindowBorder",
-					foreColor: new ConsolunaColor("#b2ffff"),
-					backColor: new ConsolunaColor("#04b0b0")),
-				new ConsolunaScreenStyleItem("WindowControl",
-					foreColor: new ConsolunaColor("#46f95f"),
-					backColor: new ConsolunaColor("#04b0b0"))
+					backColor: new ConsolunaColor("#ad0100"))
+
 			});
 
 		}
@@ -122,6 +136,86 @@ namespace ConsolunaLib
 		public ConsolunaCharacterCollection Characters
 		{
 			get { return mCharacters; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetCharactersInArea																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return an array of characters from the indicated cartesian area of the
+		/// screen buffer.
+		/// </summary>
+		/// <param name="columnIndex">
+		/// Starting column index.
+		/// </param>
+		/// <param name="rowIndex">
+		/// Starting row index.
+		/// </param>
+		/// <param name="width">
+		/// Width of area, in characters.
+		/// </param>
+		/// <param name="height">
+		/// Height of area, in characters.
+		/// </param>
+		/// <returns>
+		/// Reference to a 2-dimensional, 0-based array of characters found in
+		/// the specified source area of the screen buffer. Any characters outside
+		/// the boundaries of the logical screen buffer space are filled with
+		/// dummy elements. If either width or height are less than 1, an empty
+		/// array is returned.
+		/// </returns>
+		/// <remarks>
+		/// Column and row indices should have legal values prior to calling this
+		/// method. Any indicators that fall outside the logical bounds of the
+		/// buffer's cartesian space will be filled with dummy elements.
+		/// </remarks>
+		public ConsolunaCharacterItem[,] GetCharactersInArea(int column,
+			int row, int width, int height)
+		{
+			int bufferIndex = 0;
+			int colIndex = 0;
+			ConsolunaCharacterItem[,] result = null;
+			int rowIndex = 0;
+			int xIndex = 0;
+			int xEnd = 0;
+			int xStart = column;
+			int yIndex = 0;
+			int yEnd = 0;
+			int yStart = row;
+
+			if(width > 0 && height > 0)
+			{
+				xEnd = xStart + width;
+				yEnd = yStart + height;
+				result = new ConsolunaCharacterItem[width, height];
+				for(yIndex = yStart, rowIndex = 0;
+					yIndex < yEnd;
+					yIndex ++, rowIndex ++)
+				{
+					for(xIndex = xStart, colIndex = 0;
+						xIndex < xEnd;
+						xIndex ++, colIndex ++)
+					{
+						if(xIndex >= 0 && xIndex < mWidth &&
+							yIndex >= 0 && yIndex < mHeight)
+						{
+							bufferIndex = GetBufferIndex(mWidth, mHeight, xIndex, yIndex);
+							result[colIndex, rowIndex] = mCharacters[bufferIndex];
+						}
+						else
+						{
+							result[colIndex, rowIndex] = new ConsolunaCharacterItem();
+						}
+					}
+				}
+			}
+
+			if(result == null)
+			{
+				result = new ConsolunaCharacterItem[0, 0];
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
