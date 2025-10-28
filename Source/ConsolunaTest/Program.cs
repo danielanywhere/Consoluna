@@ -198,7 +198,10 @@ namespace ConsolunaTest
 			string testText = "";
 
 			Console.Clear();
-			Console.BufferHeight = 1000;
+			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				Console.BufferHeight = 1000;
+			}
 
 			baseText = "A fox jogs past big quirky wizards juggling hazy boxes, " +
 				"swiftly demonstrating extraordinary coordination, " +
