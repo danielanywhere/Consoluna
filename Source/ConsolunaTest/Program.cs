@@ -17,8 +17,10 @@
  */
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using ConsolunaLib;
 
@@ -256,7 +258,8 @@ namespace ConsolunaTest
 				"A box",
 				32, 10, 10, 5)
 			{
-				StyleName = "DialogColor"
+				StyleName = "DialogColor",
+				BorderStyle = ConsolunaBoxBorderStyleEnum.Single
 			});
 
 

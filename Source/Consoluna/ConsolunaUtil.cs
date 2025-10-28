@@ -238,7 +238,7 @@ namespace ConsolunaLib
 
 			if(character != null)
 			{
-				value = ((int)character.Character) & 0xff;
+				value = ((int)character.Character);
 				if(value == 9 || value == 10 || value == 13 ||
 					(value > 31 && value < 127) || value > 128)
 				{

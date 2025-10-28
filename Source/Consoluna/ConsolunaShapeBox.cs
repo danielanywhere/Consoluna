@@ -37,6 +37,157 @@ namespace ConsolunaLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* BLC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box bottom left corner character.
+		/// </summary>
+		/// <returns>
+		/// Box bottom left corner character.
+		/// </returns>
+		private char BLC()
+		{
+			char result = '\0';
+
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '╚';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '└';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* BRC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box bottom right corner character.
+		/// </summary>
+		/// <returns>
+		/// Box bottom right corner character.
+		/// </returns>
+		private char BRC()
+		{
+			char result = '\0';
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '╝';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '┘';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HLC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box horizontal line character.
+		/// </summary>
+		/// <returns>
+		/// Box horizontal line character.
+		/// </returns>
+		private char HLC()
+		{
+			char result = '\0';
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '═';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '─';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TLC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box top left corner character.
+		/// </summary>
+		/// <returns>
+		/// Box top left corner character.
+		/// </returns>
+		private char TLC()
+		{
+			char result = '\0';
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '╔';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '┌';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TRC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box top right corner character.
+		/// </summary>
+		/// <returns>
+		/// Box top right corner character.
+		/// </returns>
+		private char TRC()
+		{
+			char result = '\0';
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '╗';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '┐';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* VLC																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active box vertical line character.
+		/// </summary>
+		/// <returns>
+		/// Box vertical line character.
+		/// </returns>
+		private char VLC()
+		{
+			char result = '\0';
+			switch(mBorderStyle)
+			{
+				case ConsolunaBoxBorderStyleEnum.Double:
+					result = '║';
+					break;
+				case ConsolunaBoxBorderStyleEnum.Single:
+					result = '│';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -88,6 +239,24 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	BorderStyle																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="BorderStyle">BorderStyle</see>.
+		/// </summary>
+		private ConsolunaBoxBorderStyleEnum mBorderStyle =
+			ConsolunaBoxBorderStyleEnum.Double;
+		/// <summary>
+		/// Get/Set the border style for the box.
+		/// </summary>
+		public ConsolunaBoxBorderStyleEnum BorderStyle
+		{
+			get { return mBorderStyle; }
+			set { mBorderStyle = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Render																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -99,16 +268,19 @@ namespace ConsolunaLib
 		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
-			ConsolunaCharacterItem character = null;
+			char charBLCorner = BLC();
+			char charBRCorner = BRC();
+			char charHLine = HLC();
+			char charTLCorner = TLC();
+			char charTRCorner = TRC();
+			char charVLine = VLC();
 			char[] chars = null;
 			int colCount = 0;
+			int colEnd = 0;
 			int colIndex = 0;
-			int count = 0;
-			int index = 0;
-			Match match = null;
 			int rowCount = 0;
+			int rowEnd = 0;
 			int rowIndex = 0;
-			int shortcutKeyIndex = -1;
 			string title = "";
 
 			base.Render(screenBuffer);
@@ -129,112 +301,40 @@ namespace ConsolunaLib
 				//	Draw the actual box.
 				screenBuffer.ClearCharacterWindow(mCharacterWindow,
 					ForeColor, BackColor);
-				mCharacterWindow[0, 0].Character = (char)201;
+				colEnd = colCount - 1;
+				rowEnd = rowCount - 1;
+				mCharacterWindow[0, 0].Character = charTLCorner;
+				for(colIndex = 1; colIndex < colEnd; colIndex++)
+				{
+					mCharacterWindow[colIndex, 0].Character = charHLine;
+				}
+				mCharacterWindow[colIndex, 0].Character = charTRCorner;
+				for(rowIndex = 1; rowIndex < rowEnd; rowIndex++)
+				{
+					mCharacterWindow[0, rowIndex].Character = charVLine;
+					mCharacterWindow[colEnd, rowIndex].Character = charVLine;
+				}
+				mCharacterWindow[0, rowIndex].Character = charBLCorner;
+				for(colIndex = 1; colIndex < colEnd; colIndex++)
+				{
+					mCharacterWindow[colIndex, rowIndex].Character = charHLine;
+				}
+				mCharacterWindow[colIndex, rowIndex].Character = charBRCorner;
 
-				//if(text.Length > 0)
-				//{
-				//	match = Regex.Match(text, ResourceMain.rxShortcutKey);
-				//	if(match.Success)
-				//	{
-				//		shortcutKeyIndex = GetIndex(match, "shortcutKey");
-				//		shortcutKeyIndex--;
-				//		if(shortcutKeyIndex > 0)
-				//		{
-				//			builder.Append(text.Substring(0, shortcutKeyIndex));
-				//		}
-				//		builder.Append(text.Substring(shortcutKeyIndex + 1));
-				//		text = builder.ToString();
-				//		Clear(builder);
-				//	}
-
-				//	screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
-				//	screenBuffer.SetBackColor(mCharacterWindow, BackColor);
-
-				//	if(text.Length > 0)
-				//	{
-
-				//		//	General layout.
-				//		chars = text.ToCharArray();
-				//		count = chars.Length;
-				//		index = 0;
-				//		colIndex = 0;
-				//		rowIndex = 0;
-				//		if(rowCount > 1 && text.IndexOf('\n') > -1)
-				//		{
-				//			//	Potentially multiple lines only if using line-feeds.
-				//			foreach(char charItem in chars)
-				//			{
-				//				if(charItem == '\n')
-				//				{
-				//					colIndex = 0;
-				//					rowIndex++;
-				//					if(rowIndex >= rowCount)
-				//					{
-				//						break;
-				//					}
-				//				}
-				//				else if(colIndex < colCount)
-				//				{
-				//					character = mCharacterWindow[colIndex, rowIndex];
-				//					if(index == shortcutKeyIndex && mShortcutStyleItem != null)
-				//					{
-				//						if(mShortcutStyleItem.BackColor != null)
-				//						{
-				//							character.BackColor = mShortcutStyleItem.BackColor;
-				//						}
-				//						if(mShortcutStyleItem.ForeColor != null)
-				//						{
-				//							character.ForeColor = mShortcutStyleItem.ForeColor;
-				//						}
-				//					}
-				//					character.Character = charItem;
-				//					colIndex++;
-				//				}
-				//				else
-				//				{
-				//					colIndex++;
-				//				}
-				//				index++;
-				//			}
-				//		}
-				//		else
-				//		{
-				//			//	Single line layout.
-				//			foreach(char charItem in chars)
-				//			{
-				//				character = mCharacterWindow[colIndex, rowIndex];
-				//				if(index == shortcutKeyIndex && mShortcutStyleItem != null)
-				//				{
-				//					if(mShortcutStyleItem.BackColor != null)
-				//					{
-				//						character.BackColor = mShortcutStyleItem.BackColor;
-				//					}
-				//					if(mShortcutStyleItem.ForeColor != null)
-				//					{
-				//						character.ForeColor = mShortcutStyleItem.ForeColor;
-				//					}
-				//				}
-				//				character.Character = charItem;
-				//				index++;
-				//				colIndex++;
-				//				if(colIndex >= colCount)
-				//				{
-				//					break;
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
-				//else
-				//{
-				//	for(rowIndex = 0; rowIndex < rowCount; rowIndex++)
-				//	{
-				//		for(colIndex = 0; colIndex < colCount; colIndex++)
-				//		{
-				//			character.Character = '\0';
-				//		}
-				//	}
-				//}
+				if(title.Length > 0)
+				{
+					colIndex = 1;
+					chars = title.ToCharArray();
+					foreach(char charItem in chars)
+					{
+						mCharacterWindow[colIndex, 0].Character = GetPrintable(charItem);
+						colIndex++;
+						if(colIndex >= colEnd)
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		//*-----------------------------------------------------------------------*

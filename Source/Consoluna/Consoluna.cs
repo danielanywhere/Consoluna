@@ -692,6 +692,7 @@ namespace ConsolunaLib
 
 			//	TODO: !1 - Stopped here...
 			//	Currently using Unicode box-drawing.
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
 			//// Set the console's output encoding to Code Page 437
 			//Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 			//Console.OutputEncoding = Encoding.GetEncoding(437);
