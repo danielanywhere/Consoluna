@@ -41,6 +41,12 @@ namespace ConsolunaLib
 		/// </summary>
 		Text,
 		/// <summary>
+		/// Label in the area. Text and label differ in that upon the text
+		/// shape, the full foreground and background areas are written,
+		/// while on the label, only foreground for the present data is written.
+		/// </summary>
+		Label,
+		/// <summary>
 		///	A box, with or without borders.
 		/// </summary>
 		Box,

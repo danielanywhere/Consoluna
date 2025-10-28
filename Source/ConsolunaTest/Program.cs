@@ -19,6 +19,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using ConsolunaLib;
 
 using static ConsolunaLib.ConsolunaUtil;
@@ -203,10 +204,10 @@ namespace ConsolunaTest
 				Console.BufferHeight = 1000;
 			}
 
-			baseText = "A fox jogs past big quirky wizards juggling hazy boxes, " +
+			baseText = "A dog jogs past big quirky clowns juggling crazy boxes, " +
 				"swiftly demonstrating extraordinary coordination, " +
 				"unpredictability, and, unquestionably, " +
-				"delightful " +
+				"delightfully veracious " +
 				"supercalifragilisticexpialidociousness.";
 
 			Console.WriteLine(
@@ -236,6 +237,7 @@ namespace ConsolunaTest
 			mConsole.InputReceived += console_InputReceived;
 			mConsole.BackColor = new ConsolunaColor("#000050");
 			mConsole.ForeColor = new ConsolunaColor("#d0d000");
+
 			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
 				"The words you are currently reading are precisely the ones that " +
 				"were destined to appear in this very sentence.",
@@ -243,6 +245,21 @@ namespace ConsolunaTest
 			{
 				StyleName = "TextColor"
 			});
+			mConsole.Shapes.Add(new ConsolunaShapeLabel("lblThis",
+				"This sentence exists solely to inform you that it contains the " +
+				"very words required to say exactly what it's saying.",
+				21, 10, 10, 5, wordWrap: true)
+			{
+				StyleName = "LabelColor"
+			});
+			mConsole.Shapes.Add(new ConsolunaShapeBox("boxArea",
+				"A box",
+				32, 10, 10, 5)
+			{
+				StyleName = "DialogColor"
+			});
+
+
 			mConsole.ClearScreen();
 			mConsole.SetCursorPosition(10, 9);
 			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);

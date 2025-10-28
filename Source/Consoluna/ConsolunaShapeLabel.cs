@@ -27,12 +27,12 @@ using static ConsolunaLib.ConsolunaUtil;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeText																											*
+	//*	ConsolunaShapeLabel																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Information about a general text shape with optional hot key definition.
+	/// Information about a general label shape with optional hot key definition.
 	/// </summary>
-	public class ConsolunaShapeText : ConsolunaShapeItem
+	public class ConsolunaShapeLabel : ConsolunaShapeItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,15 +47,15 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeText item.
+		/// Create a new instance of the ConsolunaShapeLabel item.
 		/// </summary>
-		public ConsolunaShapeText()
+		public ConsolunaShapeLabel()
 		{
-			ShapeType = ConsolunaShapeType.Text;
+			ShapeType = ConsolunaShapeType.Label;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeText item.
+		/// Create a new instance of the ConsolunaShapeLabel item.
 		/// </summary>
 		/// <param name="name">
 		/// Unique name of the shape.
@@ -75,7 +75,7 @@ namespace ConsolunaLib
 		/// <param name="height">
 		/// The height of the shape, in characters.
 		/// </param>
-		public ConsolunaShapeText(string name, string text = "",
+		public ConsolunaShapeLabel(string name, string text = "",
 			int x = 0, int y = 0,
 			int width = 1, int height = 1, bool wordWrap = false) :
 			base(name, x, y, width, height)
@@ -139,9 +139,6 @@ namespace ConsolunaLib
 						Clear(builder);
 					}
 
-					screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
-					screenBuffer.SetBackColor(mCharacterWindow, BackColor);
-
 					if(text.Length > 0)
 					{
 
@@ -179,6 +176,10 @@ namespace ConsolunaLib
 											character.ForeColor = mShortcutStyleItem.ForeColor;
 										}
 									}
+									else if(ForeColor != null)
+									{
+										character.ForeColor = ForeColor;
+									}
 									character.Character = charItem;
 									colIndex++;
 								}
@@ -205,6 +206,10 @@ namespace ConsolunaLib
 									{
 										character.ForeColor = mShortcutStyleItem.ForeColor;
 									}
+								}
+								else if(ForeColor != null)
+								{
+									character.ForeColor = ForeColor;
 								}
 								character.Character = charItem;
 								index++;

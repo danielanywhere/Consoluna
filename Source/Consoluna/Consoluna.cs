@@ -653,6 +653,9 @@ namespace ConsolunaLib
 					foreColor: new ConsolunaColor("#f2fcff"),
 					backColor: new ConsolunaColor("#0001ab")),
 
+				new ConsolunaScreenStyleItem("LabelColor",
+					foreColor: new ConsolunaColor("#00b7fa")),
+
 				new ConsolunaScreenStyleItem("MenuColor",
 					foreColor: new ConsolunaColor("#0b0708"),
 					backColor: new ConsolunaColor("#b4b3b1")),
@@ -687,7 +690,10 @@ namespace ConsolunaLib
 			});
 
 
-			//// TODO: Set the console's output encoding to Code Page 437
+			//	TODO: !1 - Stopped here...
+			//	Currently using Unicode box-drawing.
+			//// Set the console's output encoding to Code Page 437
+			//Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 			//Console.OutputEncoding = Encoding.GetEncoding(437);
 
 			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -1055,6 +1061,50 @@ namespace ConsolunaLib
 		public ConsolunaCharacterCollection Characters
 		{
 			get { return mCharacters; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clear all of the characters in the character window to the specified
+		/// default values.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to dirty.
+		/// </param>
+		/// <param name="foreColor">
+		/// Optional foreground color.
+		/// </param>
+		/// <param name="backColor">
+		/// Optional background color.
+		/// </param>
+		public void ClearCharacterWindow(ConsolunaCharacterItem[,] characterWindow,
+			ConsolunaColor foreColor = null, ConsolunaColor backColor = null)
+		{
+			if(characterWindow?.Length > 0)
+			{
+				foreach(ConsolunaCharacterItem characterItem in characterWindow)
+				{
+					if(foreColor != null)
+					{
+						characterItem.ForeColor = foreColor;
+					}
+					else
+					{
+						characterItem.ForeColor = mForeColor;
+					}
+					if(backColor != null)
+					{
+						characterItem.BackColor = backColor;
+					}
+					else
+					{
+						characterItem.BackColor = mBackColor;
+					}
+					characterItem.Character = '\0';
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -2018,7 +2068,11 @@ namespace ConsolunaLib
 							{
 								index = 0;
 							}
-							character = mCharacters[index];
+							try
+							{
+								character = mCharacters[index];
+							}
+							catch { }
 							mCursorPosition.X++;
 						}
 						EnsureLegal(mWidth, mHeight, mCursorPosition);

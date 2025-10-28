@@ -240,12 +240,37 @@ namespace ConsolunaLib
 			{
 				value = ((int)character.Character) & 0xff;
 				if(value == 9 || value == 10 || value == 13 ||
-					(value > 31 && value < 127))
+					(value > 31 && value < 127) || value > 128)
 				{
 					result = (char)value;
 				}
 			}
 			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return a printable version of the characters in the caller's string.
+		/// </summary>
+		/// <param name="text">
+		/// The text to convert.
+		/// </param>
+		/// <returns>
+		/// Printable version of the caller's string.
+		/// </returns>
+		public static string GetPrintable(string text)
+		{
+			StringBuilder builder = new StringBuilder();
+			char[] chars = null;
+
+			if(text?.Length > 0)
+			{
+				chars = text.ToCharArray();
+				foreach(char charItem in chars)
+				{
+					builder.Append(GetPrintable(charItem));
+				}
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 
