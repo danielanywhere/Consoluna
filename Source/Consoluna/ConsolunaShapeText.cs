@@ -110,27 +110,20 @@ namespace ConsolunaLib
 			int rowCount = 0;
 			int rowIndex = 0;
 			int shortcutKeyIndex = -1;
-			ConsolunaScreenStyleItem shortcutStyle = null;
 			string text = mText;
-			ConsolunaScreenStyleItem textStyle = null;
 			ConsolunaTokenItem token = null;
 			ConsolunaTokenCollection tokens = null;
 
-			//	TODO: !1 - Stopped here...
-			//	TODO: Text is full background. Label will be content only.
 			base.Render(screenBuffer);
 			if(Visible && mCharacterWindow.GetLength(0) > 0)
 			{
 				//	If the character window is full, the base values are good.
 				colCount = Size.Width;
 				rowCount = Size.Height;
-				textStyle = screenBuffer.Styles.FirstOrDefault(x =>
-					x.Name == "TextColor");
 				text = text.Replace("\r", "");
+				text = WordWrap(text, colCount, false);
 				if(text.Length > 0)
 				{
-					shortcutStyle = screenBuffer.Styles.FirstOrDefault(x =>
-						x.Name == "ShortcutStyle");
 					match = Regex.Match(text, ResourceMain.rxShortcutKey);
 					if(match.Success)
 					{
@@ -144,56 +137,12 @@ namespace ConsolunaLib
 						text = builder.ToString();
 						Clear(builder);
 					}
+
+					screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
+					screenBuffer.SetBackColor(mCharacterWindow, BackColor);
+
 					if(text.Length > 0)
 					{
-						tokens = ConsolunaTokenCollection.ParseWords(text);
-						if(text.Length > colCount && rowCount > 1 && mWordWrap)
-						{
-							//	Word-wrapping layout.
-							colIndex = 0;
-							rowIndex = 0;
-							count = tokens.Count;
-							for(index = 0; index < count; index ++)
-							{
-								token = tokens[index];
-								if(token.TokenType == ConsolunaTokenType.Whitespace &&
-									token.Value == "\n")
-								{
-									colIndex = 0;
-									rowIndex++;
-								}
-								else if(colIndex + token.Value.Length >= colCount &&
-									colIndex > 0)
-								{
-									//	Place the word on the next line.
-									if(token.TokenType == ConsolunaTokenType.Whitespace)
-									{
-										token.Value = "\n";
-									}
-									if(token.Value != "\n")
-									{
-										token = new ConsolunaTokenItem()
-										{
-											TokenType = ConsolunaTokenType.Whitespace,
-											Value = "\n"
-										};
-										if(shortcutKeyIndex >= index)
-										{
-											shortcutKeyIndex++;
-										}
-										tokens.Insert(index, token);
-										count++;
-									}
-									colIndex = 0;
-									rowIndex++;
-								}
-								else
-								{
-									colIndex += token.Value.Length;
-								}
-							}
-							text = tokens.ToString();
-						}
 
 						//	General layout.
 						chars = text.ToCharArray();
@@ -218,26 +167,15 @@ namespace ConsolunaLib
 								else if(colIndex < colCount)
 								{
 									character = mCharacterWindow[colIndex, rowIndex];
-									if(index == shortcutKeyIndex && shortcutStyle != null)
+									if(index == shortcutKeyIndex && mShortcutStyleItem != null)
 									{
-										if(shortcutStyle.BackColor != null)
+										if(mShortcutStyleItem.BackColor != null)
 										{
-											character.BackColor = shortcutStyle.BackColor;
+											character.BackColor = mShortcutStyleItem.BackColor;
 										}
-										if(shortcutStyle.ForeColor != null)
+										if(mShortcutStyleItem.ForeColor != null)
 										{
-											character.ForeColor = shortcutStyle.ForeColor;
-										}
-									}
-									else if(textStyle != null)
-									{
-										if(textStyle.BackColor != null)
-										{
-											character.BackColor = textStyle.BackColor;
-										}
-										if(textStyle.ForeColor != null)
-										{
-											character.ForeColor = textStyle.ForeColor;
+											character.ForeColor = mShortcutStyleItem.ForeColor;
 										}
 									}
 									character.Character = charItem;
@@ -256,26 +194,15 @@ namespace ConsolunaLib
 							foreach(char charItem in chars)
 							{
 								character = mCharacterWindow[colIndex, rowIndex];
-								if(index == shortcutKeyIndex && shortcutStyle != null)
+								if(index == shortcutKeyIndex && mShortcutStyleItem != null)
 								{
-									if(shortcutStyle.BackColor != null)
+									if(mShortcutStyleItem.BackColor != null)
 									{
-										character.BackColor = shortcutStyle.BackColor;
+										character.BackColor = mShortcutStyleItem.BackColor;
 									}
-									if(shortcutStyle.ForeColor != null)
+									if(mShortcutStyleItem.ForeColor != null)
 									{
-										character.ForeColor = shortcutStyle.ForeColor;
-									}
-								}
-								else if(textStyle != null)
-								{
-									if(textStyle.BackColor != null)
-									{
-										character.BackColor = textStyle.BackColor;
-									}
-									if(textStyle.ForeColor != null)
-									{
-										character.ForeColor = textStyle.ForeColor;
+										character.ForeColor = mShortcutStyleItem.ForeColor;
 									}
 								}
 								character.Character = charItem;
@@ -295,18 +222,6 @@ namespace ConsolunaLib
 					{
 						for(colIndex = 0; colIndex < colCount; colIndex++)
 						{
-							character = mCharacterWindow[colIndex, rowIndex];
-							if(textStyle != null)
-							{
-								if(textStyle.BackColor != null)
-								{
-									character.BackColor = textStyle.BackColor;
-								}
-								if(textStyle.ForeColor != null)
-								{
-									character.ForeColor = textStyle.ForeColor;
-								}
-							}
 							character.Character = '\0';
 						}
 					}

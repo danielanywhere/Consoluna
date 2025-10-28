@@ -70,7 +70,7 @@ namespace ConsolunaLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (?i:(?&lt;token&gt;(?&lt;text&gt;[0-9a-z]+(\.|,){0,1})|(?&lt;whitespace&gt;\s)|(?&lt;punctuation&gt;[\!\&quot;\#\$\%\&amp;\&apos;\(\)\*\+,-\./\:\;\&lt;\=\&gt;\?\@\[\\\]\^_`]))).
+        ///   Looks up a localized string similar to (?i:(?&lt;token&gt;(?&lt;whitespace&gt;\s)|(?&lt;shortcutSequence&gt;(?&lt;shortcutCharacter&gt;[\&amp;_])(?&lt;shortcut&gt;[0-9a-z]))|(?&lt;text&gt;[0-9a-z]+(\.|,){0,1})|(?&lt;punctuation&gt;[\!\&quot;\#\$\%\&amp;\&apos;\(\)\*\+,-\./\:\;\&lt;\=\&gt;\?\@\[\\\]\^_`]))).
         /// </summary>
         internal static string rxWordToken {
             get {

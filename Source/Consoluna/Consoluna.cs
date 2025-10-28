@@ -1468,6 +1468,42 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* SetBackColor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the background color for all characters in the window.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to update.
+		/// </param>
+		/// <param name="foreColor">
+		/// Reference to the backcolor to place. If null, the local background
+		/// color is used.
+		/// </param>
+		public void SetBackColor(ConsolunaCharacterItem[,] characterWindow,
+			ConsolunaColor backColor)
+		{
+			if(characterWindow?.Length > 0)
+			{
+				if(backColor != null)
+				{
+					foreach(ConsolunaCharacterItem characterItem in characterWindow)
+					{
+						characterItem.BackColor = backColor;
+					}
+				}
+				else
+				{
+					foreach(ConsolunaCharacterItem characterItem in characterWindow)
+					{
+						characterItem.BackColor = mBackColor;
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* SetCursorPosition																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1540,6 +1576,42 @@ namespace ConsolunaLib
 				foreach(ConsolunaCharacterItem characterItem in characterWindow)
 				{
 					characterItem.Dirty = true;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SetForeColor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the foreground color for all characters in the window.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to update.
+		/// </param>
+		/// <param name="foreColor">
+		/// Reference to the forecolor to place. If null, the local foreground
+		/// color is used.
+		/// </param>
+		public void SetForeColor(ConsolunaCharacterItem[,] characterWindow,
+			ConsolunaColor foreColor)
+		{
+			if(characterWindow?.Length > 0)
+			{
+				if(foreColor != null)
+				{
+					foreach(ConsolunaCharacterItem characterItem in characterWindow)
+					{
+						characterItem.ForeColor = foreColor;
+					}
+				}
+				else
+				{
+					foreach(ConsolunaCharacterItem characterItem in characterWindow)
+					{
+						characterItem.ForeColor = mForeColor;
+					}
 				}
 			}
 		}

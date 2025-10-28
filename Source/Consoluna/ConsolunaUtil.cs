@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -415,6 +416,198 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* WordWrap																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Wrap the provided text to remain as much within the supplied window
+		/// width as possible.
+		/// </summary>
+		/// <param name="text">
+		/// The text to wrap.
+		/// </param>
+		/// <param name="maxWidth">
+		/// The maximum width of the target window.
+		/// </param>
+		/// <param name="sliceWord">
+		/// Value indicating whehter a word will be sliced if no other alternatives
+		/// are available. Default = false.
+		/// </param>
+		/// <returns>
+		/// The string representation of the caller's text, after wrapping.
+		/// </returns>
+		public static string WordWrap(string text, int maxWidth,
+			bool sliceWord = false)
+		{
+			//StringBuilder builder = new StringBuilder();
+			int colIndex = 0;
+			int count = 0;
+			int index = 0;
+			string leftPart = "";
+			ConsolunaTokenItem newToken = null;
+			string result = "";
+			string rightPart = "";
+			string shortcutText = "";
+			ConsolunaTokenItem token = null;
+			ConsolunaTokenCollection tokens = null;
+			string tokenText = "";
+			ConsolunaTokenType tokenType = ConsolunaTokenType.None;
+			string workingText = "";
+
+			if(text?.Length > 0 && maxWidth > 0)
+			{
+				workingText = text.Replace("\r", "");
+				tokens = ConsolunaTokenCollection.ParseWords(workingText);
+				colIndex = 0;
+				count = tokens.Count;
+				for(index = 0; index < count; index++)
+				{
+					token = tokens[index];
+					tokenText = token.Value;
+					tokenType = token.TokenType;
+					//	Assemble shortcut text.
+					shortcutText = tokenText;
+					if(index + 1 < count &&
+						tokenType == ConsolunaTokenType.Text &&
+						tokens[index + 1].TokenType == ConsolunaTokenType.Shortcut)
+					{
+						//	Next item is a shortcut.
+						shortcutText += tokens[index + 1].Value;
+						if(index + 2 < count &&
+							tokens[index + 2].TokenType == ConsolunaTokenType.Text)
+						{
+							//	Following item is post-shortcut text.
+							shortcutText += tokens[index + 2].Value;
+						}
+					}
+					else if(index + 1 < count &&
+						tokenType == ConsolunaTokenType.Shortcut &&
+						tokens[index + 1].TokenType == ConsolunaTokenType.Text &&
+						(index - 1 < 0 ||
+						tokens[index - 1].TokenType != ConsolunaTokenType.Text))
+					{
+						//	Next item is text and this is not part of an earlier pattern.
+						shortcutText += tokens[index + 1].Value;
+					}
+					if(tokenType == ConsolunaTokenType.Whitespace &&
+						tokenText == "\n")
+					{
+						colIndex = 0;
+					}
+					else if(colIndex + shortcutText.Length >= maxWidth)
+					{
+						if(colIndex > 0)
+						{
+							//	Place the word on the next line.
+							if(tokenType == ConsolunaTokenType.Whitespace)
+							{
+								token.Value = "\n";
+							}
+							else
+							{
+								newToken = new ConsolunaTokenItem()
+								{
+									TokenType = ConsolunaTokenType.Whitespace,
+									Value = "\n"
+								};
+								tokens.Insert(index, newToken);
+								count++;
+							}
+							colIndex = 0;
+						}
+						else if(sliceWord)
+						{
+							//	The cursor is currently located at column 0.
+							if(tokenText.Length > 1)
+							{
+								leftPart = tokenText.Substring(0, maxWidth);
+								rightPart = tokenText.Substring(maxWidth);
+								token.Value = leftPart;
+								index++;
+								newToken = new ConsolunaTokenItem()
+								{
+									TokenType = ConsolunaTokenType.Text,
+									Value = rightPart
+								};
+								tokens.Insert(index, newToken);
+								newToken = new ConsolunaTokenItem()
+								{
+									TokenType = ConsolunaTokenType.Whitespace,
+									Value = "\n"
+								};
+								tokens.Insert(index, newToken);
+								//index++;
+								count += 2;
+								//colIndex = rightPart.Length;
+								colIndex = 0;
+							}
+							else if(index + 1 >= count ||
+								tokens[index + 1].TokenType != ConsolunaTokenType.Whitespace)
+							{
+								//	Single character not followed by a whitespace.
+								newToken = new ConsolunaTokenItem()
+								{
+									TokenType = ConsolunaTokenType.Whitespace,
+									Value = "\n"
+								};
+								index++;
+								tokens.Insert(index, newToken);
+								count++;
+								colIndex = 0;
+							}
+							else
+							{
+								//	Consume a single character.
+								colIndex = 1;
+							}
+						}
+						else
+						{
+							//	Insert a line break at the end of this word.
+							if(index + 1 < count)
+							{
+								index++;
+								token = tokens[index];
+								if(token.TokenType == ConsolunaTokenType.Whitespace)
+								{
+									token.Value = "\n";
+								}
+								else
+								{
+									newToken = new ConsolunaTokenItem()
+									{
+										TokenType = ConsolunaTokenType.Whitespace,
+										Value = "\n"
+									};
+									tokens.Insert(index, newToken);
+									count++;
+								}
+								colIndex = 0;
+							}
+						}
+					}
+					else
+					{
+						if(colIndex == 0 && tokenType == ConsolunaTokenType.Whitespace)
+						{
+							tokens.RemoveAt(index);
+							index--;
+							count--;
+						}
+						else
+						{
+							colIndex += tokenText.Length;
+						}
+					}
+				}
+			}
+			if(tokens.Count > 0)
+			{
+				result = tokens.ToString();
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*

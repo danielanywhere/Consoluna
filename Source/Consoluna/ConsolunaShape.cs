@@ -130,6 +130,44 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* mShortcutBackColor_PropertyChanged																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// The shortcut background color property has changed.
+		/// </summary>
+		/// <param name="sender">
+		/// The object raising this event.
+		/// </param>
+		/// <param name="e">
+		/// Console property change event arguments.
+		/// </param>
+		private void mShortcutBackColor_PropertyChanged(object sender,
+			ConsolunaPropertyChangeEventArgs e)
+		{
+			OnPropertyChanged("ShortcutBackColor");
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* mShortcutForeColor_PropertyChanged																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// The shortcut foreground color property has changed.
+		/// </summary>
+		/// <param name="sender">
+		/// The object raising this event.
+		/// </param>
+		/// <param name="e">
+		/// Console property change event arguments.
+		/// </param>
+		private void mShortcutForeColor_PropertyChanged(object sender,
+			ConsolunaPropertyChangeEventArgs e)
+		{
+			OnPropertyChanged("ShortcutForeColor");
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* mSize_PropertyChanged																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -338,23 +376,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Name																																	*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Name">Name</see>.
-		/// </summary>
-		private string mName = "";
-		/// <summary>
-		/// Get/Set the name of this shape.
-		/// </summary>
-		public string Name
-		{
-			get { return mName; }
-			set { mName = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	ForeColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -384,6 +405,23 @@ namespace ConsolunaLib
 					OnPropertyChanged();
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Name																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Name">Name</see>.
+		/// </summary>
+		private string mName = "";
+		/// <summary>
+		/// Get/Set the name of this shape.
+		/// </summary>
+		public string Name
+		{
+			get { return mName; }
+			set { mName = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -436,10 +474,46 @@ namespace ConsolunaLib
 			int colIndex = 0;
 			int rowCount = 0;
 			int rowIndex = 0;
+			string styleNameLower = "";
 
 			if(screenBuffer != null && mPosition != null &&
 				ConsolunaSize.HasVolume(mSize))
 			{
+				//	Update the local styling properties from explicit style names.
+				if(mStyleName?.Length > 0)
+				{
+					styleNameLower = mStyleName.ToLower();
+					mStyleItem = screenBuffer.Styles.FirstOrDefault(x =>
+						x.Name.ToLower() == styleNameLower);
+					if(mStyleItem != null)
+					{
+						if(mStyleItem.BackColor != null)
+						{
+							mBackColor = mStyleItem.BackColor;
+						}
+						if(mStyleItem.ForeColor != null)
+						{
+							mForeColor = mStyleItem.ForeColor;
+						}
+					}
+				}
+				if(mShortcutStyleName?.Length > 0)
+				{
+					styleNameLower = mShortcutStyleName.ToLower();
+					mShortcutStyleItem = screenBuffer.Styles.FirstOrDefault(x =>
+						x.Name.ToLower() == styleNameLower);
+					if(mShortcutStyleItem != null)
+					{
+						if(mShortcutStyleItem.BackColor != null)
+						{
+							mShortcutBackColor = mShortcutStyleItem.BackColor;
+						}
+						if(mShortcutStyleItem.ForeColor != null)
+						{
+							mShortcutForeColor = mShortcutStyleItem.ForeColor;
+						}
+					}
+				}
 				//	Any inherited class can use this window.
 				if(mShadow)
 				{
@@ -533,6 +607,110 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ShortcutBackColor																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for
+		/// <see cref="ShortcutBackColor">ShortcutBackColor</see>.
+		/// </summary>
+		private ConsolunaColor mShortcutBackColor = null;
+		/// <summary>
+		/// Get/Set a reference to the background color for shortcut chaaracters
+		/// on this shape.
+		/// </summary>
+		public ConsolunaColor ShortcutBackColor
+		{
+			get { return mShortcutBackColor; }
+			set
+			{
+				bool bChanged = (mShortcutBackColor != value);
+				if(bChanged && mShortcutBackColor != null)
+				{
+					mShortcutBackColor.PropertyChanged -=
+						mShortcutBackColor_PropertyChanged;
+				}
+				mShortcutBackColor = value;
+				if(bChanged)
+				{
+					if(mShortcutBackColor != null)
+					{
+						mShortcutBackColor.PropertyChanged +=
+							mShortcutBackColor_PropertyChanged;
+					}
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ShortcutForeColor																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for
+		/// <see cref="ShortcutForeColor">ShortcutForeColor</see>.
+		/// </summary>
+		private ConsolunaColor mShortcutForeColor = null;
+		/// <summary>
+		/// Get/Set a reference to the foreground color for shortcut keys on this
+		/// shape.
+		/// </summary>
+		public ConsolunaColor ShortcutForeColor
+		{
+			get { return mShortcutForeColor; }
+			set
+			{
+				bool bChanged = (mShortcutForeColor != value);
+				if(mShortcutForeColor != null)
+				{
+					mShortcutForeColor.PropertyChanged -=
+						mShortcutForeColor_PropertyChanged;
+				}
+				mShortcutForeColor = value;
+				if(bChanged)
+				{
+					if(mShortcutForeColor != null)
+					{
+						mShortcutForeColor.PropertyChanged +=
+							mShortcutForeColor_PropertyChanged;
+					}
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ShortcutStyleName																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
+		/// </summary>
+		protected ConsolunaScreenStyleItem mShortcutStyleItem = null;
+		/// <summary>
+		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
+		/// </summary>
+		private string mShortcutStyleName = "";
+		/// <summary>
+		/// Get/Set the name of the screen style to assign to shortcuts on this
+		/// object.
+		/// </summary>
+		public string ShortcutStyleName
+		{
+			get { return mShortcutStyleName; }
+			set
+			{
+				bool bChanged = (mShortcutStyleName != value);
+				mShortcutStyleName = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Size																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -559,6 +737,35 @@ namespace ConsolunaLib
 					{
 						mSize.PropertyChanged += mSize_PropertyChanged;
 					}
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	StyleName																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="StyleName">StyleName</see>.
+		/// </summary>
+		protected ConsolunaScreenStyleItem mStyleItem = null;
+		/// <summary>
+		/// Private member for <see cref="StyleName">StyleName</see>.
+		/// </summary>
+		private string mStyleName = "";
+		/// <summary>
+		/// Get/Set the name of the screen style to assign to this object.
+		/// </summary>
+		public string StyleName
+		{
+			get { return mStyleName; }
+			set
+			{
+				bool bChanged = (mStyleName != value);
+				mStyleName = value;
+				if(bChanged)
+				{
 					OnPropertyChanged();
 				}
 			}

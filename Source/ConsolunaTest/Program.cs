@@ -21,6 +21,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using ConsolunaLib;
 
+using static ConsolunaLib.ConsolunaUtil;
+
 namespace ConsolunaTest
 {
 	//*-------------------------------------------------------------------------*
@@ -192,7 +194,37 @@ namespace ConsolunaTest
 		/// </summary>
 		public void Run()
 		{
+			string baseText = "";
+			string testText = "";
+
 			Console.Clear();
+			Console.BufferHeight = 1000;
+
+			baseText = "A fox jogs past big quirky wizards juggling hazy boxes, " +
+				"swiftly demonstrating extraordinary coordination, " +
+				"unpredictability, and, unquestionably, " +
+				"delightful " +
+				"supercalifragilisticexpialidociousness.";
+
+			Console.WriteLine(
+				$"Word-wrapping the following with split:\r\n{baseText}\r\n");
+			testText = WordWrap(baseText, 10, true);
+			Console.WriteLine("* OUTPUT *");
+			Console.WriteLine(testText);
+			Console.WriteLine("");
+
+			Console.WriteLine(
+				$"Word-wrapping the following without split:\r\n{baseText}\r\n");
+			testText = WordWrap(baseText, 10, false);
+			Console.WriteLine("* OUTPUT *");
+			Console.WriteLine(testText);
+			Console.WriteLine("");
+
+
+			Console.WriteLine("Press [Enter] to continue.");
+			Console.ReadLine();
+
+
 			mConsole = new Consoluna()
 			{
 				InputMode = ConsolunaInputMode.EventDriven,
@@ -202,8 +234,12 @@ namespace ConsolunaTest
 			mConsole.BackColor = new ConsolunaColor("#000050");
 			mConsole.ForeColor = new ConsolunaColor("#d0d000");
 			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
-				"Here is a whole bunch of text to place in this area...",
-				10, 10, 10, 5, wordWrap: true));
+				"The words you are currently reading are precisely the ones that " +
+				"were destined to appear in this very sentence.",
+				10, 10, 10, 5, wordWrap: true)
+			{
+				StyleName = "TextColor"
+			});
 			mConsole.ClearScreen();
 			mConsole.SetCursorPosition(10, 9);
 			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
