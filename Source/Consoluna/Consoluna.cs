@@ -1066,10 +1066,10 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ClearCharacterWindow																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Clear all of the characters in the character window to the specified
-		/// default values.
+		/// Clear the entire character window to the specified default values.
 		/// </summary>
 		/// <param name="characterWindow">
 		/// Reference to the cartesian-style character window to dirty.
@@ -1104,6 +1104,80 @@ namespace ConsolunaLib
 						characterItem.BackColor = mBackColor;
 					}
 					characterItem.Character = '\0';
+				}
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Clear a portion of the characters in the character window to the
+		/// specified default values.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to dirty.
+		/// </param>
+		/// <param name="column">
+		/// Starting column index at which to begin clearing.
+		/// </param>
+		/// <param name="row">
+		/// Starting row index at which to begin clearing.
+		/// </param>
+		/// <param name="width">
+		/// Width of columns to clear.
+		/// </param>
+		/// <param name="height">
+		/// Height of rows to clear.
+		/// </param>
+		/// <param name="foreColor">
+		/// Optional foreground color.
+		/// </param>
+		/// <param name="backColor">
+		/// Optional background color.
+		/// </param>
+		public void ClearCharacterWindow(ConsolunaCharacterItem[,] characterWindow,
+			int column, int row, int width, int height,
+			ConsolunaColor foreColor = null, ConsolunaColor backColor = null)
+		{
+			ConsolunaCharacterItem character = null;
+			int colEnd = 0;
+			int colIndex = 0;
+			int colStart = 0;
+			int rowEnd = 0;
+			int rowIndex = 0;
+			int rowStart = 0;
+
+			if(characterWindow?.Length > 0)
+			{
+				colEnd = Math.Min(column + width, characterWindow.GetLength(0));
+				rowEnd = Math.Min(row + height, characterWindow.GetLength(1));
+				for(rowIndex = row; rowIndex < rowEnd; rowIndex ++)
+				{
+					if(rowIndex > -1)
+					{
+						for(colIndex = column; colIndex < colEnd; colIndex ++)
+						{
+							if(colIndex > -1)
+							{
+								character = characterWindow[colIndex, rowIndex];
+								if(foreColor != null)
+								{
+									character.ForeColor = foreColor;
+								}
+								else
+								{
+									character.ForeColor = mForeColor;
+								}
+								if(backColor != null)
+								{
+									character.BackColor = backColor;
+								}
+								else
+								{
+									character.BackColor = mBackColor;
+								}
+								character.Character = '\0';
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1401,6 +1475,18 @@ namespace ConsolunaLib
 		{
 			return (colIndex > -1 && colIndex < Console.WindowWidth &&
 				rowIndex > -1 && rowIndex < Console.WindowHeight);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	IsBusy																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Get a value indicating whether this session is busy processing.
+		/// </summary>
+		public bool IsBusy
+		{
+			get { return mUpdateBusy; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1982,10 +2068,8 @@ namespace ConsolunaLib
 						if(bFound)
 						{
 							//	Check to see if the current style still matches.
-							if(ConsolunaColor.Equals(
-									lastBackColor, character.BackColor) &&
-								ConsolunaColor.Equals(
-									lastForeColor, character.ForeColor) &&
+							if(AfterShadowEquals(character, "BackColor", lastBackColor) &&
+								AfterShadowEquals(character, "ForeColor", lastForeColor) &&
 								lastStyle == character.CharacterStyle &&
 								lastX == colIndex - 1)
 							{
@@ -1994,7 +2078,8 @@ namespace ConsolunaLib
 							}
 							else if(builder.Length > 0)
 							{
-								//	Apply the style.
+								//	Current style doesn't match.
+								//	Apply the old style.
 								if(SetTerminalPosition(startX, rowIndex))
 								{
 									Console.Write(AnsiBackColorStart(
@@ -2012,8 +2097,10 @@ namespace ConsolunaLib
 						if(!bFound)
 						{
 							//	Begin a new style.
-							lastBackColor = character.BackColor;
-							lastForeColor = character.ForeColor;
+							lastBackColor = ApplyShadowColor(
+								character.BackColor, character.Shadowed);
+							lastForeColor = ApplyShadowColor(
+								character.ForeColor, character.Shadowed);
 							lastStyle = character.CharacterStyle;
 							lastX = colIndex;
 							startX = colIndex;

@@ -22,6 +22,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ConsolunaLib;
 
 using static ConsolunaLib.ConsolunaUtil;
@@ -39,6 +40,8 @@ namespace ConsolunaTest
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		private bool mInitialized = false;
+
 		//*-----------------------------------------------------------------------*
 		//* console_InputReceived																									*
 		//*-----------------------------------------------------------------------*
@@ -51,14 +54,12 @@ namespace ConsolunaTest
 		/// <param name="e">
 		/// Console input event arguments.
 		/// </param>
-		private void console_InputReceived(object sender, ConsolunaInputEventArgs e)
+		private void console_InputReceived(object sender,
+			ConsolunaInputEventArgs e)
 		{
 			int asc = 0;
-			ConsolunaCharacterItem character = null;
-			int width = 0;
-			int height = 0;
 
-			if(e != null)
+			if(mInitialized && e != null)
 			{
 				if(e is ConsolunaInputKeyboardEventArgs keyEvent)
 				{
@@ -106,21 +107,24 @@ namespace ConsolunaTest
 				}
 				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
 				{
-					mConsole.SaveCursorPosition();
-					mConsole.SetCursorPosition(0, 0);
-					mConsole.Write(
-						$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
-					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					if(!mConsole.IsBusy)
 					{
-						mConsole.Write("Win");
+						mConsole.SaveCursorPosition();
+						mConsole.SetCursorPosition(0, 0);
+						mConsole.Write(
+							$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
+						if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+						{
+							mConsole.Write("Win");
+						}
+						else
+						{
+							mConsole.Write("Non-Win");
+						}
+						mConsole.Update();
+						mConsole.RestoreCursorPosition();
+						mConsole.HideCursor();
 					}
-					else
-					{
-						mConsole.Write("Non-Win");
-					}
-					mConsole.Update();
-					mConsole.RestoreCursorPosition();
-					mConsole.HideCursor();
 				}
 				e.Handled = true;
 			}
@@ -164,6 +168,11 @@ namespace ConsolunaTest
 				//	prg.exampleparameter = arg.Substring(key.Length);
 				//	continue;
 				//}
+				key = "/mode:";
+				if(lowerArg.StartsWith(key))
+				{
+					prg.mMode = ToInt(arg.Substring(key.Length));
+				}
 				key = "/wait";
 				if(lowerArg.StartsWith(key))
 				{
@@ -190,6 +199,23 @@ namespace ConsolunaTest
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Mode																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Mode">Mode</see>.
+		/// </summary>
+		private int mMode = 0;
+		/// <summary>
+		/// Get/Set the test mode to run.
+		/// </summary>
+		public int Mode
+		{
+			get { return mMode; }
+			set { mMode = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Run																																		*
 		//*-----------------------------------------------------------------------*
 		private Consoluna mConsole = null;
@@ -198,82 +224,91 @@ namespace ConsolunaTest
 		/// </summary>
 		public void Run()
 		{
-			//string baseText = "";
-			//string testText = "";
+			string baseText = "";
+			string testText = "";
 
 			Console.Clear();
-			//if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			//{
-			//	Console.BufferHeight = 1000;
-			//}
 
-			//baseText = "A dog jogs past big quirky clowns juggling crazy boxes, " +
-			//	"swiftly demonstrating extraordinary coordination, " +
-			//	"unpredictability, and, unquestionably, " +
-			//	"delightfully veracious " +
-			//	"supercalifragilisticexpialidociousness.";
-
-			//Console.WriteLine(
-			//	$"Word-wrapping the following with split:\r\n{baseText}\r\n");
-			//testText = WordWrap(baseText, 10, true);
-			//Console.WriteLine("* OUTPUT *");
-			//Console.WriteLine(testText);
-			//Console.WriteLine("");
-
-			//Console.WriteLine(
-			//	$"Word-wrapping the following without split:\r\n{baseText}\r\n");
-			//testText = WordWrap(baseText, 10, false);
-			//Console.WriteLine("* OUTPUT *");
-			//Console.WriteLine(testText);
-			//Console.WriteLine("");
-
-
-			//Console.WriteLine("Press [Enter] to continue.");
-			//Console.ReadLine();
-
-
-			mConsole = new Consoluna()
+			switch(mMode)
 			{
-				InputMode = ConsolunaInputMode.EventDriven,
-				PollInterval = 100
-			};
-			mConsole.InputReceived += console_InputReceived;
-			mConsole.BackColor = new ConsolunaColor("#000050");
-			mConsole.ForeColor = new ConsolunaColor("#d0d000");
+				case 0:
+					//	Color shapes.
+					mConsole = new Consoluna()
+					{
+						InputMode = ConsolunaInputMode.EventDriven,
+						PollInterval = 100
+					};
+					mConsole.InputReceived += console_InputReceived;
+					mConsole.BackColor = new ConsolunaColor("#000050");
+					mConsole.ForeColor = new ConsolunaColor("#d0d000");
 
-			mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
-				"The words you are currently reading are precisely the ones that " +
-				"were destined to appear in this very sentence.",
-				10, 10, 10, 5, wordWrap: true)
-			{
-				StyleName = "TextColor"
-			});
-			mConsole.Shapes.Add(new ConsolunaShapeLabel("lblThis",
-				"This sentence exists solely to inform you that it contains the " +
-				"very words required to say exactly what it's saying.",
-				21, 10, 10, 5, wordWrap: true)
-			{
-				StyleName = "LabelColor"
-			});
-			mConsole.Shapes.Add(new ConsolunaShapeBox("boxArea",
-				"A box",
-				32, 10, 10, 5)
-			{
-				StyleName = "DialogColor",
-				BorderStyle = ConsolunaBoxBorderStyleEnum.Single
-			});
+					mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
+						"The words you are currently reading are precisely the ones " +
+						"that were destined to appear in this very sentence.",
+						10, 10, 10, 5, wordWrap: true)
+					{
+						StyleName = "TextColor"
+					});
+					mConsole.Shapes.Add(new ConsolunaShapeLabel("lblThis",
+						"This sentence exists solely to inform you that it contains the " +
+						"very words required to say exactly what it's saying.",
+						21, 10, 10, 5, wordWrap: true)
+					{
+						StyleName = "LabelColor"
+					});
+					mConsole.Shapes.Add(new ConsolunaShapeBox("boxArea",
+						"A box",
+						32, 10, 10, 5)
+					{
+						StyleName = "DialogColor",
+						BorderStyle = ConsolunaBoxBorderStyleEnum.Single,
+						Shadow = true
+					});
 
-			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				Console.BufferHeight = Console.WindowHeight;
+					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					{
+						Console.BufferHeight = Console.WindowHeight;
+					}
+
+					mConsole.ClearScreen();
+					mConsole.SetCursorPosition(10, 9);
+					mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
+					mConsole.Write("Start writing here: ");
+
+					mConsole.Update();
+					break;
+
+				case 1:
+					//	Show word wrap.
+					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					{
+						Console.BufferHeight = 1000;
+					}
+
+					baseText = "A dog jogs past big quirky clowns juggling crazy boxes, " +
+						"swiftly demonstrating extraordinary coordination, " +
+						"unpredictability, and, unquestionably, " +
+						"delightfully veracious " +
+						"supercalifragilisticexpialidociousness.";
+
+					Console.WriteLine(
+						$"Word-wrapping the following with split:\r\n{baseText}\r\n");
+					testText = WordWrap(baseText, 10, true);
+					Console.WriteLine("* OUTPUT *");
+					Console.WriteLine(testText);
+					Console.WriteLine("");
+
+					Console.WriteLine(
+						$"Word-wrapping the following without split:\r\n{baseText}\r\n");
+					testText = WordWrap(baseText, 10, false);
+					Console.WriteLine("* OUTPUT *");
+					Console.WriteLine(testText);
+					Console.WriteLine("");
+
+					break;
 			}
+			mInitialized = true;
 
-			mConsole.ClearScreen();
-			mConsole.SetCursorPosition(10, 9);
-			mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
-			mConsole.Write("Start writing here: ");
-
-			mConsole.Update();
 		}
 		//*-----------------------------------------------------------------------*
 

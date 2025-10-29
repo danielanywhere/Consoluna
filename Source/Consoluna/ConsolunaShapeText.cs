@@ -139,8 +139,10 @@ namespace ConsolunaLib
 						Clear(builder);
 					}
 
-					screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
-					screenBuffer.SetBackColor(mCharacterWindow, BackColor);
+					//screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
+					//screenBuffer.SetBackColor(mCharacterWindow, BackColor);
+					screenBuffer.ClearCharacterWindow(mCharacterWindow,
+						ForeColor, BackColor);
 
 					if(text.Length > 0)
 					{

@@ -25,6 +25,8 @@ using System.Threading.Tasks;
 
 using ConsolunaLib.Internal;
 
+using static ConsolunaLib.ConsolunaUtil;
+
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
@@ -52,6 +54,38 @@ namespace ConsolunaLib
 		/// </summary>
 		public ConsolunaColor()
 		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaColor item.
+		/// </summary>
+		/// <param name="red">
+		/// Red channel value.
+		/// </param>
+		/// <param name="green">
+		/// Green channel value.
+		/// </param>
+		/// <param name="blue">
+		/// Blue channel value.
+		/// </param>
+		public ConsolunaColor(byte red, byte green, byte blue)
+		{
+			mRed = red;
+			mGreen = green;
+			mBlue = blue;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ConsolunaColor item.
+		/// </summary>
+		/// <param name="rgb">
+		/// Red channel value.
+		/// </param>
+		public ConsolunaColor((byte red, byte green, byte blue) rgb)
+		{
+			mRed = rgb.red;
+			mGreen = rgb.green;
+			mBlue = rgb.blue;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -112,6 +146,84 @@ namespace ConsolunaLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FromHsl																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new RGB Color from HSL values.
+		/// </summary>
+		/// <param name="hsl">
+		/// The hue, saturation, and brightness.
+		/// </param>
+		/// <returns>
+		/// An RGB tuple.
+		/// </returns>
+		public static (byte red, byte green, byte blue) FromHsl((float hue,
+			float saturation, float lightness) hsl)
+		{
+			return FromHsl(hsl.hue, hsl.saturation, hsl.lightness);
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new RGB Color from HSL values.
+		/// </summary>
+		/// <param name="hue">
+		/// The hue to convert.
+		/// </param>
+		/// <param name="saturation">
+		/// The saturation to convert.
+		/// </param>
+		/// <param name="lightness">
+		/// The lightness to convert.
+		/// </param>
+		/// <returns>
+		/// An RGB tuple.
+		/// </returns>
+		public static (byte red, byte green, byte blue) FromHsl(float hue,
+			float saturation, float lightness)
+		{
+			int b = 0;
+			float C = (1f - Math.Abs(2f * lightness - 1f)) * saturation;
+			int g = 0;
+			float m = lightness - C / 2f;
+			int r = 0;
+			float X = C * (1f - Math.Abs((hue / 60f) % 2f - 1f));
+
+			float r1 = 0f, g1 = 0f, b1 = 0f;
+
+			if(hue >= 0f && hue < 60f)
+			{
+				r1 = C; g1 = X; b1 = 0f;
+			}
+			else if(hue >= 60f && hue < 120f)
+			{
+				r1 = X; g1 = C; b1 = 0f;
+			}
+			else if(hue >= 120f && hue < 180f)
+			{
+				r1 = 0f; g1 = C; b1 = X;
+			}
+			else if(hue >= 180f && hue < 240f)
+			{
+				r1 = 0f; g1 = X; b1 = C;
+			}
+			else if(hue >= 240f && hue < 300f)
+			{
+				r1 = X; g1 = 0f; b1 = C;
+			}
+			else if(hue >= 300f && hue < 360f)
+			{
+				r1 = C; g1 = 0f; b1 = X;
+			}
+
+			r = (int)Math.Round((r1 + m) * 255f);
+			g = (int)Math.Round((g1 + m) * 255f);
+			b = (int)Math.Round((b1 + m) * 255f);
+
+			return ((byte)ClampByte(r), (byte)ClampByte(g), (byte)ClampByte(b));
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -189,6 +301,26 @@ namespace ConsolunaLib
 		//*	SetColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
+		/// Set the color's channel values from an RGB tuple.
+		/// </summary>
+		/// <param name="colsoleColor">
+		/// Reference to the object to update.
+		/// </param>
+		/// <param name="color">
+		/// The tuple to apply.
+		/// </param>
+		public static void SetColor(ConsolunaColor consoleColor,
+			(byte red, byte green, byte blue) color)
+		{
+			if(consoleColor != null)
+			{
+				consoleColor.mRed = color.red;
+				consoleColor.mGreen = color.green;
+				consoleColor.mBlue = color.blue;
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
 		/// Set the color's channel values from the caller's HTML hex code.
 		/// </summary>
 		/// <param name="consoleColor">
@@ -209,6 +341,87 @@ namespace ConsolunaLib
 				consoleColor.mBlue = Convert.ToByte(hexColor.Substring(5, 2), 16);
 				consoleColor.OnPropertyChanged("Color");
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToHsl																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the HSL representation of the caller's RGB value,
+		/// </summary>
+		/// <param name="color">
+		/// Reference to the color to be converted.
+		/// </param>
+		/// <returns>
+		/// A tuple containing the hue, saturation, and lightness components of an
+		/// HSL color.
+		/// </returns>
+		public static (float hue, float saturation, float lightness) ToHsl(
+			ConsolunaColor color)
+		{
+			float blue = 0f;
+			float delta = 0f;
+			float green = 0f;
+			float hue = 0f;
+			float lightness = 0f;
+			float max = 0f;
+			float min = 0f;
+			float red = 0f;
+			float saturation = 0f;
+
+			if(color != null)
+			{
+				// Normalize RGB values to [0,1]
+				red = (float)color.mRed / 255f;
+				green = (float)color.mGreen / 255f;
+				blue = (float)color.mBlue / 255f;
+
+				max = Math.Max(red, Math.Max(green, blue));
+				min = Math.Min(red, Math.Min(green, blue));
+				delta = max - min;
+
+				// Calculate Lightness
+				lightness = (max + min) / 2f;
+
+				hue = 0f;
+				saturation = 0f;
+
+				if(delta != 0f)
+				{
+					// Calculate Saturation
+					if(max + min != 0f && max - min != 2f)
+					{
+						saturation = lightness < 0.5f ?
+							delta / (max + min) :
+							delta / (2f - max - min);
+					}
+
+					// Calculate Hue
+					if(delta != 0f)
+					{
+						if(max == red)
+						{
+							hue = ((green - blue) / delta) % 6f;
+						}
+						else if(max == green)
+						{
+							hue = ((blue - red) / delta) + 2f;
+						}
+						else // max == bf
+						{
+							hue = ((red - green) / delta) + 4f;
+						}
+					}
+
+					hue *= 60f;
+					if(hue < 0f)
+					{
+						hue += 360f;
+					}
+				}
+			}
+			return (hue, saturation, lightness);
 		}
 		//*-----------------------------------------------------------------------*
 

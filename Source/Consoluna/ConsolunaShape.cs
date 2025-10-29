@@ -515,12 +515,7 @@ namespace ConsolunaLib
 					}
 				}
 				//	Any inherited class can use this window.
-				if(mShadow)
-				{
-					mCharacterWindow = screenBuffer.GetCharactersInArea(
-						mPosition.X, mPosition.Y, mSize.Width + 1, mSize.Height + 1);
-				}
-				else
+				if(!mShadow)
 				{
 					mCharacterWindow = screenBuffer.GetCharactersInArea(
 						mPosition.X, mPosition.Y, mSize.Width, mSize.Height);
@@ -534,17 +529,26 @@ namespace ConsolunaLib
 					//	Draw shadow.
 					if(mShadow)
 					{
-						colIndex = colCount - 1;
-						for(rowIndex = 1; rowIndex < rowCount; rowIndex++)
+						mCharacterWindow = screenBuffer.GetCharactersInArea(
+							mPosition.X + mSize.Width,
+							mPosition.Y + 1,
+							1,
+							mSize.Height);
+						foreach(ConsolunaCharacterItem characterItem in mCharacterWindow)
 						{
-							mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+							characterItem.Shadowed = true;
 						}
-						rowIndex = rowCount - 1;
-						colCount--;
-						for(colIndex = 1; colIndex < colCount; colIndex++)
+						mCharacterWindow = screenBuffer.GetCharactersInArea(
+							mPosition.X + 1,
+							mPosition.Y + mSize.Height,
+							mSize.Width - 1,
+							1);
+						foreach(ConsolunaCharacterItem characterItem in mCharacterWindow)
 						{
-							mCharacterWindow[colIndex, rowIndex].Shadowed = true;
+							characterItem.Shadowed = true;
 						}
+						mCharacterWindow = screenBuffer.GetCharactersInArea(
+							mPosition.X, mPosition.Y, mSize.Width, mSize.Height);
 					}
 				}
 				else if(mDirty && mLastPosition != null &&

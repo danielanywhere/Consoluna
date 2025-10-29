@@ -46,6 +46,109 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//* AfterShadowEquals																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the two colors are equal
+		/// </summary>
+		/// <param name="character"></param>
+		/// <param name="colorName"></param>
+		/// <param name="comparison"></param>
+		/// <returns></returns>
+		public static bool AfterShadowEquals(ConsolunaCharacterItem character,
+			string colorName, ConsolunaColor comparison)
+		{
+			ConsolunaColor currentColor = null;
+			bool result = false;
+
+			if(character != null && colorName?.Length > 0)
+			{
+				switch(colorName)
+				{
+					case "BackColor":
+						currentColor = character.BackColor;
+						break;
+					case "ForeColor":
+						currentColor = character.ForeColor;
+						break;
+				}
+				//currentColor = (ConsolunaColor)GetPropertyByName(character, colorName);
+				if(currentColor != null)
+				{
+					if(character.Shadowed)
+					{
+						(float hue, float saturation, float lightness) =
+							ConsolunaColor.ToHsl(currentColor);
+						lightness /= 2f;
+						currentColor = new ConsolunaColor(
+							ConsolunaColor.FromHsl((hue, saturation, lightness)));
+					}
+					result = currentColor.Equals(comparison);
+				}
+				else
+				{
+					//	Compare only against null.
+					result = (currentColor == comparison);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ApplyShadowColor																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the specified color of the provided character after the
+		/// shadow has been applied.
+		/// </summary>
+		/// <param name="baseColor">
+		/// Reference to the base color to use.
+		/// </param>
+		/// <param name="shadowed">
+		/// Value indicating whether the color is to be shaded.
+		/// </param>
+		/// <returns>
+		/// Reference to the provided base color, if the character was
+		/// not shaded. Otherwise, a reference to a shaded version of the
+		/// base color.
+		/// </returns>
+		public static ConsolunaColor ApplyShadowColor(ConsolunaColor baseColor,
+			bool shadowed)
+		{
+			ConsolunaColor result = baseColor;
+
+			if(baseColor != null && shadowed)
+			{
+				(float hue, float saturation, float lightness) =
+					ConsolunaColor.ToHsl(baseColor);
+				lightness /= 2f;
+				result = new ConsolunaColor(
+					ConsolunaColor.FromHsl((hue, saturation, lightness)));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ClampByte																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clamp a value to a integer byte.
+		/// </summary>
+		/// <param name="value">
+		/// The raw value to clamp.
+		/// </param>
+		/// <returns>
+		/// Valid byte value between 0 and 255.
+		/// </returns>
+		public static int ClampByte(int value)
+		{
+			return Math.Max(0, Math.Min(255, value));
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* Clear																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -309,14 +412,10 @@ namespace ConsolunaLib
 				{
 					//	Built-in property.
 					property =
-						properties.FirstOrDefault(x => x.Name.EndsWith(propertyName));
+						properties.FirstOrDefault(x => x.Name == propertyName);
 					if(property != null)
 					{
 						propertyValue = property.GetValue(item);
-						if(propertyValue != null)
-						{
-							result = propertyValue.ToString();
-						}
 					}
 				}
 			}
@@ -437,6 +536,49 @@ namespace ConsolunaLib
 					}
 				}
 			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToInt																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Provide fail-safe conversion of string to numeric value.
+		/// </summary>
+		/// <param name="value">
+		/// Value to convert.
+		/// </param>
+		/// <returns>
+		/// Int32 value. 0 if not convertible.
+		/// </returns>
+		public static int ToInt(object value)
+		{
+			int result = 0;
+			if(value != null)
+			{
+				result = ToInt(value.ToString());
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Provide fail-safe conversion of string to numeric value.
+		/// </summary>
+		/// <param name="value">
+		/// Value to convert.
+		/// </param>
+		/// <returns>
+		/// Int32 value. 0 if not convertible.
+		/// </returns>
+		public static int ToInt(string value)
+		{
+			int result = 0;
+			try
+			{
+				result = int.Parse(value);
+			}
+			catch { }
 			return result;
 		}
 		//*-----------------------------------------------------------------------*

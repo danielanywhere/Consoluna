@@ -302,9 +302,18 @@ namespace ConsolunaLib
 		public bool Shadowed
 		{
 			get { return mShadowed; }
-			set { mShadowed = value; }
+			set
+			{
+				bool bChanged = (mShadowed != value);
+				mShadowed = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
+
 
 	}
 	//*-------------------------------------------------------------------------*
