@@ -30,6 +30,7 @@ namespace ConsolunaLib
 	/// <summary>
 	/// Enumeration of known key modifier types in Consoluna applications.
 	/// </summary>
+	[Flags]
 	public enum ConsolunaInputKeyModifierType
 	{
 		/// <summary>

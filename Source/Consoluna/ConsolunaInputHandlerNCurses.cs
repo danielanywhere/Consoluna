@@ -48,6 +48,209 @@ namespace ConsolunaLib
 		private int mKeyMouse;
 
 		//*-----------------------------------------------------------------------*
+		//* GetKeyCode																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Get the extended key code for the specified character code.
+		/// </summary>
+		/// <param name="code1">
+		/// The primary ncurses code to inspect.
+		/// </param>
+		/// <param name="code2">
+		/// The secondary ncurses code to inspect.
+		/// </param>
+		/// <returns>
+		/// The consistent key code to return to the caller.
+		/// </returns>
+		private static int GetKeyCode(int code1, int code2)
+		{
+			int result = 0;
+
+			if((code1 > 0 && code1 < 9) ||
+				(code1 > 10 && code1 < 27))
+			{
+				//	So yea. We kind of have to skip support for the following:
+				//	- 09: [Ctrl][I]. This is universal [Tab].
+				//	- 10: [Ctrl][J]. This is [Enter] in Unix.
+				result = code1 + 96;
+			}
+			else if(code1 == 27 &&
+				code2 > 0 && code2 < 27)
+			{
+				result = code2 + 96;
+			}
+			else if(code1 > 31 && code1 < 127)
+			{
+				result = code1;
+			}
+			else if(code1 == 27 && code2 > 31 && code2 < 127)
+			{
+				result = code2;
+			}
+			else
+			{
+				switch(code1)
+				{
+					case 263:
+						//	Backspace.
+						result = 8;
+						break;
+					case 330:
+						//	Delete.
+						result = 127;
+						break;
+					case 9:
+						//	Tab.
+						result = 9;
+						break;
+					case 10:
+					//	Unix [Enter].
+					case 13:
+					//	Actual physical [Enter] key on every modern keyboard.
+					case 343:
+						//	KEY_ENTER.
+						result = '\r';
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetKeyCharacter																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Retrieve the recognizable character associated with the specified
+		/// character code.
+		/// </summary>
+		/// <param name="code1">
+		/// The primary ncurses code to inspect.
+		/// </param>
+		/// <param name="code2">
+		/// The secondary ncurses code to inspect.
+		/// </param>
+		/// <returns>
+		/// The recognizable character to return to the caller.
+		/// </returns>
+		private static char GetKeyCharacter(int code1, int code2)
+		{
+			char result = '\0';
+			if((code1 > 0 && code1 < 9) ||
+				(code1 > 10 && code1 < 27))
+			{
+				//	So yea. We kind of have to skip support for the following:
+				//	- 09: [Ctrl][I]. This is universal [Tab].
+				//	- 10: [Ctrl][J]. This is [Enter] in Unix.
+				result = (char)(code1 + 96);
+			}
+			else if(code1 == 27 &&
+				code2 > 0 && code2 < 27)
+			{
+				result = (char)(code2 + 96);
+			}
+			else if(code1 > 31 && code1 < 127)
+			{
+				result = (char)code1;
+			}
+			else if(code1 == 27 && code2 > 31 && code2 < 127)
+			{
+				result = (char)code2;
+			}
+			else
+			{
+				switch(code1)
+				{
+					case 263:
+						//	Backspace.
+						result = '\b';
+						break;
+					case 330:
+						//	Delete.
+						result = (char)127;
+						break;
+					case 9:
+						result = '\t';
+						break;
+					case 10:
+						//	Unix [Enter].
+					case 13:
+						//	Actual physical [Enter] key on every modern keyboard.
+					case 343:
+						//	KEY_ENTER.
+						result = '\r';
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetKeyModifier																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the key modifier active for the current key code.
+		/// </summary>
+		/// <param name="code1">
+		/// The primary ncurses code to inspect.
+		/// </param>
+		/// <param name="code2">
+		/// The secondary ncurses code to inspect.
+		/// </param>
+		/// <returns>
+		/// The input key modifier type associated with the current code, if
+		/// found. Otherwise, None.
+		/// </returns>
+		private static ConsolunaInputKeyModifierType GetKeyModifier(int code1,
+			int code2)
+		{
+			ConsolunaInputKeyModifierType result =
+				ConsolunaInputKeyModifierType.None;
+
+			if((code1 > 0 && code1 < 9) ||
+				(code1 > 10 && code1 < 27))
+			{
+				//	So yea. We kind of have to skip support for the following:
+				//	- 09: [Ctrl][I]. This is universal [Tab].
+				//	- 10: [Ctrl][J]. This is [Enter] in Unix.
+				result |= ConsolunaInputKeyModifierType.Ctrl;
+			}
+			else if(code1 == 27 && code2 > 0)
+			{
+				result |= ConsolunaInputKeyModifierType.Alt;
+				if(code2 > 64 && code2 < 91)
+				{
+					result |= ConsolunaInputKeyModifierType.Shift;
+				}
+			}
+			else if((code1 >= 33 && code1 <= 38) ||
+				(code1 >= 40 && code1 <= 43) ||
+				(code1 >= 65 && code1 <= 90))
+			{
+				result |= ConsolunaInputKeyModifierType.Shift;
+			}
+			else
+			{
+				switch(code1)
+				{
+					case 58:
+					case 60:
+					case 62:
+					case 63:
+					case 64:
+					case 94:
+					case 95:
+					case 126:
+						result |= ConsolunaInputKeyModifierType.Shift;
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetMouseMethod																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -366,6 +569,7 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 		//* ReadInput																															*
 		//*-----------------------------------------------------------------------*
+		private bool mWaitForNext = false;
 		/// <summary>
 		/// Read the current input from the console.
 		/// </summary>
@@ -420,10 +624,30 @@ namespace ConsolunaLib
 						}
 						else
 						{
-							result = new ConsolunaInputKeyboardEventArgs()
+							if(mWaitForNext)
 							{
-								KeyCode = ch
-							};
+								result = new ConsolunaInputKeyboardEventArgs()
+								{
+									KeyCode = GetKeyCode(27, ch),
+									KeyCharacter = GetKeyCharacter(27, ch),
+									KeyModifier = GetKeyModifier(27, ch)
+								};
+								mWaitForNext = false;
+							}
+							else if(ch == 27)
+							{
+								mWaitForNext = true;
+							}
+							else
+							{
+								//	Normal (is there such a thing in ncurses?) character.
+								result = new ConsolunaInputKeyboardEventArgs()
+								{
+									KeyCode = GetKeyCode(ch, 0),
+									KeyCharacter = GetKeyCharacter(ch, 0),
+									KeyModifier = GetKeyModifier(ch, 0)
+								};
+							}
 						}
 					}
 				}

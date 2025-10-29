@@ -156,6 +156,41 @@ namespace ConsolunaLib
 		private INPUT_RECORD[] mWindowRecord = new INPUT_RECORD[KeyBufferLength];
 		private IntPtr mWindowInputHandle = default(IntPtr);
 
+		//*-----------------------------------------------------------------------*
+		//* GetKeyModifier																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the modifier keys for the current control key state.
+		/// </summary>
+		/// <param name="controlKeyState">
+		/// Windows KEY_EVENT_RECORD ControlKeyState.
+		/// </param>
+		/// <returns>
+		/// Input key modifier value corresponding to the reported control key
+		/// state.
+		/// </returns>
+		private static ConsolunaInputKeyModifierType GetKeyModifier(
+			uint controlKeyState)
+		{
+			ConsolunaInputKeyModifierType result =
+				ConsolunaInputKeyModifierType.None;
+
+			if((controlKeyState & 0x0003) != 0)
+			{
+				result |= ConsolunaInputKeyModifierType.Alt;
+			}
+			if((controlKeyState & 0x000c) != 0)
+			{
+				result |= ConsolunaInputKeyModifierType.Ctrl;
+			}
+			if((controlKeyState & 0x0010) != 0)
+			{
+				result |= ConsolunaInputKeyModifierType.Shift;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -294,7 +329,8 @@ namespace ConsolunaLib
 								result = new ConsolunaInputKeyboardEventArgs()
 								{
 									KeyCharacter = keyEvent.UnicodeChar,
-									KeyCode = (int)keyEvent.UnicodeChar
+									KeyCode = (int)keyEvent.UnicodeChar,
+									KeyModifier = GetKeyModifier(keyEvent.ControlKeyState)
 								};
 							}
 							break;

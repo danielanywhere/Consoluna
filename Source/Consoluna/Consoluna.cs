@@ -1027,7 +1027,7 @@ namespace ConsolunaLib
 				mCursorPosition.X--;
 			}
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
-			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+			SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1044,7 +1044,7 @@ namespace ConsolunaLib
 		{
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.X = 0;
-			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+			SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1271,25 +1271,32 @@ namespace ConsolunaLib
 				xEnd = xStart + width;
 				yEnd = yStart + height;
 				result = new ConsolunaCharacterItem[width, height];
-				for(yIndex = yStart, rowIndex = 0;
-					yIndex < yEnd;
-					yIndex++, rowIndex++)
+				try
 				{
-					for(xIndex = xStart, colIndex = 0;
-						xIndex < xEnd;
-						xIndex++, colIndex++)
+					for(yIndex = yStart, rowIndex = 0;
+						yIndex < yEnd;
+						yIndex++, rowIndex++)
 					{
-						if(xIndex >= 0 && xIndex < mWidth &&
-							yIndex >= 0 && yIndex < mHeight)
+						for(xIndex = xStart, colIndex = 0;
+							xIndex < xEnd;
+							xIndex++, colIndex++)
 						{
-							bufferIndex = GetBufferIndex(mWidth, mHeight, xIndex, yIndex);
-							result[colIndex, rowIndex] = mCharacters[bufferIndex];
-						}
-						else
-						{
-							result[colIndex, rowIndex] = new ConsolunaCharacterItem();
+							if(xIndex >= 0 && xIndex < mWidth &&
+								yIndex >= 0 && yIndex < mHeight)
+							{
+								bufferIndex = GetBufferIndex(mWidth, mHeight, xIndex, yIndex);
+								result[colIndex, rowIndex] = mCharacters[bufferIndex];
+							}
+							else
+							{
+								result[colIndex, rowIndex] = new ConsolunaCharacterItem();
+							}
 						}
 					}
+				}
+				catch
+				{
+					result = null;
 				}
 			}
 
@@ -1374,6 +1381,30 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* InWindow																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the provided coordinate is within the
+		/// physical window.
+		/// </summary>
+		/// <param name="colIndex">
+		/// The column index to check.
+		/// </param>
+		/// <param name="rowIndex">
+		/// The row index to check.
+		/// </param>
+		/// <returns>
+		/// True if the provided coordinate is within the physical terminal window.
+		/// Otherwise, false.
+		/// </returns>
+		public bool InWindow(int colIndex, int rowIndex)
+		{
+			return (colIndex > -1 && colIndex < Console.WindowWidth &&
+				rowIndex > -1 && rowIndex < Console.WindowHeight);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* KeyboardInputReceived																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1397,7 +1428,7 @@ namespace ConsolunaLib
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.Y += count;
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
-			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+			SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1558,7 +1589,7 @@ namespace ConsolunaLib
 		//* SetCursorPosition																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Set the current cursor position.
+		/// Set the current logical cursor position.
 		/// </summary>
 		/// <param name="x">
 		/// 0-based horizontal position.
@@ -1669,6 +1700,38 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* SetTerminalPosition																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Safely set the current cursor position on the physical terminal.
+		/// </summary>
+		/// <param name="colIndex">
+		/// The index of the column to activate.
+		/// </param>
+		/// <param name="rowIndex">
+		/// The index of the row to activate.
+		/// </param>
+		/// <returns>
+		/// True if the position was set. Otherwise, false.
+		/// </returns>
+		public bool SetTerminalPosition(int colIndex, int rowIndex)
+		{
+			bool result = false;
+
+			if(InWindow(colIndex, rowIndex))
+			{
+				try
+				{
+					Console.SetCursorPosition(colIndex, rowIndex);
+					result = true;
+				}
+				catch { }
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Shapes																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1728,7 +1791,7 @@ namespace ConsolunaLib
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
 			mCursorPosition.X += (count * 4);
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
-			Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+			SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1829,12 +1892,12 @@ namespace ConsolunaLib
 					//	is only available in Windows.
 					if(Console.WindowWidth != Console.BufferWidth)
 					{
-						Console.SetCursorPosition(0, 0);
+						SetTerminalPosition(0, 0);
 						Console.BufferWidth = Console.WindowWidth;
 					}
 					if(Console.WindowHeight != Console.BufferHeight)
 					{
-						Console.SetCursorPosition(0, 0);
+						SetTerminalPosition(0, 0);
 						Console.BufferHeight = Console.WindowHeight;
 					}
 				}
@@ -1883,7 +1946,7 @@ namespace ConsolunaLib
 					Console.Write(AnsiForeColorStart(mForeColor));
 					Console.Write(AnsiEraseInDisplay());
 					//Console.Write(AnsiCursorHide());
-					Console.SetCursorPosition(0, 0);
+					SetTerminalPosition(0, 0);
 				}
 				//rows = mScreenCharacters
 				//	.Where(x => x.Dirty)
@@ -1932,12 +1995,16 @@ namespace ConsolunaLib
 							else if(builder.Length > 0)
 							{
 								//	Apply the style.
-								Console.SetCursorPosition(startX, rowIndex);
-								Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
-								Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
-								Console.Write(AnsiStyleStart(lastStyle));
-								Console.Write(builder.ToString());
-								Console.Write(AnsiResetStyles());
+								if(SetTerminalPosition(startX, rowIndex))
+								{
+									Console.Write(AnsiBackColorStart(
+										lastBackColor ?? mBackColor));
+									Console.Write(AnsiForeColorStart(
+										lastForeColor ?? mForeColor));
+									Console.Write(AnsiStyleStart(lastStyle));
+									Console.Write(builder.ToString());
+									Console.Write(AnsiResetStyles());
+								}
 								Clear(builder);
 								bFound = false;
 							}
@@ -1958,24 +2025,28 @@ namespace ConsolunaLib
 					if(builder.Length > 0)
 					{
 						//	Apply the current style.
-						Console.SetCursorPosition(startX, rowIndex);
-						Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
-						Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
-						Console.Write(AnsiStyleStart(lastStyle));
-						Console.Write(builder.ToString());
-						Console.Write(AnsiResetStyles());
+						if(SetTerminalPosition(startX, rowIndex))
+						{
+							Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
+							Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
+							Console.Write(AnsiStyleStart(lastStyle));
+							Console.Write(builder.ToString());
+							Console.Write(AnsiResetStyles());
+						}
 						Clear(builder);
 					}
 				}
 				if(builder.Length > 0)
 				{
 					//	Apply any remaining style.
-					Console.SetCursorPosition(startX, rowIndex);
-					Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
-					Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
-					Console.Write(AnsiStyleStart(lastStyle));
-					Console.Write(builder.ToString());
-					Console.Write(AnsiResetStyles());
+					if(SetTerminalPosition(startX, rowIndex))
+					{
+						Console.Write(AnsiBackColorStart(lastBackColor ?? mBackColor));
+						Console.Write(AnsiForeColorStart(lastForeColor ?? mForeColor));
+						Console.Write(AnsiStyleStart(lastStyle));
+						Console.Write(builder.ToString());
+						Console.Write(AnsiResetStyles());
+					}
 				}
 				mCharacterEventsActive = bCharacterEventsActive;
 				mLastUpdateWidth = mWidth;
@@ -1983,7 +2054,7 @@ namespace ConsolunaLib
 				if(bCursorVisible)
 				{
 					ShowCursor();
-					Console.SetCursorPosition(mCursorPosition.X, mCursorPosition.Y);
+					SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 				}
 				mUpdateBusy = false;
 			}

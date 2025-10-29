@@ -87,6 +87,24 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//*	KeyModifier																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="KeyModifier">KeyModifier</see>.
+		/// </summary>
+		private ConsolunaInputKeyModifierType mKeyModifier =
+			ConsolunaInputKeyModifierType.None;
+		/// <summary>
+		/// Get/Set the modifiers for this key.
+		/// </summary>
+		public ConsolunaInputKeyModifierType KeyModifier
+		{
+			get { return mKeyModifier; }
+			set { mKeyModifier = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
 	}
 	//*-------------------------------------------------------------------------*
 

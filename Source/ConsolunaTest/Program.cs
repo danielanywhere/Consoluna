@@ -63,7 +63,8 @@ namespace ConsolunaTest
 				if(e is ConsolunaInputKeyboardEventArgs keyEvent)
 				{
 					asc = (int)keyEvent.KeyCharacter;
-					if(asc > 31 && asc < 127)
+					if(asc > 31 && asc < 127 &&
+						((int)keyEvent.KeyModifier & 0x06) == 0)
 					{
 						mConsole.Write(keyEvent.KeyCharacter);
 					}
@@ -197,38 +198,38 @@ namespace ConsolunaTest
 		/// </summary>
 		public void Run()
 		{
-			string baseText = "";
-			string testText = "";
+			//string baseText = "";
+			//string testText = "";
 
 			Console.Clear();
-			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				Console.BufferHeight = 1000;
-			}
+			//if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			//{
+			//	Console.BufferHeight = 1000;
+			//}
 
-			baseText = "A dog jogs past big quirky clowns juggling crazy boxes, " +
-				"swiftly demonstrating extraordinary coordination, " +
-				"unpredictability, and, unquestionably, " +
-				"delightfully veracious " +
-				"supercalifragilisticexpialidociousness.";
+			//baseText = "A dog jogs past big quirky clowns juggling crazy boxes, " +
+			//	"swiftly demonstrating extraordinary coordination, " +
+			//	"unpredictability, and, unquestionably, " +
+			//	"delightfully veracious " +
+			//	"supercalifragilisticexpialidociousness.";
 
-			Console.WriteLine(
-				$"Word-wrapping the following with split:\r\n{baseText}\r\n");
-			testText = WordWrap(baseText, 10, true);
-			Console.WriteLine("* OUTPUT *");
-			Console.WriteLine(testText);
-			Console.WriteLine("");
+			//Console.WriteLine(
+			//	$"Word-wrapping the following with split:\r\n{baseText}\r\n");
+			//testText = WordWrap(baseText, 10, true);
+			//Console.WriteLine("* OUTPUT *");
+			//Console.WriteLine(testText);
+			//Console.WriteLine("");
 
-			Console.WriteLine(
-				$"Word-wrapping the following without split:\r\n{baseText}\r\n");
-			testText = WordWrap(baseText, 10, false);
-			Console.WriteLine("* OUTPUT *");
-			Console.WriteLine(testText);
-			Console.WriteLine("");
+			//Console.WriteLine(
+			//	$"Word-wrapping the following without split:\r\n{baseText}\r\n");
+			//testText = WordWrap(baseText, 10, false);
+			//Console.WriteLine("* OUTPUT *");
+			//Console.WriteLine(testText);
+			//Console.WriteLine("");
 
 
-			Console.WriteLine("Press [Enter] to continue.");
-			Console.ReadLine();
+			//Console.WriteLine("Press [Enter] to continue.");
+			//Console.ReadLine();
 
 
 			mConsole = new Consoluna()
@@ -262,6 +263,10 @@ namespace ConsolunaTest
 				BorderStyle = ConsolunaBoxBorderStyleEnum.Single
 			});
 
+			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				Console.BufferHeight = Console.WindowHeight;
+			}
 
 			mConsole.ClearScreen();
 			mConsole.SetCursorPosition(10, 9);
