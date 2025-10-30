@@ -16,6 +16,7 @@
  * 
  */
 
+using ConsolunaLib.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,15 +24,15 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Handlers
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputHandlerWindows																						*
+	//*	InputHandlerWindows																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// User input handler specifically for Windows Console.
 	/// </summary>
-	public class ConsolunaInputHandlerWindows : IConsolunaInputHandler
+	public class InputHandlerWindows : IInputHandler
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -123,30 +124,30 @@ namespace ConsolunaLib
 		// ** WINDOWS API FUNCTIONS **
 		//*-----------------------------------------------------------------------*
 		[DllImport("kernel32.dll")]
-		private static extern IntPtr GetStdHandle(int nStdHandle);
+		private static extern nint GetStdHandle(int nStdHandle);
 
 		[DllImport("kernel32.dll")]
-		private static extern bool GetConsoleMode(IntPtr hConsoleHandle,
+		private static extern bool GetConsoleMode(nint hConsoleHandle,
 			out uint lpMode);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadConsoleInput(
-				IntPtr hConsoleInput,
+				nint hConsoleInput,
 				[Out] INPUT_RECORD[] lpBuffer,
 				uint nLength,
 				out uint lpNumberOfEventsRead);
 
 		[DllImport("kernel32.dll")]
-		private static extern bool SetConsoleMode(IntPtr hConsoleHandle,
+		private static extern bool SetConsoleMode(nint hConsoleHandle,
 			uint dwMode);
 
 		[DllImport("kernel32.dll")]
-		private static extern bool PeekConsoleInput(IntPtr hConsoleInput,
+		private static extern bool PeekConsoleInput(nint hConsoleInput,
 			[Out] INPUT_RECORD[] lpBuffer, uint nLength,
 			out uint lpNumberOfEventsRead);
 
 		[DllImport("kernel32.dll")]
-		private static extern uint WaitForSingleObject(IntPtr hHandle,
+		private static extern uint WaitForSingleObject(nint hHandle,
 			uint dwMilliseconds);
 
 		//	** LOCAL PRIVATE **
@@ -154,7 +155,7 @@ namespace ConsolunaLib
 		private bool mInitialized = false;
 		private uint mWindowConsoleMode = 0;
 		private INPUT_RECORD[] mWindowRecord = new INPUT_RECORD[KeyBufferLength];
-		private IntPtr mWindowInputHandle = default(IntPtr);
+		private nint mWindowInputHandle = default;
 
 		//*-----------------------------------------------------------------------*
 		//* GetKeyModifier																												*
@@ -169,23 +170,23 @@ namespace ConsolunaLib
 		/// Input key modifier value corresponding to the reported control key
 		/// state.
 		/// </returns>
-		private static ConsolunaInputKeyModifierType GetKeyModifier(
+		private static KeyModifierType GetKeyModifier(
 			uint controlKeyState)
 		{
-			ConsolunaInputKeyModifierType result =
-				ConsolunaInputKeyModifierType.None;
+			KeyModifierType result =
+				KeyModifierType.None;
 
 			if((controlKeyState & 0x0003) != 0)
 			{
-				result |= ConsolunaInputKeyModifierType.Alt;
+				result |= KeyModifierType.Alt;
 			}
 			if((controlKeyState & 0x000c) != 0)
 			{
-				result |= ConsolunaInputKeyModifierType.Ctrl;
+				result |= KeyModifierType.Ctrl;
 			}
 			if((controlKeyState & 0x0010) != 0)
 			{
-				result |= ConsolunaInputKeyModifierType.Shift;
+				result |= KeyModifierType.Shift;
 			}
 			return result;
 		}
@@ -203,10 +204,10 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Create a new instance of the WindowsConsoleInputHandler item.
 		/// </summary>
-		public ConsolunaInputHandlerWindows()
+		public InputHandlerWindows()
 		{
 			uint windowConsoleMode = 0;
-			IntPtr windowOutputHandle = default(IntPtr);
+			nint windowOutputHandle = default;
 
 			windowOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 			if(GetConsoleMode(windowOutputHandle, out windowConsoleMode))
@@ -221,7 +222,7 @@ namespace ConsolunaLib
 		/// <param name="WindowConsoleMode">
 		/// The starting window console mode.
 		/// </param>
-		public ConsolunaInputHandlerWindows(uint windowConsoleMode)
+		public InputHandlerWindows(uint windowConsoleMode)
 		{
 			mWindowConsoleMode = windowConsoleMode;
 		}
@@ -270,13 +271,13 @@ namespace ConsolunaLib
 		///// <summary>
 		///// Private member for <see cref="InputInfo">InputInfo</see>.
 		///// </summary>
-		//private List<ConsolunaInputEventArgs> mInputInfo =
-		//	new List<ConsolunaInputEventArgs>();
+		//private List<InputEventArgs> mInputInfo =
+		//	new List<InputEventArgs>();
 		///// <summary>
 		///// Get/Set a reference to the input info collection assigned to this
 		///// instance.
 		///// </summary>
-		//public List<ConsolunaInputEventArgs> InputInfo
+		//public List<InputEventArgs> InputInfo
 		//{
 		//	get { return mInputInfo; }
 		//	set { mInputInfo = value; }
@@ -293,13 +294,13 @@ namespace ConsolunaLib
 		/// Reference to a single event read from the input, if present. Otherwise,
 		/// null.
 		/// </returns>
-		public ConsolunaInputEventArgs ReadInput()
+		public InputEventArgs ReadInput()
 		{
 			int colCount = 0;
-			KEY_EVENT_RECORD keyEvent = default(KEY_EVENT_RECORD);
-			MOUSE_EVENT_RECORD mouseEvent = default(MOUSE_EVENT_RECORD);
-			INPUT_RECORD record = default(INPUT_RECORD);
-			ConsolunaInputEventArgs result = null;
+			KEY_EVENT_RECORD keyEvent = default;
+			MOUSE_EVENT_RECORD mouseEvent = default;
+			INPUT_RECORD record = default;
+			InputEventArgs result = null;
 			int rowCount = 0;
 			uint windowEventCount = 0;
 			uint windowReadCount = 0;
@@ -326,10 +327,10 @@ namespace ConsolunaLib
 							//	);
 							if(keyEvent.KeyDown == 1)
 							{
-								result = new ConsolunaInputKeyboardEventArgs()
+								result = new KeyboardInputEventArgs()
 								{
 									KeyCharacter = keyEvent.UnicodeChar,
-									KeyCode = (int)keyEvent.UnicodeChar,
+									KeyCode = keyEvent.UnicodeChar,
 									KeyModifier = GetKeyModifier(keyEvent.ControlKeyState)
 								};
 							}
@@ -344,20 +345,20 @@ namespace ConsolunaLib
 							//	$"ButtonState: {mouseEvent.ButtonState}");
 							if(mouseEvent.ButtonState == 1)
 							{
-								result = new ConsolunaInputMouseEventArgs()
+								result = new MouseInputEventArgs()
 								{
 									MouseX = mouseEvent.MousePosition.X,
 									MouseY = mouseEvent.MousePosition.Y
 								};
 							}
 							break;
-						//	NOTE: Window size handled at host in this version.
-						//case WINDOW_BUFFER_SIZE_EVENT:
-						//	colCount = record.WindowBufferSizeEvent.Size.X;
-						//	rowCount = record.WindowBufferSizeEvent.Size.Y;
-						//	Console.WriteLine(
-						//		$"Window buffer size changed: {colCount} x {rowCount}");
-						//	break;
+							//	NOTE: Window size handled at host in this version.
+							//case WINDOW_BUFFER_SIZE_EVENT:
+							//	colCount = record.WindowBufferSizeEvent.Size.X;
+							//	rowCount = record.WindowBufferSizeEvent.Size.Y;
+							//	Console.WriteLine(
+							//		$"Window buffer size changed: {colCount} x {rowCount}");
+							//	break;
 					}
 				}
 			}

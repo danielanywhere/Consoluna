@@ -22,35 +22,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Shapes
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputMode																											*
+	//*	ShapeType																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of available input modes for ConsolePlus.
+	/// Enumeration of recognized shape types.
 	/// </summary>
-	public enum ConsolunaInputMode
+	public enum ShapeType
 	{
 		/// <summary>
-		/// No input mode specified or unknown.
+		/// No shape specified or unknown.
 		/// </summary>
 		None = 0,
 		/// <summary>
-		/// Non-blocking immediate character. The caller will poll for input
-		/// directly on the host's schedule.
+		/// Text in the area.
 		/// </summary>
-		DirectPoll,
+		Text,
 		/// <summary>
-		/// Blocking. The caller will wait for a specific value to be received,
-		/// discarding other non-matching values.
+		/// Label in the area. Text and label differ in that upon the text
+		/// shape, the full foreground and background areas are written,
+		/// while on the label, only foreground for the present data is written.
 		/// </summary>
-		FilterWait,
+		Label,
 		/// <summary>
-		/// Non-blocking. The caller will register to receive input events
-		/// as they occur at the console.
+		///	A box, with or without borders.
 		/// </summary>
-		EventDriven
+		Box,
+		/// <summary>
+		/// A dialog box with border, close icon, optional maximize icon,
+		/// and optional button.
+		/// </summary>
+		Dialog,
+		/// <summary>
+		/// A custom shape using a series of character sequences.
+		/// </summary>
+		Custom
 	}
 	//*-------------------------------------------------------------------------*
 

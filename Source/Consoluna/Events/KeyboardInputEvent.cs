@@ -18,17 +18,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaPropertyChangeEventArgs																				*
+	//*	KeyboardInputEventArgs																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// General panel property change event arguments.
+	/// Event arguments for handling a keyboard events on Consoluna applications.
 	/// </summary>
-	public class ConsolunaPropertyChangeEventArgs
+	public class KeyboardInputEventArgs : InputEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -40,70 +42,66 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	Handled																																*
+		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Handled">Handled</see>.
+		/// Create a new instance of the KeyboardInputEventArgs item.
 		/// </summary>
-		private bool mHandled = false;
-		/// <summary>
-		/// Get/Set a value indicating whether this change has been handled.
-		/// </summary>
-		public bool Handled
+		public KeyboardInputEventArgs()
 		{
-			get { return mHandled; }
-			set { mHandled = value; }
+			EventType = InputEventType.Keyboard;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	NewValue																															*
+		//*	KeyCharacter																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="NewValue">NewValue</see>.
+		/// Private member for <see cref="KeyCharacter">KeyCharacter</see>.
 		/// </summary>
-		private object mNewValue = null;
+		private char mKeyCharacter = char.MinValue;
 		/// <summary>
-		/// Get/Set a reference to the new value of the property.
+		/// Get/Set the printable keyboard character.
 		/// </summary>
-		public object NewValue
+		public char KeyCharacter
 		{
-			get { return mNewValue; }
-			set { mNewValue = value; }
+			get { return mKeyCharacter; }
+			set { mKeyCharacter = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	OldValue																															*
+		//*	KeyCode																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="OldValue">OldValue</see>.
+		/// Private member for <see cref="KeyCode">KeyCode</see>.
 		/// </summary>
-		private object mOldValue = null;
+		private int mKeyCode = 0;
 		/// <summary>
-		/// Get/Set a reference to the old value of the property.
+		/// Get/Set the key code received.
 		/// </summary>
-		public object OldValue
+		public int KeyCode
 		{
-			get { return mOldValue; }
-			set { mOldValue = value; }
+			get { return mKeyCode; }
+			set { mKeyCode = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	PropertyName																													*
+		//*	KeyModifier																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="PropertyName">PropertyName</see>.
+		/// Private member for <see cref="KeyModifier">KeyModifier</see>.
 		/// </summary>
-		private string mPropertyName = "";
+		private KeyModifierType mKeyModifier =
+			KeyModifierType.None;
 		/// <summary>
-		/// Get/Set the name of the property whose value has changed.
+		/// Get/Set the modifiers for this key.
 		/// </summary>
-		public string PropertyName
+		public KeyModifierType KeyModifier
 		{
-			get { return mPropertyName; }
-			set { mPropertyName = value; }
+			get { return mKeyModifier; }
+			set { mKeyModifier = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

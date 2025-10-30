@@ -22,33 +22,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputKeyModifierType																						*
+	//*	InputEventType																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of known key modifier types in Consoluna applications.
+	/// Enumeration of event types recognized in Consoluna applications.
 	/// </summary>
-	[Flags]
-	public enum ConsolunaInputKeyModifierType
+	public enum InputEventType
 	{
 		/// <summary>
-		/// No modifier specified or unknown.
+		/// No event type specified or unknown.
 		/// </summary>
-		None  = 0x00,
+		None = 0,
 		/// <summary>
-		/// Shift key.
+		/// User keyboard event.
 		/// </summary>
-		Shift = 0x01,
+		Keyboard,
 		/// <summary>
-		/// Alt key.
+		/// Mouse event.
 		/// </summary>
-		Alt   = 0x02,
+		Mouse,
 		/// <summary>
-		/// Ctrl key.
+		/// Window resize event.
 		/// </summary>
-		Ctrl  = 0x04
+		Resize
 	}
 	//*-------------------------------------------------------------------------*
 

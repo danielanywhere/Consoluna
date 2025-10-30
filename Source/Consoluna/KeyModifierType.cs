@@ -25,29 +25,30 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputEventType																									*
+	//*	KeyModifierType																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of event types recognized in Consoluna applications.
+	/// Enumeration of known key modifier types in Consoluna applications.
 	/// </summary>
-	public enum ConsolunaInputEventType
+	[Flags]
+	public enum KeyModifierType
 	{
 		/// <summary>
-		/// No event type specified or unknown.
+		/// No modifier specified or unknown.
 		/// </summary>
-		None = 0,
+		None  = 0x00,
 		/// <summary>
-		/// User keyboard event.
+		/// Shift key.
 		/// </summary>
-		Keyboard,
+		Shift = 0x01,
 		/// <summary>
-		/// Mouse event.
+		/// Alt key.
 		/// </summary>
-		Mouse,
+		Alt   = 0x02,
 		/// <summary>
-		/// Window resize event.
+		/// Ctrl key.
 		/// </summary>
-		Resize
+		Ctrl  = 0x04
 	}
 	//*-------------------------------------------------------------------------*
 

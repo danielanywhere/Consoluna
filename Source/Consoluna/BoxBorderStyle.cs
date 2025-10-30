@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaBoxBorderStyleEnum																							*
+	//*	BoxBorderStyle																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Enumeration of available box border styles.
 	/// </summary>
-	public enum ConsolunaBoxBorderStyleEnum
+	public enum BoxBorderStyle
 	{
 		/// <summary>
 		/// No box border style defined or unknown.

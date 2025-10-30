@@ -30,12 +30,12 @@ using static ConsolunaLib.ConsolunaUtil;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaColor																													*
+	//*	ColorInfo																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Color description for Consoluna applications.
 	/// </summary>
-	public class ConsolunaColor : ChangeObjectItem
+	public class ColorInfo : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -50,14 +50,14 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaColor item.
+		/// Create a new instance of the ColorInfo item.
 		/// </summary>
-		public ConsolunaColor()
+		public ColorInfo()
 		{
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaColor item.
+		/// Create a new instance of the ColorInfo item.
 		/// </summary>
 		/// <param name="red">
 		/// Red channel value.
@@ -68,7 +68,7 @@ namespace ConsolunaLib
 		/// <param name="blue">
 		/// Blue channel value.
 		/// </param>
-		public ConsolunaColor(byte red, byte green, byte blue)
+		public ColorInfo(byte red, byte green, byte blue)
 		{
 			mRed = red;
 			mGreen = green;
@@ -76,12 +76,12 @@ namespace ConsolunaLib
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaColor item.
+		/// Create a new instance of the ColorInfo item.
 		/// </summary>
 		/// <param name="rgb">
 		/// Red channel value.
 		/// </param>
-		public ConsolunaColor((byte red, byte green, byte blue) rgb)
+		public ColorInfo((byte red, byte green, byte blue) rgb)
 		{
 			mRed = rgb.red;
 			mGreen = rgb.green;
@@ -89,12 +89,12 @@ namespace ConsolunaLib
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaColor item.
+		/// Create a new instance of the ColorInfo item.
 		/// </summary>
 		/// <param name="hexColor">
 		/// Hex color to initialize.
 		/// </param>
-		public ConsolunaColor(string hexColor)
+		public ColorInfo(string hexColor)
 		{
 			SetColor(this, hexColor);
 		}
@@ -136,7 +136,7 @@ namespace ConsolunaLib
 		{
 			bool result = false;
 
-			if(o is ConsolunaColor color)
+			if(o is ColorInfo color)
 			{
 				if(color.mBlue == mBlue &&
 					color.mGreen == mGreen &&
@@ -309,7 +309,7 @@ namespace ConsolunaLib
 		/// <param name="color">
 		/// The tuple to apply.
 		/// </param>
-		public static void SetColor(ConsolunaColor consoleColor,
+		public static void SetColor(ColorInfo consoleColor,
 			(byte red, byte green, byte blue) color)
 		{
 			if(consoleColor != null)
@@ -329,7 +329,7 @@ namespace ConsolunaLib
 		/// <param name="hexColor">
 		/// Hex color string to parse.
 		/// </param>
-		public static void SetColor(ConsolunaColor consoleColor, string hexColor)
+		public static void SetColor(ColorInfo consoleColor, string hexColor)
 		{
 			string text = "";
 
@@ -358,7 +358,7 @@ namespace ConsolunaLib
 		/// HSL color.
 		/// </returns>
 		public static (float hue, float saturation, float lightness) ToHsl(
-			ConsolunaColor color)
+			ColorInfo color)
 		{
 			float blue = 0f;
 			float delta = 0f;

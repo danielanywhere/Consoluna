@@ -22,44 +22,70 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	IConsolunaInputHandler																									*
+	//*	InputResizeEventArgs																										*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Input handler interface for Consoluna applications.
+	/// Event arguments for handling a window resize event on Consoluna
+	/// applications.
 	/// </summary>
-	public interface IConsolunaInputHandler
+	public class InputResizeEventArgs : InputEventArgs
 	{
+		//*************************************************************************
+		//*	Private																																*
+		//*************************************************************************
+		//*************************************************************************
+		//*	Protected																															*
+		//*************************************************************************
+		//*************************************************************************
+		//*	Public																																*
+		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//* Close																																	*
+		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Close any open connections and reset system settings.
+		/// Create a new instance of the InputResizeEventArgs item.
 		/// </summary>
-		void Close();
+		public InputResizeEventArgs()
+		{
+			EventType = InputEventType.Resize;
+		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* Initialize																														*
+		//*	Height																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Initialize the input handler.
+		/// Private member for <see cref="Height">Height</see>.
 		/// </summary>
-		void Initialize();
+		private int mHeight = 0;
+		/// <summary>
+		/// Get/Set the height of the terminal window.
+		/// </summary>
+		public int Height
+		{
+			get { return mHeight; }
+			set { mHeight = value; }
+		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* ReadInput																															*
+		//*	Width																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Read any available input.
+		/// Private member for <see cref="Width">Width</see>.
 		/// </summary>
-		/// <returns>
-		/// Reference to an input event, if found. Otherwise, null.
-		/// </returns>
-		ConsolunaInputEventArgs ReadInput();
+		private int mWidth = 0;
+		/// <summary>
+		/// Get/Set the Width of the terminal window.
+		/// </summary>
+		public int Width
+		{
+			get { return mWidth; }
+			set { mWidth = value; }
+		}
 		//*-----------------------------------------------------------------------*
 
 	}

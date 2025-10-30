@@ -25,41 +25,54 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaCursorShapeEnum																								*
+	//*	CharacterStyleType																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of possible cursor shapes.
+	/// Enumeration of available character styles on Consoluna applications.
 	/// </summary>
-	public enum ConsolunaCursorShapeEnum
+	[Flags]
+	public enum CharacterStyleType
 	{
 		/// <summary>
-		/// No cursor shape specified or unknown.
+		/// No style specified or unknown.
 		/// </summary>
-		None = 0,
+		None =      0x0000,
 		/// <summary>
-		/// Steady state block.
+		/// Normal style.
 		/// </summary>
-		Block,
+		Normal =    0x0001,
 		/// <summary>
-		/// Blinking block.
+		/// Bold style.
 		/// </summary>
-		BlinkingBlock,
+		Bold =      0x0002,
 		/// <summary>
-		/// Steady state underline.
+		/// Faint or dim.
 		/// </summary>
-		Underline,
+		Faint =     0x0004,
 		/// <summary>
-		/// Blinking underline.
+		/// Italic.
 		/// </summary>
-		BlinkingUnderline,
+		Italic =    0x0008,
 		/// <summary>
-		/// Steady state bar.
+		/// Underline.
 		/// </summary>
-		Bar,
+		Underline = 0x0010,
 		/// <summary>
-		/// Blinking bar.
+		/// Blinking.
 		/// </summary>
-		BlinkingBar
+		Blink =     0x0020,
+		/// <summary>
+		/// Inverse color.
+		/// </summary>
+		Inverse =   0x0040,
+		/// <summary>
+		/// Invisible or hidden.
+		/// </summary>
+		Hidden =    0x0080,
+		/// <summary>
+		/// Strikethrough.
+		/// </summary>
+		Strike =    0x0100
 	}
 	//*-------------------------------------------------------------------------*
 

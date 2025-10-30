@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaPropertyCollection																							*
+	//*	PropertyCollection																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaPropertyItem Items.
+	/// Collection of PropertyItem Items.
 	/// </summary>
-	public class ConsolunaPropertyCollection : List<ConsolunaPropertyItem>
+	public class PropertyCollection : List<PropertyItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -56,9 +56,9 @@ namespace ConsolunaLib
 		/// <returns>
 		/// Reference to the newly created and added item.
 		/// </returns>
-		public ConsolunaPropertyItem Add(string name, string value)
+		public PropertyItem Add(string name, string value)
 		{
-			ConsolunaPropertyItem result = new ConsolunaPropertyItem();
+			PropertyItem result = new PropertyItem();
 
 			if(name?.Length > 0)
 			{
@@ -78,12 +78,12 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaPropertyItem																										*
+	//*	PropertyItem																														*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about an individual property.
 	/// </summary>
-	public class ConsolunaPropertyItem
+	public class PropertyItem
 	{
 		//*************************************************************************
 		//*	Private																																*

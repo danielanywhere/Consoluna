@@ -25,40 +25,37 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeType																											*
+	//*	TokenType																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of recognized shape types.
+	/// Enumeration of the recognized token types.
 	/// </summary>
-	public enum ConsolunaShapeType
+	public enum TokenType
 	{
 		/// <summary>
-		/// No shape specified or unknown.
+		/// No token type specified or unknown.
 		/// </summary>
-		None = 0,
+		None,
 		/// <summary>
-		/// Text in the area.
+		/// Text value.
 		/// </summary>
 		Text,
 		/// <summary>
-		/// Label in the area. Text and label differ in that upon the text
-		/// shape, the full foreground and background areas are written,
-		/// while on the label, only foreground for the present data is written.
+		/// Whitespace.
 		/// </summary>
-		Label,
+		Whitespace,
 		/// <summary>
-		///	A box, with or without borders.
+		/// Punctuation character.
 		/// </summary>
-		Box,
+		Punctuation,
 		/// <summary>
-		/// A dialog box with border, close icon, optional maximize icon,
-		/// and optional button.
+		/// Unprintable character.
 		/// </summary>
-		Dialog,
+		Hidden,
 		/// <summary>
-		/// A custom shape using a series of character sequences.
+		/// Shortcut character.
 		/// </summary>
-		Custom
+		Shortcut
 	}
 	//*-------------------------------------------------------------------------*
 

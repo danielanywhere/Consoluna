@@ -26,12 +26,12 @@ using ConsolunaLib.Internal;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaPosition																												*
+	//*	PositionInfo																														*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Position object for use with Consoluna applications.
 	/// </summary>
-	public class ConsolunaPosition : ChangeObjectItem
+	public class PositionInfo : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -46,19 +46,19 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaPosition item.
+		/// Create a new instance of the PositionInfo item.
 		/// </summary>
-		public ConsolunaPosition()
+		public PositionInfo()
 		{
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaPosition item.
+		/// Create a new instance of the PositionInfo item.
 		/// </summary>
 		/// <param name="position">
 		/// Reference to a position whose member values will be copied.
 		/// </param>
-		public ConsolunaPosition(ConsolunaPosition position)
+		public PositionInfo(PositionInfo position)
 		{
 			if(position != null)
 			{
@@ -68,7 +68,7 @@ namespace ConsolunaLib
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaPosition item.
+		/// Create a new instance of the PositionInfo item.
 		/// </summary>
 		/// <param name="x">
 		/// The initial X value of the new position.
@@ -76,7 +76,7 @@ namespace ConsolunaLib
 		/// <param name="y">
 		/// The initial Y value of the new position.
 		/// </param>
-		public ConsolunaPosition(int x, int y)
+		public PositionInfo(int x, int y)
 		{
 			mX = x;
 			mY = y;
@@ -94,7 +94,7 @@ namespace ConsolunaLib
 		{
 			bool result = false;
 
-			if(o is ConsolunaPosition position)
+			if(o is PositionInfo position)
 			{
 				if(position.mX == mX &&
 					position.mY == mY)
@@ -138,7 +138,7 @@ namespace ConsolunaLib
 		/// <returns>
 		/// True if the object is null or empty. Otherwise, false.
 		/// </returns>
-		public static bool IsEmpty(ConsolunaPosition position)
+		public static bool IsEmpty(PositionInfo position)
 		{
 			bool result = true;
 
@@ -163,8 +163,8 @@ namespace ConsolunaLib
 		/// <param name="target">
 		/// Reference to the target object receiving the values.
 		/// </param>
-		public static void TransferValues(ConsolunaPosition source,
-			ConsolunaPosition target)
+		public static void TransferValues(PositionInfo source,
+			PositionInfo target)
 		{
 			if(source != null && target != null)
 			{

@@ -21,16 +21,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using ConsolunaLib.Internal;
+using ConsolunaLib.Shapes;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputKeyboardEventArgs																					*
+	//*	ShapeCollectionEventArgs																								*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for handling a keyboard events on Consoluna applications.
+	/// Event arguments for console character collections.
 	/// </summary>
-	public class ConsolunaInputKeyboardEventArgs : ConsolunaInputEventArgs
+	public class ShapeCollectionEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -45,65 +48,99 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaInputKeyboardEventArgs item.
+		/// Create a new instance of the ShapeCollectionEventArgs item.
 		/// </summary>
-		public ConsolunaInputKeyboardEventArgs()
+		public ShapeCollectionEventArgs()
 		{
-			EventType = ConsolunaInputEventType.Keyboard;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ShapeCollectionEventArgs item.
+		/// </summary>
+		/// <param name="e">
+		/// Reference to a generic event that has been captured.
+		/// </param>
+		public ShapeCollectionEventArgs(
+			CollectionChangeEventArgs<ShapeBase> e)
+		{
+			if(e != null)
+			{
+				mActionName = e.ActionName;
+				mAffectedItems.AddRange(e.AffectedItems);
+				mHandled = e.Handled;
+				mPropertyName = e.PropertyName;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	KeyCharacter																													*
+		//*	ActionName																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="KeyCharacter">KeyCharacter</see>.
+		/// Private member for <see cref="ActionName">ActionName</see>.
 		/// </summary>
-		private char mKeyCharacter = char.MinValue;
+		private string mActionName = "";
 		/// <summary>
-		/// Get/Set the printable keyboard character.
+		/// Get/Set the name of the action on the collection.
 		/// </summary>
-		public char KeyCharacter
+		public string ActionName
 		{
-			get { return mKeyCharacter; }
-			set { mKeyCharacter = value; }
+			get { return mActionName; }
+			set { mActionName = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	KeyCode																																*
+		//*	AffectedItems																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="KeyCode">KeyCode</see>.
+		/// Private member for <see cref="AffectedItems">AffectedItems</see>.
 		/// </summary>
-		private int mKeyCode = 0;
+		private List<ShapeBase> mAffectedItems =
+			new List<ShapeBase>();
 		/// <summary>
-		/// Get/Set the key code received.
+		/// Get a reference to the collection of items on the event.
 		/// </summary>
-		public int KeyCode
+		public List<ShapeBase> AffectedItems
 		{
-			get { return mKeyCode; }
-			set { mKeyCode = value; }
+			get { return mAffectedItems; }
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	KeyModifier																														*
+		//*	Handled																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="KeyModifier">KeyModifier</see>.
+		/// Private member for <see cref="Handled">Handled</see>.
 		/// </summary>
-		private ConsolunaInputKeyModifierType mKeyModifier =
-			ConsolunaInputKeyModifierType.None;
+		private bool mHandled = false;
 		/// <summary>
-		/// Get/Set the modifiers for this key.
+		/// Get/Set a value indicating whether this event has been handled.
 		/// </summary>
-		public ConsolunaInputKeyModifierType KeyModifier
+		public bool Handled
 		{
-			get { return mKeyModifier; }
-			set { mKeyModifier = value; }
+			get { return mHandled; }
+			set { mHandled = value; }
 		}
 		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	PropertyName																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="PropertyName">PropertyName</see>.
+		/// </summary>
+		private string mPropertyName = "";
+		/// <summary>
+		/// Get/Set the name of the affected property.
+		/// </summary>
+		public string PropertyName
+		{
+			get { return mPropertyName; }
+			set { mPropertyName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
 
 	}
 	//*-------------------------------------------------------------------------*

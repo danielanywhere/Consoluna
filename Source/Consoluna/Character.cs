@@ -20,19 +20,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using ConsolunaLib.Events;
 using ConsolunaLib.Internal;
 
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaCharacterCollection																						*
+	//*	CharacterCollection																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaCharacterItem Items.
+	/// Collection of CharacterItem Items.
 	/// </summary>
-	public class ConsolunaCharacterCollection :
-		ChangeObjectCollection<ConsolunaCharacterItem>
+	public class CharacterCollection :
+		ChangeObjectCollection<CharacterItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -48,12 +48,12 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaCharacterItem																									*
+	//*	CharacterItem																														*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Console display information about an individual character.
 	/// </summary>
-	public class ConsolunaCharacterItem : ChangeObjectItem
+	public class CharacterItem : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -71,7 +71,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mBackColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("BackColor");
 		}
@@ -90,7 +90,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mForeColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("ForeColor");
 		}
@@ -113,7 +113,7 @@ namespace ConsolunaLib
 		/// Property change event arguments.
 		/// </param>
 		protected override void OnPropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			if(e?.PropertyName != "Dirty")
 			{
@@ -130,13 +130,13 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaCharacterItem item.
+		/// Create a new instance of the CharacterItem item.
 		/// </summary>
-		public ConsolunaCharacterItem()
+		public CharacterItem()
 		{
-			mBackColor = new ConsolunaColor();
+			mBackColor = new ColorInfo();
 			mBackColor.PropertyChanged += mBackColor_PropertyChanged;
-			mForeColor = new ConsolunaColor()
+			mForeColor = new ColorInfo()
 			{
 				Red = 0x7f,
 				Green = 0x7f,
@@ -152,11 +152,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="BackColor">BackColor</see>.
 		/// </summary>
-		private ConsolunaColor mBackColor = null;
+		private ColorInfo mBackColor = null;
 		/// <summary>
 		/// Get/Set a reference to the background color for this character.
 		/// </summary>
-		public ConsolunaColor BackColor
+		public ColorInfo BackColor
 		{
 			get { return mBackColor; }
 			set
@@ -210,12 +210,12 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
 		/// </summary>
-		private ConsolunaCharacterStyleTypeEnum mCharacterStyle =
-			ConsolunaCharacterStyleTypeEnum.Normal;
+		private CharacterStyleType mCharacterStyle =
+			CharacterStyleType.Normal;
 		/// <summary>
 		/// Get/Set the current character style.
 		/// </summary>
-		public ConsolunaCharacterStyleTypeEnum CharacterStyle
+		public CharacterStyleType CharacterStyle
 		{
 			get { return mCharacterStyle; }
 			set
@@ -262,11 +262,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ForeColor">ForeColor</see>.
 		/// </summary>
-		private ConsolunaColor mForeColor = null;
+		private ColorInfo mForeColor = null;
 		/// <summary>
 		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>
-		public ConsolunaColor ForeColor
+		public ColorInfo ForeColor
 		{
 			get { return mForeColor; }
 			set
@@ -319,13 +319,13 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	SafeConsolunaCharacterCollection																				*
+	//*	SafeCharacterCollection																									*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaCharacterItem Items.
+	/// Collection of CharacterItem Items.
 	/// </summary>
-	public class SafeConsolunaCharacterCollection :
-		SafeChangeObjectCollection<ConsolunaCharacterItem>
+	public class SafeCharacterCollection :
+		SafeChangeObjectCollection<CharacterItem>
 	{
 		//*************************************************************************
 		//*	Private																																*

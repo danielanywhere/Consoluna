@@ -25,37 +25,41 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaTokenType																											*
+	//*	CursorShapeEnum																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of the recognized token types.
+	/// Enumeration of possible cursor shapes.
 	/// </summary>
-	public enum ConsolunaTokenType
+	public enum CursorShapeEnum
 	{
 		/// <summary>
-		/// No token type specified or unknown.
+		/// No cursor shape specified or unknown.
 		/// </summary>
-		None,
+		None = 0,
 		/// <summary>
-		/// Text value.
+		/// Steady state block.
 		/// </summary>
-		Text,
+		Block,
 		/// <summary>
-		/// Whitespace.
+		/// Blinking block.
 		/// </summary>
-		Whitespace,
+		BlinkingBlock,
 		/// <summary>
-		/// Punctuation character.
+		/// Steady state underline.
 		/// </summary>
-		Punctuation,
+		Underline,
 		/// <summary>
-		/// Unprintable character.
+		/// Blinking underline.
 		/// </summary>
-		Hidden,
+		BlinkingUnderline,
 		/// <summary>
-		/// Shortcut character.
+		/// Steady state bar.
 		/// </summary>
-		Shortcut
+		Bar,
+		/// <summary>
+		/// Blinking bar.
+		/// </summary>
+		BlinkingBar
 	}
 	//*-------------------------------------------------------------------------*
 

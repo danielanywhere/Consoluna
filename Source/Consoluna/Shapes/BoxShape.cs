@@ -24,15 +24,15 @@ using System.Text.RegularExpressions;
 
 using static ConsolunaLib.ConsolunaUtil;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Shapes
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeBox																												*
+	//*	BoxShape																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about a general box shape.
 	/// </summary>
-	public class ConsolunaShapeBox : ConsolunaShapeItem
+	public class BoxShape : ShapeBase
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -52,10 +52,10 @@ namespace ConsolunaLib
 
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '╚';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '└';
 					break;
 			}
@@ -77,10 +77,10 @@ namespace ConsolunaLib
 			char result = '\0';
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '╝';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '┘';
 					break;
 			}
@@ -102,10 +102,10 @@ namespace ConsolunaLib
 			char result = '\0';
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '═';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '─';
 					break;
 			}
@@ -127,10 +127,10 @@ namespace ConsolunaLib
 			char result = '\0';
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '╔';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '┌';
 					break;
 			}
@@ -152,10 +152,10 @@ namespace ConsolunaLib
 			char result = '\0';
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '╗';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '┐';
 					break;
 			}
@@ -177,10 +177,10 @@ namespace ConsolunaLib
 			char result = '\0';
 			switch(mBorderStyle)
 			{
-				case ConsolunaBoxBorderStyleEnum.Double:
+				case BoxBorderStyle.Double:
 					result = '║';
 					break;
-				case ConsolunaBoxBorderStyleEnum.Single:
+				case BoxBorderStyle.Single:
 					result = '│';
 					break;
 			}
@@ -198,15 +198,15 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeBox item.
+		/// Create a new instance of the BoxShape item.
 		/// </summary>
-		public ConsolunaShapeBox()
+		public BoxShape()
 		{
-			ShapeType = ConsolunaShapeType.Text;
+			ShapeType = ShapeType.Text;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeBox item.
+		/// Create a new instance of the BoxShape item.
 		/// </summary>
 		/// <param name="name">
 		/// Unique name of the shape.
@@ -226,7 +226,7 @@ namespace ConsolunaLib
 		/// <param name="height">
 		/// The height of the shape, in characters.
 		/// </param>
-		public ConsolunaShapeBox(string name, string title = "",
+		public BoxShape(string name, string title = "",
 			int x = 0, int y = 0,
 			int width = 1, int height = 1) :
 			base(name, x, y, width, height)
@@ -244,12 +244,12 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="BorderStyle">BorderStyle</see>.
 		/// </summary>
-		private ConsolunaBoxBorderStyleEnum mBorderStyle =
-			ConsolunaBoxBorderStyleEnum.Double;
+		private BoxBorderStyle mBorderStyle =
+			BoxBorderStyle.Double;
 		/// <summary>
 		/// Get/Set the border style for the box.
 		/// </summary>
-		public ConsolunaBoxBorderStyleEnum BorderStyle
+		public BoxBorderStyle BorderStyle
 		{
 			get { return mBorderStyle; }
 			set { mBorderStyle = value; }
@@ -354,7 +354,7 @@ namespace ConsolunaLib
 			get { return mTitle; }
 			set
 			{
-				bool bChanged = (mTitle != value);
+				bool bChanged = mTitle != value;
 				if(value == null)
 				{
 					mTitle = "";

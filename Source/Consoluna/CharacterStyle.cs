@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaCharacterStyle																									*
+	//*	CharacterStyle																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Generic styling for one or more characters, typically of a given group.
 	/// </summary>
-	public class ConsolunaCharacterStyle
+	public class CharacterStyle
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,11 +47,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="BackColor">BackColor</see>.
 		/// </summary>
-		private ConsolunaColor mBackColor = null;
+		private ColorInfo mBackColor = null;
 		/// <summary>
 		/// Get/Set a reference to the background color for this character.
 		/// </summary>
-		public ConsolunaColor BackColor
+		public ColorInfo BackColor
 		{
 			get { return mBackColor; }
 			set
@@ -62,23 +62,20 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	CharacterStyle																												*
+		//*	StyleType																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="CharacterStyle">CharacterStyle</see>.
+		/// Private member for <see cref="StyleType">StyleType</see>.
 		/// </summary>
-		private ConsolunaCharacterStyleTypeEnum mCharacterStyle =
-			ConsolunaCharacterStyleTypeEnum.Normal;
+		private CharacterStyleType mStyleType =
+			CharacterStyleType.Normal;
 		/// <summary>
 		/// Get/Set the current character style.
 		/// </summary>
-		public ConsolunaCharacterStyleTypeEnum CharacterStyle
+		public CharacterStyleType StyleType
 		{
-			get { return mCharacterStyle; }
-			set
-			{
-				mCharacterStyle = value;
-			}
+			get { return mStyleType; }
+			set { mStyleType = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -88,11 +85,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ForeColor">ForeColor</see>.
 		/// </summary>
-		private ConsolunaColor mForeColor = null;
+		private ColorInfo mForeColor = null;
 		/// <summary>
 		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>
-		public ConsolunaColor ForeColor
+		public ColorInfo ForeColor
 		{
 			get { return mForeColor; }
 			set
@@ -108,12 +105,12 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="Properties">Properties</see>.
 		/// </summary>
-		private ConsolunaPropertyCollection mProperties =
-			new ConsolunaPropertyCollection();
+		private PropertyCollection mProperties =
+			new PropertyCollection();
 		/// <summary>
 		/// Get a reference to the collection of custom properties for this style.
 		/// </summary>
-		public ConsolunaPropertyCollection Properties
+		public PropertyCollection Properties
 		{
 			get { return mProperties; }
 		}

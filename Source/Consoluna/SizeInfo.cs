@@ -20,20 +20,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 
 using ConsolunaLib.Internal;
 
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaCharacterCollectionEventArgs																		*
+	//*	SizeInfo																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for console character collections.
+	/// Dimension object for use with Consoluna applications.
 	/// </summary>
-	public class ConsolunaCharacterCollectionEventArgs
+	public class SizeInfo : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -48,99 +46,170 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaCharacterCollectionEventArgs item.
+		/// Create a new instance of the SizeInfo item.
 		/// </summary>
-		public ConsolunaCharacterCollectionEventArgs()
+		public SizeInfo()
 		{
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaCharacterCollectionEventArgs item.
+		/// Create a new instance of the SizeInfo item.
 		/// </summary>
-		/// <param name="e">
-		/// Reference to a generic event that has been captured.
+		/// <param name="width">
+		/// Width dimension.
 		/// </param>
-		public ConsolunaCharacterCollectionEventArgs(
-			CollectionChangeEventArgs<ConsolunaCharacterItem> e)
+		/// <param name="height">
+		/// Height dimension.
+		/// </param>
+		public SizeInfo(int width, int height)
 		{
-			if(e != null)
+			mWidth = width;
+			mHeight = height;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Equals																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether this item's members are equal to the
+		/// members of the caller's item.
+		/// </summary>
+		public override bool Equals(object o)
+		{
+			bool result = false;
+
+			if(o is SizeInfo size)
 			{
-				mActionName = e.ActionName;
-				mAffectedItems.AddRange(e.AffectedItems);
-				mHandled = e.Handled;
-				mPropertyName = e.PropertyName;
+				if(size.mWidth == mWidth &&
+					size.mHeight == mHeight)
+				{
+					result = true;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetHashCode																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the unique hash code for this instance.
+		/// </summary>
+		public override int GetHashCode()
+		{
+			int factor = 0;
+			int result = 2025102303;
+
+			factor = 0 - (int)((double)result * 0.25);
+
+			result *= (factor + mWidth.GetHashCode());
+			result *= (factor + mHeight.GetHashCode());
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Height																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Height">Height</see>.
+		/// </summary>
+		private int mHeight = 0;
+		/// <summary>
+		/// Get/Set the vertical size.
+		/// </summary>
+		public int Height
+		{
+			get { return mHeight; }
+			set
+			{
+				bool bChanged = (mHeight != value);
+				mHeight = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
 			}
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ActionName																														*
+		//* IsEmpty																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="ActionName">ActionName</see>.
+		/// Return a value indicating whether the specified size object is empty.
 		/// </summary>
-		private string mActionName = "";
-		/// <summary>
-		/// Get/Set the name of the action on the collection.
-		/// </summary>
-		public string ActionName
+		/// <param name="size">
+		/// Reference to the size object to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the object is null or empty. Otherwise, false.
+		/// </returns>
+		public static bool IsEmpty(SizeInfo size)
 		{
-			get { return mActionName; }
-			set { mActionName = value; }
+			bool result = true;
+
+			if(size != null &&
+				(size.mHeight != 0 || size.mWidth != 0))
+			{
+				result = false;
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	AffectedItems																													*
+		//* HasVolume																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="AffectedItems">AffectedItems</see>.
+		/// Return a value indicating whether the specified size object has a
+		/// volume.
 		/// </summary>
-		private List<ConsolunaCharacterItem> mAffectedItems =
-			new List<ConsolunaCharacterItem>();
-		/// <summary>
-		/// Get a reference to the collection of items on the event.
-		/// </summary>
-		public List<ConsolunaCharacterItem> AffectedItems
+		/// <param name="size">
+		/// Reference to the size object to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the object is has a volume. Otherwise, false.
+		/// </returns>
+		public static bool HasVolume(SizeInfo size)
 		{
-			get { return mAffectedItems; }
+			bool result = false;
+
+			if(size != null &&
+				(size.mHeight != 0 && size.mWidth != 0))
+			{
+				result = true;
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Handled																																*
+		//*	Width																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Handled">Handled</see>.
+		/// Private member for <see cref="Width">Width</see>.
 		/// </summary>
-		private bool mHandled = false;
+		private int mWidth = 0;
 		/// <summary>
-		/// Get/Set a value indicating whether this event has been handled.
+		/// Get/Set the horizontal dimension.
 		/// </summary>
-		public bool Handled
+		public int Width
 		{
-			get { return mHandled; }
-			set { mHandled = value; }
+			get { return mWidth; }
+			set
+			{
+				bool bChanged = (mWidth != value);
+				mWidth = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	PropertyName																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="PropertyName">PropertyName</see>.
-		/// </summary>
-		private string mPropertyName = "";
-		/// <summary>
-		/// Get/Set the name of the affected property.
-		/// </summary>
-		public string PropertyName
-		{
-			get { return mPropertyName; }
-			set { mPropertyName = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
 
 	}
 	//*-------------------------------------------------------------------------*

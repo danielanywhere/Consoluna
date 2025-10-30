@@ -23,7 +23,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 using ConsolunaLib;
+using ConsolunaLib.Events;
+using ConsolunaLib.Shapes;
 
 using static ConsolunaLib.ConsolunaUtil;
 
@@ -55,13 +58,13 @@ namespace ConsolunaTest
 		/// Console input event arguments.
 		/// </param>
 		private void console_InputReceived(object sender,
-			ConsolunaInputEventArgs e)
+			InputEventArgs e)
 		{
 			int asc = 0;
 
 			if(mInitialized && e != null)
 			{
-				if(e is ConsolunaInputKeyboardEventArgs keyEvent)
+				if(e is KeyboardInputEventArgs keyEvent)
 				{
 					asc = (int)keyEvent.KeyCharacter;
 					if(asc > 31 && asc < 127 &&
@@ -82,7 +85,7 @@ namespace ConsolunaTest
 								//	Tab.
 								mConsole.Tab(1);
 								mConsole.SetCursorShape(
-									ConsolunaCursorShapeEnum.BlinkingBlock);
+									CursorShapeEnum.BlinkingBlock);
 								break;
 							case 10:
 								//	Line feed.
@@ -100,12 +103,12 @@ namespace ConsolunaTest
 					}
 					mConsole.Update();
 				}
-				else if(e is ConsolunaInputMouseEventArgs mouseEvent)
+				else if(e is MouseInputEventArgs mouseEvent)
 				{
 					Console.WriteLine(
 						$" Mouse: {mouseEvent.MouseX}, {mouseEvent.MouseY} ");
 				}
-				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
+				else if(e is InputResizeEventArgs resizeEvent)
 				{
 					mConsole.SaveCursorPosition();
 					mConsole.SetCursorPosition(0, 0);
@@ -232,33 +235,33 @@ namespace ConsolunaTest
 					//	Color shapes.
 					mConsole = new Consoluna()
 					{
-						InputMode = ConsolunaInputMode.EventDriven,
+						InputMode = InputMode.EventDriven,
 						PollInterval = 100
 					};
 					mConsole.InputReceived += console_InputReceived;
-					mConsole.BackColor = new ConsolunaColor("#000050");
-					mConsole.ForeColor = new ConsolunaColor("#d0d000");
+					mConsole.BackColor = new ColorInfo("#000050");
+					mConsole.ForeColor = new ColorInfo("#d0d000");
 
-					mConsole.Shapes.Add(new ConsolunaShapeText("txtThis",
+					mConsole.Shapes.Add(new TextShape("txtThis",
 						"The words you are currently reading are precisely the ones " +
 						"that were destined to appear in this very sentence.",
 						10, 10, 10, 5, wordWrap: true)
 					{
 						StyleName = "TextColor"
 					});
-					mConsole.Shapes.Add(new ConsolunaShapeLabel("lblThis",
+					mConsole.Shapes.Add(new LabelShape("lblThis",
 						"This sentence exists solely to inform you that it contains the " +
 						"very words required to say exactly what it's saying.",
 						21, 10, 10, 5, wordWrap: true)
 					{
 						StyleName = "LabelColor"
 					});
-					mConsole.Shapes.Add(new ConsolunaShapeBox("boxArea",
+					mConsole.Shapes.Add(new BoxShape("boxArea",
 						"A box",
 						32, 10, 10, 5)
 					{
 						StyleName = "DialogColor",
-						BorderStyle = ConsolunaBoxBorderStyleEnum.Single,
+						BorderStyle = BoxBorderStyle.Single,
 						Shadow = true
 					});
 
@@ -269,7 +272,7 @@ namespace ConsolunaTest
 
 					mConsole.ClearScreen();
 					mConsole.SetCursorPosition(10, 9);
-					mConsole.SetCursorShape(ConsolunaCursorShapeEnum.None);
+					mConsole.SetCursorShape(CursorShapeEnum.None);
 					mConsole.Write("Start writing here: ");
 
 					mConsole.Update();

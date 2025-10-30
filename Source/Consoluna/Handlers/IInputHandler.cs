@@ -16,75 +16,51 @@
  * 
  */
 
+using ConsolunaLib.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Handlers
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputMouseEventArgs																						*
+	//*	IInputHandler																														*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Event arguments for handling a mouse event on Consoluna applications.
+	/// Input handler interface for Consoluna applications.
 	/// </summary>
-	public class ConsolunaInputMouseEventArgs : ConsolunaInputEventArgs
+	public interface IInputHandler
 	{
-		//*************************************************************************
-		//*	Private																																*
-		//*************************************************************************
-		//*************************************************************************
-		//*	Protected																															*
-		//*************************************************************************
-		//*************************************************************************
-		//*	Public																																*
-		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	_Constructor																													*
+		//* Close																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaInputMouseEventArgs item.
+		/// Close any open connections and reset system settings.
 		/// </summary>
-		public ConsolunaInputMouseEventArgs()
-		{
-			EventType = ConsolunaInputEventType.Mouse;
-		}
+		void Close();
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	MouseX																																*
+		//* Initialize																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="MouseX">MouseX</see>.
+		/// Initialize the input handler.
 		/// </summary>
-		private int mMouseX = 0;
-		/// <summary>
-		/// Get/Set the mouse X position.
-		/// </summary>
-		public int MouseX
-		{
-			get { return mMouseX; }
-			set { mMouseX = value; }
-		}
+		void Initialize();
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	MouseY																																*
+		//* ReadInput																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="MouseY">MouseY</see>.
+		/// Read any available input.
 		/// </summary>
-		private int mMouseY = 0;
-		/// <summary>
-		/// Get/Set the mouse Y position.
-		/// </summary>
-		public int MouseY
-		{
-			get { return mMouseY; }
-			set { mMouseY = value; }
-		}
+		/// <returns>
+		/// Reference to an input event, if found. Otherwise, null.
+		/// </returns>
+		InputEventArgs ReadInput();
 		//*-----------------------------------------------------------------------*
 
 	}

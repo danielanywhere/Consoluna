@@ -22,15 +22,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputEventArgs																									*
+	//*	MouseInputEventArgs																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Input event arguments for Consoluna applications.
+	/// Event arguments for handling a mouse event on Consoluna applications.
 	/// </summary>
-	public abstract class ConsolunaInputEventArgs
+	public class MouseInputEventArgs : InputEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -42,36 +42,48 @@ namespace ConsolunaLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	EventType																															*
+		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="EventType">EventType</see>.
+		/// Create a new instance of the MouseInputEventArgs item.
 		/// </summary>
-		private ConsolunaInputEventType mEventType = ConsolunaInputEventType.None;
-		/// <summary>
-		/// Get/Set the type of event that occurred.
-		/// </summary>
-		public ConsolunaInputEventType EventType
+		public MouseInputEventArgs()
 		{
-			get { return mEventType; }
-			set { mEventType = value; }
+			EventType = InputEventType.Mouse;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Handled																																*
+		//*	MouseX																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Handled">Handled</see>.
+		/// Private member for <see cref="MouseX">MouseX</see>.
 		/// </summary>
-		private bool mHandled = false;
+		private int mMouseX = 0;
 		/// <summary>
-		/// Get/Set a value indicating whether the event has been handled.
+		/// Get/Set the mouse X position.
 		/// </summary>
-		public bool Handled
+		public int MouseX
 		{
-			get { return mHandled; }
-			set { mHandled = value; }
+			get { return mMouseX; }
+			set { mMouseX = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	MouseY																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="MouseY">MouseY</see>.
+		/// </summary>
+		private int mMouseY = 0;
+		/// <summary>
+		/// Get/Set the mouse Y position.
+		/// </summary>
+		public int MouseY
+		{
+			get { return mMouseY; }
+			set { mMouseY = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

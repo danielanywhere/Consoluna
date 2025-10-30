@@ -24,21 +24,20 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using ConsolunaLib.Events;
 using ConsolunaLib.Internal;
-
 using static ConsolunaLib.ConsolunaUtil;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Shapes
 {
 	//*-------------------------------------------------------------------------*
 	//*	ConsolunaShapeCollection																								*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaShapeItem Items.
+	/// Collection of ShapeBase Items.
 	/// </summary>
 	public class ConsolunaShapeCollection :
-		ChangeObjectCollection<ConsolunaShapeItem>
+		ChangeObjectCollection<ShapeBase>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -53,13 +52,13 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeItem																											*
+	//*	ShapeBase																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about a shape directive that will be rendered as a set of
 	/// characters.
 	/// </summary>
-	public abstract class ConsolunaShapeItem : ChangeObjectItem
+	public abstract class ShapeBase : ChangeObjectItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -67,11 +66,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// The position at the last render.
 		/// </summary>
-		private ConsolunaPosition mLastPosition = null;
+		private PositionInfo mLastPosition = null;
 		/// <summary>
 		/// The size at the last render.
 		/// </summary>
-		private ConsolunaSize mLastSize = null;
+		private SizeInfo mLastSize = null;
 
 		//*-----------------------------------------------------------------------*
 		//* mBackColor_PropertyChanged																						*
@@ -86,7 +85,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mBackColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("BackColor");
 		}
@@ -105,7 +104,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mForeColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("ForeColor");
 		}
@@ -124,7 +123,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mPosition_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("Position");
 		}
@@ -143,7 +142,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mShortcutBackColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("ShortcutBackColor");
 		}
@@ -162,7 +161,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mShortcutForeColor_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("ShortcutForeColor");
 		}
@@ -181,7 +180,7 @@ namespace ConsolunaLib
 		/// Console property change event arguments.
 		/// </param>
 		private void mSize_PropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			OnPropertyChanged("Size");
 		}
@@ -205,8 +204,8 @@ namespace ConsolunaLib
 		/// class.
 		/// </para>
 		/// </summary>
-		protected ConsolunaCharacterItem[,] mCharacterWindow =
-			new ConsolunaCharacterItem[0, 0];
+		protected CharacterItem[,] mCharacterWindow =
+			new CharacterItem[0, 0];
 
 		//*-----------------------------------------------------------------------*
 		//* OnPropertyChanged																											*
@@ -222,7 +221,7 @@ namespace ConsolunaLib
 		/// Property change event arguments.
 		/// </param>
 		protected override void OnPropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			if(e?.PropertyName != "Dirty")
 			{
@@ -239,27 +238,27 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeItem item.
+		/// Create a new instance of the ShapeBase item.
 		/// </summary>
-		public ConsolunaShapeItem()
+		public ShapeBase()
 		{
-			mBackColor = new ConsolunaColor();
+			mBackColor = new ColorInfo();
 			mBackColor.PropertyChanged += mBackColor_PropertyChanged;
-			mForeColor = new ConsolunaColor()
+			mForeColor = new ColorInfo()
 			{
 				Red = 0x7f,
 				Green = 0x7f,
 				Blue = 0x7f
 			};
 			mForeColor.PropertyChanged += mForeColor_PropertyChanged;
-			mPosition = new ConsolunaPosition();
+			mPosition = new PositionInfo();
 			mPosition.PropertyChanged += mPosition_PropertyChanged;
-			mSize = new ConsolunaSize();
+			mSize = new SizeInfo();
 			mSize.PropertyChanged += mSize_PropertyChanged;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeText item.
+		/// Create a new instance of the TextShape item.
 		/// </summary>
 		/// <param name="name">
 		/// Unique name of the shape.
@@ -276,7 +275,7 @@ namespace ConsolunaLib
 		/// <param name="height">
 		/// The height of the shape, in characters.
 		/// </param>
-		public ConsolunaShapeItem(string name, int x = 0, int y = 0,
+		public ShapeBase(string name, int x = 0, int y = 0,
 			int width = 1, int height = 1) : this()
 		{
 			if(name?.Length > 0)
@@ -296,16 +295,16 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="BackColor">BackColor</see>.
 		/// </summary>
-		private ConsolunaColor mBackColor = null;
+		private ColorInfo mBackColor = null;
 		/// <summary>
 		/// Get/Set a reference to the background color for this character.
 		/// </summary>
-		public ConsolunaColor BackColor
+		public ColorInfo BackColor
 		{
 			get { return mBackColor; }
 			set
 			{
-				bool bChanged = (mBackColor != value);
+				bool bChanged = mBackColor != value;
 				if(bChanged && mBackColor != null)
 				{
 					mBackColor.PropertyChanged -= mBackColor_PropertyChanged;
@@ -324,24 +323,23 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	CharacterStyleType																										*
+		//*	StyleType																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Private member for
 		/// <see cref="CharacterStyleType">CharacterStyleType</see>.
 		/// </summary>
-		private ConsolunaCharacterStyleTypeEnum mCharacterStyleType =
-			ConsolunaCharacterStyleTypeEnum.Normal;
+		private CharacterStyleType mStyleType = CharacterStyleType.Normal;
 		/// <summary>
 		/// Get/Set the current character style.
 		/// </summary>
-		public ConsolunaCharacterStyleTypeEnum CharacterStyleType
+		public CharacterStyleType StyleType
 		{
-			get { return mCharacterStyleType; }
+			get { return mStyleType; }
 			set
 			{
-				bool bChanged = (mCharacterStyleType != value);
-				mCharacterStyleType = value;
+				bool bChanged = mStyleType != value;
+				mStyleType = value;
 				if(bChanged)
 				{
 					OnPropertyChanged();
@@ -366,7 +364,7 @@ namespace ConsolunaLib
 			get { return mDirty; }
 			set
 			{
-				bool bChanged = (mDirty != value);
+				bool bChanged = mDirty != value;
 				mDirty = value;
 				if(bChanged && mDirty == true)
 				{
@@ -382,16 +380,16 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ForeColor">ForeColor</see>.
 		/// </summary>
-		private ConsolunaColor mForeColor = null;
+		private ColorInfo mForeColor = null;
 		/// <summary>
 		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>
-		public ConsolunaColor ForeColor
+		public ColorInfo ForeColor
 		{
 			get { return mForeColor; }
 			set
 			{
-				bool bChanged = (mForeColor != value);
+				bool bChanged = mForeColor != value;
 				if(mForeColor != null)
 				{
 					mForeColor.PropertyChanged -= mForeColor_PropertyChanged;
@@ -432,16 +430,16 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="Position">Position</see>.
 		/// </summary>
-		private ConsolunaPosition mPosition = null;
+		private PositionInfo mPosition = null;
 		/// <summary>
 		/// Get/Set a reference to this shape's current grid position.
 		/// </summary>
-		public ConsolunaPosition Position
+		public PositionInfo Position
 		{
 			get { return mPosition; }
 			set
 			{
-				bool bChanged = (mPosition != value);
+				bool bChanged = mPosition != value;
 				if(bChanged && mPosition != null)
 				{
 					mPosition.PropertyChanged -= mPosition_PropertyChanged;
@@ -470,7 +468,7 @@ namespace ConsolunaLib
 		/// </param>
 		public virtual void Render(Consoluna screenBuffer)
 		{
-			ConsolunaCharacterItem character = null;
+			CharacterItem character = null;
 			int colCount = 0;
 			int colIndex = 0;
 			int rowCount = 0;
@@ -478,7 +476,7 @@ namespace ConsolunaLib
 			string styleNameLower = "";
 
 			if(screenBuffer != null && mPosition != null &&
-				ConsolunaSize.HasVolume(mSize))
+				SizeInfo.HasVolume(mSize))
 			{
 				//	Update the local styling properties from explicit style names.
 				if(mStyleName?.Length > 0)
@@ -535,7 +533,7 @@ namespace ConsolunaLib
 							mPosition.Y + 1,
 							1,
 							mSize.Height);
-						foreach(ConsolunaCharacterItem characterItem in mCharacterWindow)
+						foreach(CharacterItem characterItem in mCharacterWindow)
 						{
 							characterItem.Shadowed = true;
 						}
@@ -544,7 +542,7 @@ namespace ConsolunaLib
 							mPosition.Y + mSize.Height,
 							mSize.Width - 1,
 							1);
-						foreach(ConsolunaCharacterItem characterItem in mCharacterWindow)
+						foreach(CharacterItem characterItem in mCharacterWindow)
 						{
 							characterItem.Shadowed = true;
 						}
@@ -553,7 +551,7 @@ namespace ConsolunaLib
 					}
 				}
 				else if(mDirty && mLastPosition != null &&
-					ConsolunaSize.HasVolume(mLastSize))
+					SizeInfo.HasVolume(mLastSize))
 				{
 					//	Erase this level after going invisible.
 					screenBuffer.SetDirty(mCharacterWindow);
@@ -561,7 +559,7 @@ namespace ConsolunaLib
 			}
 			else
 			{
-				mCharacterWindow = new ConsolunaCharacterItem[0, 0];
+				mCharacterWindow = new CharacterItem[0, 0];
 			}
 			mLastPosition = mPosition;
 			mLastSize = mSize;
@@ -592,16 +590,16 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ShapeType">ShapeType</see>.
 		/// </summary>
-		private ConsolunaShapeType mShapeType = ConsolunaShapeType.None;
+		private ShapeType mShapeType = ShapeType.None;
 		/// <summary>
 		///  Get/Set the type of shape to be displayed.
 		/// </summary>
-		public ConsolunaShapeType ShapeType
+		public ShapeType ShapeType
 		{
 			get { return mShapeType; }
 			set
 			{
-				bool bChanged = (mShapeType != value);
+				bool bChanged = mShapeType != value;
 				mShapeType = value;
 				if(bChanged)
 				{
@@ -618,17 +616,17 @@ namespace ConsolunaLib
 		/// Private member for
 		/// <see cref="ShortcutBackColor">ShortcutBackColor</see>.
 		/// </summary>
-		private ConsolunaColor mShortcutBackColor = null;
+		private ColorInfo mShortcutBackColor = null;
 		/// <summary>
 		/// Get/Set a reference to the background color for shortcut chaaracters
 		/// on this shape.
 		/// </summary>
-		public ConsolunaColor ShortcutBackColor
+		public ColorInfo ShortcutBackColor
 		{
 			get { return mShortcutBackColor; }
 			set
 			{
-				bool bChanged = (mShortcutBackColor != value);
+				bool bChanged = mShortcutBackColor != value;
 				if(bChanged && mShortcutBackColor != null)
 				{
 					mShortcutBackColor.PropertyChanged -=
@@ -655,17 +653,17 @@ namespace ConsolunaLib
 		/// Private member for
 		/// <see cref="ShortcutForeColor">ShortcutForeColor</see>.
 		/// </summary>
-		private ConsolunaColor mShortcutForeColor = null;
+		private ColorInfo mShortcutForeColor = null;
 		/// <summary>
 		/// Get/Set a reference to the foreground color for shortcut keys on this
 		/// shape.
 		/// </summary>
-		public ConsolunaColor ShortcutForeColor
+		public ColorInfo ShortcutForeColor
 		{
 			get { return mShortcutForeColor; }
 			set
 			{
-				bool bChanged = (mShortcutForeColor != value);
+				bool bChanged = mShortcutForeColor != value;
 				if(mShortcutForeColor != null)
 				{
 					mShortcutForeColor.PropertyChanged -=
@@ -691,7 +689,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
 		/// </summary>
-		protected ConsolunaScreenStyleItem mShortcutStyleItem = null;
+		protected ScreenStyleItem mShortcutStyleItem = null;
 		/// <summary>
 		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
 		/// </summary>
@@ -705,7 +703,7 @@ namespace ConsolunaLib
 			get { return mShortcutStyleName; }
 			set
 			{
-				bool bChanged = (mShortcutStyleName != value);
+				bool bChanged = mShortcutStyleName != value;
 				mShortcutStyleName = value;
 				if(bChanged)
 				{
@@ -721,16 +719,16 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="Size">Size</see>.
 		/// </summary>
-		private ConsolunaSize mSize = null;
+		private SizeInfo mSize = null;
 		/// <summary>
 		/// Get/Set a reference to the size of this shape.
 		/// </summary>
-		public ConsolunaSize Size
+		public SizeInfo Size
 		{
 			get { return mSize; }
 			set
 			{
-				bool bChanged = (mSize != value);
+				bool bChanged = mSize != value;
 				if(mSize != null)
 				{
 					mSize.PropertyChanged -= mSize_PropertyChanged;
@@ -754,7 +752,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="StyleName">StyleName</see>.
 		/// </summary>
-		protected ConsolunaScreenStyleItem mStyleItem = null;
+		protected ScreenStyleItem mStyleItem = null;
 		/// <summary>
 		/// Private member for <see cref="StyleName">StyleName</see>.
 		/// </summary>
@@ -767,7 +765,7 @@ namespace ConsolunaLib
 			get { return mStyleName; }
 			set
 			{
-				bool bChanged = (mStyleName != value);
+				bool bChanged = mStyleName != value;
 				mStyleName = value;
 				if(bChanged)
 				{
@@ -792,7 +790,7 @@ namespace ConsolunaLib
 			get { return mVisible; }
 			set
 			{
-				bool bChanged = (mVisible != value);
+				bool bChanged = mVisible != value;
 				mVisible = value;
 				if(bChanged)
 				{
@@ -811,10 +809,10 @@ namespace ConsolunaLib
 	//*	SafeConsolunaShapeCollection																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaShapeItem Items.
+	/// Collection of ShapeBase Items.
 	/// </summary>
 	public class SafeConsolunaShapeCollection :
-		SafeChangeObjectCollection<ConsolunaShapeItem>
+		SafeChangeObjectCollection<ShapeBase>
 	{
 		//*************************************************************************
 		//*	Private																																*

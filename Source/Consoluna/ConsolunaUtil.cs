@@ -55,10 +55,10 @@ namespace ConsolunaLib
 		/// <param name="colorName"></param>
 		/// <param name="comparison"></param>
 		/// <returns></returns>
-		public static bool AfterShadowEquals(ConsolunaCharacterItem character,
-			string colorName, ConsolunaColor comparison)
+		public static bool AfterShadowEquals(CharacterItem character,
+			string colorName, ColorInfo comparison)
 		{
-			ConsolunaColor currentColor = null;
+			ColorInfo currentColor = null;
 			bool result = false;
 
 			if(character != null && colorName?.Length > 0)
@@ -72,16 +72,16 @@ namespace ConsolunaLib
 						currentColor = character.ForeColor;
 						break;
 				}
-				//currentColor = (ConsolunaColor)GetPropertyByName(character, colorName);
+				//currentColor = (ColorInfo)GetPropertyByName(character, colorName);
 				if(currentColor != null)
 				{
 					if(character.Shadowed)
 					{
 						(float hue, float saturation, float lightness) =
-							ConsolunaColor.ToHsl(currentColor);
+							ColorInfo.ToHsl(currentColor);
 						lightness /= 2f;
-						currentColor = new ConsolunaColor(
-							ConsolunaColor.FromHsl((hue, saturation, lightness)));
+						currentColor = new ColorInfo(
+							ColorInfo.FromHsl((hue, saturation, lightness)));
 					}
 					result = currentColor.Equals(comparison);
 				}
@@ -113,18 +113,18 @@ namespace ConsolunaLib
 		/// not shaded. Otherwise, a reference to a shaded version of the
 		/// base color.
 		/// </returns>
-		public static ConsolunaColor ApplyShadowColor(ConsolunaColor baseColor,
+		public static ColorInfo ApplyShadowColor(ColorInfo baseColor,
 			bool shadowed)
 		{
-			ConsolunaColor result = baseColor;
+			ColorInfo result = baseColor;
 
 			if(baseColor != null && shadowed)
 			{
 				(float hue, float saturation, float lightness) =
-					ConsolunaColor.ToHsl(baseColor);
+					ColorInfo.ToHsl(baseColor);
 				lightness /= 2f;
-				result = new ConsolunaColor(
-					ConsolunaColor.FromHsl((hue, saturation, lightness)));
+				result = new ColorInfo(
+					ColorInfo.FromHsl((hue, saturation, lightness)));
 			}
 			return result;
 		}
@@ -183,7 +183,7 @@ namespace ConsolunaLib
 		/// Reference to the position to constrain.
 		/// </param>
 		public static void EnsureLegal(int bufferWidth,
-			int bufferHeight, ConsolunaPosition position)
+			int bufferHeight, PositionInfo position)
 		{
 			int index = 0;
 
@@ -280,15 +280,15 @@ namespace ConsolunaLib
 		/// Reference to a cartesian coordinate representing a legal position
 		/// within the buffer array, if valid. Otherwise, null.
 		/// </returns>
-		public static ConsolunaPosition GetLegalPosition(int bufferWidth,
+		public static PositionInfo GetLegalPosition(int bufferWidth,
 			int bufferHeight, int columnIndex, int rowIndex)
 		{
 			int index = 0;
-			ConsolunaPosition result = null;
+			PositionInfo result = null;
 
 			if(bufferWidth > 0 && bufferHeight > 0)
 			{
-				result = new ConsolunaPosition();
+				result = new PositionInfo();
 				index =
 					GetBufferIndex(bufferWidth, bufferHeight, columnIndex, rowIndex);
 				result.X = index % bufferWidth;
@@ -334,7 +334,7 @@ namespace ConsolunaLib
 		/// <returns>
 		/// The printable version of the item's Character property.
 		/// </returns>
-		public static char GetPrintable(ConsolunaCharacterItem character)
+		public static char GetPrintable(CharacterItem character)
 		{
 			char result = ' ';
 			int value = 0;
@@ -627,20 +627,20 @@ namespace ConsolunaLib
 			int count = 0;
 			int index = 0;
 			string leftPart = "";
-			ConsolunaTokenItem newToken = null;
+			TokenItem newToken = null;
 			string result = "";
 			string rightPart = "";
 			string shortcutText = "";
-			ConsolunaTokenItem token = null;
-			ConsolunaTokenCollection tokens = null;
+			TokenItem token = null;
+			TokenCollection tokens = null;
 			string tokenText = "";
-			ConsolunaTokenType tokenType = ConsolunaTokenType.None;
+			TokenType tokenType = TokenType.None;
 			string workingText = "";
 
 			if(text?.Length > 0 && maxWidth > 0)
 			{
 				workingText = text.Replace("\r", "");
-				tokens = ConsolunaTokenCollection.ParseWords(workingText);
+				tokens = TokenCollection.ParseWords(workingText);
 				colIndex = 0;
 				count = tokens.Count;
 				for(index = 0; index < count; index++)
@@ -651,28 +651,28 @@ namespace ConsolunaLib
 					//	Assemble shortcut text.
 					shortcutText = tokenText;
 					if(index + 1 < count &&
-						tokenType == ConsolunaTokenType.Text &&
-						tokens[index + 1].TokenType == ConsolunaTokenType.Shortcut)
+						tokenType == TokenType.Text &&
+						tokens[index + 1].TokenType == TokenType.Shortcut)
 					{
 						//	Next item is a shortcut.
 						shortcutText += tokens[index + 1].Value;
 						if(index + 2 < count &&
-							tokens[index + 2].TokenType == ConsolunaTokenType.Text)
+							tokens[index + 2].TokenType == TokenType.Text)
 						{
 							//	Following item is post-shortcut text.
 							shortcutText += tokens[index + 2].Value;
 						}
 					}
 					else if(index + 1 < count &&
-						tokenType == ConsolunaTokenType.Shortcut &&
-						tokens[index + 1].TokenType == ConsolunaTokenType.Text &&
+						tokenType == TokenType.Shortcut &&
+						tokens[index + 1].TokenType == TokenType.Text &&
 						(index - 1 < 0 ||
-						tokens[index - 1].TokenType != ConsolunaTokenType.Text))
+						tokens[index - 1].TokenType != TokenType.Text))
 					{
 						//	Next item is text and this is not part of an earlier pattern.
 						shortcutText += tokens[index + 1].Value;
 					}
-					if(tokenType == ConsolunaTokenType.Whitespace &&
+					if(tokenType == TokenType.Whitespace &&
 						tokenText == "\n")
 					{
 						colIndex = 0;
@@ -682,15 +682,15 @@ namespace ConsolunaLib
 						if(colIndex > 0)
 						{
 							//	Place the word on the next line.
-							if(tokenType == ConsolunaTokenType.Whitespace)
+							if(tokenType == TokenType.Whitespace)
 							{
 								token.Value = "\n";
 							}
 							else
 							{
-								newToken = new ConsolunaTokenItem()
+								newToken = new TokenItem()
 								{
-									TokenType = ConsolunaTokenType.Whitespace,
+									TokenType = TokenType.Whitespace,
 									Value = "\n"
 								};
 								tokens.Insert(index, newToken);
@@ -707,15 +707,15 @@ namespace ConsolunaLib
 								rightPart = tokenText.Substring(maxWidth);
 								token.Value = leftPart;
 								index++;
-								newToken = new ConsolunaTokenItem()
+								newToken = new TokenItem()
 								{
-									TokenType = ConsolunaTokenType.Text,
+									TokenType = TokenType.Text,
 									Value = rightPart
 								};
 								tokens.Insert(index, newToken);
-								newToken = new ConsolunaTokenItem()
+								newToken = new TokenItem()
 								{
-									TokenType = ConsolunaTokenType.Whitespace,
+									TokenType = TokenType.Whitespace,
 									Value = "\n"
 								};
 								tokens.Insert(index, newToken);
@@ -725,12 +725,12 @@ namespace ConsolunaLib
 								colIndex = 0;
 							}
 							else if(index + 1 >= count ||
-								tokens[index + 1].TokenType != ConsolunaTokenType.Whitespace)
+								tokens[index + 1].TokenType != TokenType.Whitespace)
 							{
 								//	Single character not followed by a whitespace.
-								newToken = new ConsolunaTokenItem()
+								newToken = new TokenItem()
 								{
-									TokenType = ConsolunaTokenType.Whitespace,
+									TokenType = TokenType.Whitespace,
 									Value = "\n"
 								};
 								index++;
@@ -751,15 +751,15 @@ namespace ConsolunaLib
 							{
 								index++;
 								token = tokens[index];
-								if(token.TokenType == ConsolunaTokenType.Whitespace)
+								if(token.TokenType == TokenType.Whitespace)
 								{
 									token.Value = "\n";
 								}
 								else
 								{
-									newToken = new ConsolunaTokenItem()
+									newToken = new TokenItem()
 									{
-										TokenType = ConsolunaTokenType.Whitespace,
+										TokenType = TokenType.Whitespace,
 										Value = "\n"
 									};
 									tokens.Insert(index, newToken);
@@ -771,7 +771,7 @@ namespace ConsolunaLib
 					}
 					else
 					{
-						if(colIndex == 0 && tokenType == ConsolunaTokenType.Whitespace)
+						if(colIndex == 0 && tokenType == TokenType.Whitespace)
 						{
 							tokens.RemoveAt(index);
 							index--;

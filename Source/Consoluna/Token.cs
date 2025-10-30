@@ -28,12 +28,12 @@ using static ConsolunaLib.ConsolunaUtil;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaTokenCollection																								*
+	//*	TokenCollection																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of ConsolunaTokenItem Items.
+	/// Collection of TokenItem Items.
 	/// </summary>
-	public class ConsolunaTokenCollection : List<ConsolunaTokenItem>
+	public class TokenCollection : List<TokenItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -57,20 +57,20 @@ namespace ConsolunaLib
 		/// <returns>
 		/// Reference to a collection of word tokens.
 		/// </returns>
-		public static ConsolunaTokenCollection ParseWords(string text)
+		public static TokenCollection ParseWords(string text)
 		{
 			bool bFound = false;
 			MatchCollection matches = null;
 			int matchIndex = 0;
 			string matchValue = "";
-			ConsolunaTokenCollection result = new ConsolunaTokenCollection();
-			List<(string memberName, ConsolunaTokenType tokenType)> tests =
-				new List<(string memberName, ConsolunaTokenType tokenType)>()
+			TokenCollection result = new TokenCollection();
+			List<(string memberName, TokenType tokenType)> tests =
+				new List<(string memberName, TokenType tokenType)>()
 			{
-					("text", ConsolunaTokenType.Text),
-					("whitespace", ConsolunaTokenType.Whitespace),
-					("punctuation", ConsolunaTokenType.Punctuation),
-					("shortcut", ConsolunaTokenType.Shortcut)
+					("text", TokenType.Text),
+					("whitespace", TokenType.Whitespace),
+					("punctuation", TokenType.Punctuation),
+					("shortcut", TokenType.Shortcut)
 			};
 
 			if(text?.Length > 0)
@@ -78,14 +78,14 @@ namespace ConsolunaLib
 				matches = Regex.Matches(text, ResourceMain.rxWordToken);
 				foreach(Match matchItem in matches)
 				{
-					foreach((string memberName, ConsolunaTokenType tokenType) testItem
+					foreach((string memberName, TokenType tokenType) testItem
 						in tests)
 					{
 						matchValue = GetValue(matchItem, testItem.memberName);
 						if(matchValue.Length > 0)
 						{
 							matchIndex = GetIndex(matchItem, testItem.memberName);
-							result.Add(new ConsolunaTokenItem()
+							result.Add(new TokenItem()
 							{
 								Index = matchIndex,
 								TokenType = testItem.tokenType,
@@ -113,9 +113,9 @@ namespace ConsolunaLib
 		{
 			StringBuilder builder = new StringBuilder();
 
-			foreach(ConsolunaTokenItem tokenItem in this)
+			foreach(TokenItem tokenItem in this)
 			{
-				if(tokenItem.TokenType == ConsolunaTokenType.Shortcut)
+				if(tokenItem.TokenType == TokenType.Shortcut)
 				{
 					builder.Append('_');
 				}
@@ -129,12 +129,12 @@ namespace ConsolunaLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaTokenItem																											*
+	//*	TokenItem																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about a single token in a sequence.
 	/// </summary>
-	public class ConsolunaTokenItem
+	public class TokenItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -169,11 +169,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="TokenType">TokenType</see>.
 		/// </summary>
-		private ConsolunaTokenType mTokenType = ConsolunaTokenType.None;
+		private TokenType mTokenType = TokenType.None;
 		/// <summary>
 		/// Get/Set the token type for this item.
 		/// </summary>
-		public ConsolunaTokenType TokenType
+		public TokenType TokenType
 		{
 			get { return mTokenType; }
 			set { mTokenType = value; }
@@ -193,7 +193,7 @@ namespace ConsolunaLib
 		{
 			StringBuilder builder = new StringBuilder();
 
-			if(mTokenType == ConsolunaTokenType.Shortcut)
+			if(mTokenType == TokenType.Shortcut)
 			{
 				builder.Append('_');
 			}

@@ -24,15 +24,15 @@ using System.Text.RegularExpressions;
 
 using static ConsolunaLib.ConsolunaUtil;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Shapes
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeLabel																											*
+	//*	LabelShape																															*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Information about a general label shape with optional hot key definition.
 	/// </summary>
-	public class ConsolunaShapeLabel : ConsolunaShapeItem
+	public class LabelShape : ShapeBase
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,15 +47,15 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeLabel item.
+		/// Create a new instance of the LabelShape item.
 		/// </summary>
-		public ConsolunaShapeLabel()
+		public LabelShape()
 		{
-			ShapeType = ConsolunaShapeType.Label;
+			ShapeType = ShapeType.Label;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeLabel item.
+		/// Create a new instance of the LabelShape item.
 		/// </summary>
 		/// <param name="name">
 		/// Unique name of the shape.
@@ -75,7 +75,7 @@ namespace ConsolunaLib
 		/// <param name="height">
 		/// The height of the shape, in characters.
 		/// </param>
-		public ConsolunaShapeLabel(string name, string text = "",
+		public LabelShape(string name, string text = "",
 			int x = 0, int y = 0,
 			int width = 1, int height = 1, bool wordWrap = false) :
 			base(name, x, y, width, height)
@@ -100,7 +100,7 @@ namespace ConsolunaLib
 		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
-			ConsolunaCharacterItem character = null;
+			CharacterItem character = null;
 			char[] chars = null;
 			int colCount = 0;
 			int colIndex = 0;
@@ -224,7 +224,7 @@ namespace ConsolunaLib
 				}
 				else
 				{
-					for(rowIndex = 0; rowIndex < rowCount; rowIndex ++)
+					for(rowIndex = 0; rowIndex < rowCount; rowIndex++)
 					{
 						for(colIndex = 0; colIndex < colCount; colIndex++)
 						{
@@ -268,7 +268,7 @@ namespace ConsolunaLib
 			get { return mText; }
 			set
 			{
-				bool bChanged = (mText != value);
+				bool bChanged = mText != value;
 				if(value == null)
 				{
 					mText = "";

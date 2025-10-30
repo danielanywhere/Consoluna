@@ -16,6 +16,7 @@
  * 
  */
 
+using ConsolunaLib.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -76,7 +77,7 @@ namespace ConsolunaLib.Internal
 		/// Dock panel property change event arguments.
 		/// </param>
 		protected virtual void OnItemPropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			if(e != null && !e.Handled)
 			{
@@ -243,7 +244,7 @@ namespace ConsolunaLib.Internal
 		/// <summary>
 		/// Raised when the value of a property on an individual item has changed.
 		/// </summary>
-		public event EventHandler<ConsolunaPropertyChangeEventArgs>
+		public event EventHandler<PropertyChangeEventArgs>
 			ItemPropertyChanged;
 		//*-----------------------------------------------------------------------*
 
@@ -473,7 +474,7 @@ namespace ConsolunaLib.Internal
 		/// Property change event arguments.
 		/// </param>
 		protected virtual void OnPropertyChanged(object sender,
-			ConsolunaPropertyChangeEventArgs e)
+			PropertyChangeEventArgs e)
 		{
 			if(sender != null && e != null)
 			{
@@ -493,7 +494,7 @@ namespace ConsolunaLib.Internal
 		{
 			if(propertyName?.Length > 0)
 			{
-				OnPropertyChanged(this, new ConsolunaPropertyChangeEventArgs()
+				OnPropertyChanged(this, new PropertyChangeEventArgs()
 				{
 					PropertyName = propertyName
 				});
@@ -516,7 +517,7 @@ namespace ConsolunaLib.Internal
 		protected virtual void OnPropertyChanged(
 			string propertyName, object oldValue, object newValue)
 		{
-			OnPropertyChanged(this, new ConsolunaPropertyChangeEventArgs()
+			OnPropertyChanged(this, new PropertyChangeEventArgs()
 			{
 				PropertyName = propertyName,
 				OldValue = oldValue,
@@ -534,7 +535,7 @@ namespace ConsolunaLib.Internal
 		/// <summary>
 		/// Raised when the value of a property has changed.
 		/// </summary>
-		public event EventHandler<ConsolunaPropertyChangeEventArgs> PropertyChanged;
+		public event EventHandler<PropertyChangeEventArgs> PropertyChanged;
 		//*-----------------------------------------------------------------------*
 
 

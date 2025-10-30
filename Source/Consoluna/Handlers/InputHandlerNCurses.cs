@@ -22,18 +22,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
+using ConsolunaLib.Events;
 using Mindmagma.Curses;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Handlers
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaInputHandlerNCurses																						*
+	//*	InputHandlerNCurses																											*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Console input handler for processing NCurses activity in Consoluna.
 	/// </summary>
-	public class ConsolunaInputHandlerNCurses : IConsolunaInputHandler
+	public class InputHandlerNCurses : IInputHandler
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -41,7 +41,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Reference to the STDIO screen.
 		/// </summary>
-		private IntPtr mScreen;
+		private nint mScreen;
 		/// <summary>
 		/// Mapped mouse key character.
 		/// </summary>
@@ -66,8 +66,8 @@ namespace ConsolunaLib
 		{
 			int result = 0;
 
-			if((code1 > 0 && code1 < 9) ||
-				(code1 > 10 && code1 < 27))
+			if(code1 > 0 && code1 < 9 ||
+				code1 > 10 && code1 < 27)
 			{
 				//	So yea. We kind of have to skip support for the following:
 				//	- 09: [Ctrl][I]. This is universal [Tab].
@@ -136,8 +136,8 @@ namespace ConsolunaLib
 		private static char GetKeyCharacter(int code1, int code2)
 		{
 			char result = '\0';
-			if((code1 > 0 && code1 < 9) ||
-				(code1 > 10 && code1 < 27))
+			if(code1 > 0 && code1 < 9 ||
+				code1 > 10 && code1 < 27)
 			{
 				//	So yea. We kind of have to skip support for the following:
 				//	- 09: [Ctrl][I]. This is universal [Tab].
@@ -173,9 +173,9 @@ namespace ConsolunaLib
 						result = '\t';
 						break;
 					case 10:
-						//	Unix [Enter].
+					//	Unix [Enter].
 					case 13:
-						//	Actual physical [Enter] key on every modern keyboard.
+					//	Actual physical [Enter] key on every modern keyboard.
 					case 343:
 						//	KEY_ENTER.
 						result = '\r';
@@ -202,33 +202,33 @@ namespace ConsolunaLib
 		/// The input key modifier type associated with the current code, if
 		/// found. Otherwise, None.
 		/// </returns>
-		private static ConsolunaInputKeyModifierType GetKeyModifier(int code1,
+		private static KeyModifierType GetKeyModifier(int code1,
 			int code2)
 		{
-			ConsolunaInputKeyModifierType result =
-				ConsolunaInputKeyModifierType.None;
+			KeyModifierType result =
+				KeyModifierType.None;
 
-			if((code1 > 0 && code1 < 9) ||
-				(code1 > 10 && code1 < 27))
+			if(code1 > 0 && code1 < 9 ||
+				code1 > 10 && code1 < 27)
 			{
 				//	So yea. We kind of have to skip support for the following:
 				//	- 09: [Ctrl][I]. This is universal [Tab].
 				//	- 10: [Ctrl][J]. This is [Enter] in Unix.
-				result |= ConsolunaInputKeyModifierType.Ctrl;
+				result |= KeyModifierType.Ctrl;
 			}
 			else if(code1 == 27 && code2 > 0)
 			{
-				result |= ConsolunaInputKeyModifierType.Alt;
+				result |= KeyModifierType.Alt;
 				if(code2 > 64 && code2 < 91)
 				{
-					result |= ConsolunaInputKeyModifierType.Shift;
+					result |= KeyModifierType.Shift;
 				}
 			}
-			else if((code1 >= 33 && code1 <= 38) ||
-				(code1 >= 40 && code1 <= 43) ||
-				(code1 >= 65 && code1 <= 90))
+			else if(code1 >= 33 && code1 <= 38 ||
+				code1 >= 40 && code1 <= 43 ||
+				code1 >= 65 && code1 <= 90)
 			{
-				result |= ConsolunaInputKeyModifierType.Shift;
+				result |= KeyModifierType.Shift;
 			}
 			else
 			{
@@ -242,7 +242,7 @@ namespace ConsolunaLib
 					case 94:
 					case 95:
 					case 126:
-						result |= ConsolunaInputKeyModifierType.Shift;
+						result |= KeyModifierType.Shift;
 						break;
 				}
 			}
@@ -262,7 +262,7 @@ namespace ConsolunaLib
 		private static MethodInfo GetMouseMethod()
 		{
 			MethodInfo[] candidates = Array.Empty<MethodInfo>();
-			Type ncType = typeof(Mindmagma.Curses.NCurses);
+			Type ncType = typeof(NCurses);
 			MethodInfo result = null;
 
 			try
@@ -273,9 +273,9 @@ namespace ConsolunaLib
 					{
 						bool nameOk = m.Name.Equals("GetMouse", StringComparison.Ordinal);
 						ParameterInfo[] ps = m.GetParameters();
-						bool oneByRef = (ps.Length == 1 && ps[0].ParameterType.IsByRef);
-						bool retOk = (m.ReturnType == typeof(void) ||
-							m.ReturnType == typeof(int));
+						bool oneByRef = ps.Length == 1 && ps[0].ParameterType.IsByRef;
+						bool retOk = m.ReturnType == typeof(void) ||
+							m.ReturnType == typeof(int);
 						return nameOk && retOk && oneByRef;
 					})
 					.ToArray();
@@ -487,18 +487,18 @@ namespace ConsolunaLib
 		public void Close()
 		{
 			bool cursorRestored = false;
-			IntPtr screen = mScreen;
+			nint screen = mScreen;
 			int setVisibleResult = 0;
 
 			try
 			{
-				if(screen != IntPtr.Zero)
+				if(screen != nint.Zero)
 				{
 					setVisibleResult = NCurses.SetCursor(1);
-					cursorRestored = (setVisibleResult != -1);
+					cursorRestored = setVisibleResult != -1;
 
 					NCurses.EndWin();
-					mScreen = IntPtr.Zero;
+					mScreen = nint.Zero;
 				}
 			}
 			catch { }
@@ -518,7 +518,7 @@ namespace ConsolunaLib
 			int initRows = 0;
 			int initCols = 0;
 			uint oldMask = 0;
-			IntPtr screen = IntPtr.Zero;
+			nint screen = nint.Zero;
 
 			try
 			{
@@ -530,7 +530,7 @@ namespace ConsolunaLib
 				NCurses.FlushInputBuffer();
 
 				int setVisibleResult = NCurses.SetCursor(0);
-				cursorHidden = (setVisibleResult != -1);
+				cursorHidden = setVisibleResult != -1;
 
 				NCurses.MouseMask(allMouseMask, out oldMask);
 
@@ -553,13 +553,13 @@ namespace ConsolunaLib
 		///// <summary>
 		///// Private member for <see cref="InputInfo">InputInfo</see>.
 		///// </summary>
-		//private List<ConsolunaInputEventArgs> mInputInfo =
-		//	new List<ConsolunaInputEventArgs>();
+		//private List<InputEventArgs> mInputInfo =
+		//	new List<InputEventArgs>();
 		///// <summary>
 		///// Get/Set a reference to the input info collection assigned to this
 		///// instance.
 		///// </summary>
-		//public List<ConsolunaInputEventArgs> InputInfo
+		//public List<InputEventArgs> InputInfo
 		//{
 		//	get { return mInputInfo; }
 		//	set { mInputInfo = value; }
@@ -577,7 +577,7 @@ namespace ConsolunaLib
 		/// Reference to the current console input event arguments, if an event
 		/// was created. Otherwise, null.
 		/// </returns>
-		public ConsolunaInputEventArgs ReadInput()
+		public InputEventArgs ReadInput()
 		{
 			int ch = -1;
 			bool hasMouseCoords = false;
@@ -586,11 +586,11 @@ namespace ConsolunaLib
 			int cols = 0;
 			bool sawResize = false;
 			int rows = 0;
-			ConsolunaInputEventArgs result = null;
+			InputEventArgs result = null;
 
 			try
 			{
-				if(mScreen == IntPtr.Zero)
+				if(mScreen == nint.Zero)
 				{
 					// not initialized
 				}
@@ -611,7 +611,7 @@ namespace ConsolunaLib
 							hasMouseCoords = GetMouseCoords(out mx, out my);
 							if(hasMouseCoords)
 							{
-								result = new ConsolunaInputMouseEventArgs()
+								result = new MouseInputEventArgs()
 								{
 									MouseX = mx,
 									MouseY = my
@@ -619,14 +619,14 @@ namespace ConsolunaLib
 							}
 							else
 							{
-								result = new ConsolunaInputMouseEventArgs();
+								result = new MouseInputEventArgs();
 							}
 						}
 						else
 						{
 							if(mWaitForNext)
 							{
-								result = new ConsolunaInputKeyboardEventArgs()
+								result = new KeyboardInputEventArgs()
 								{
 									KeyCode = GetKeyCode(27, ch),
 									KeyCharacter = GetKeyCharacter(27, ch),
@@ -641,7 +641,7 @@ namespace ConsolunaLib
 							else
 							{
 								//	Normal (is there such a thing in ncurses?) character.
-								result = new ConsolunaInputKeyboardEventArgs()
+								result = new KeyboardInputEventArgs()
 								{
 									KeyCode = GetKeyCode(ch, 0),
 									KeyCharacter = GetKeyCharacter(ch, 0),

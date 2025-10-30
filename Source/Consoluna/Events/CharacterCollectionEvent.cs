@@ -22,18 +22,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-
 using ConsolunaLib.Internal;
 
-namespace ConsolunaLib
+namespace ConsolunaLib.Events
 {
 	//*-------------------------------------------------------------------------*
-	//*	ConsolunaShapeCollectionEventArgs																				*
+	//*	CharacterCollectionEventArgs																						*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
 	/// Event arguments for console character collections.
 	/// </summary>
-	public class ConsolunaShapeCollectionEventArgs
+	public class CharacterCollectionEventArgs
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -48,20 +47,20 @@ namespace ConsolunaLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeCollectionEventArgs item.
+		/// Create a new instance of the CharacterCollectionEventArgs item.
 		/// </summary>
-		public ConsolunaShapeCollectionEventArgs()
+		public CharacterCollectionEventArgs()
 		{
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Create a new instance of the ConsolunaShapeCollectionEventArgs item.
+		/// Create a new instance of the CharacterCollectionEventArgs item.
 		/// </summary>
 		/// <param name="e">
 		/// Reference to a generic event that has been captured.
 		/// </param>
-		public ConsolunaShapeCollectionEventArgs(
-			CollectionChangeEventArgs<ConsolunaShapeItem> e)
+		public CharacterCollectionEventArgs(
+			CollectionChangeEventArgs<CharacterItem> e)
 		{
 			if(e != null)
 			{
@@ -96,12 +95,12 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="AffectedItems">AffectedItems</see>.
 		/// </summary>
-		private List<ConsolunaShapeItem> mAffectedItems =
-			new List<ConsolunaShapeItem>();
+		private List<CharacterItem> mAffectedItems =
+			new List<CharacterItem>();
 		/// <summary>
 		/// Get a reference to the collection of items on the event.
 		/// </summary>
-		public List<ConsolunaShapeItem> AffectedItems
+		public List<CharacterItem> AffectedItems
 		{
 			get { return mAffectedItems; }
 		}
