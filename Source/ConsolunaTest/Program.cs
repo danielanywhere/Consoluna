@@ -107,24 +107,21 @@ namespace ConsolunaTest
 				}
 				else if(e is ConsolunaInputResizeEventArgs resizeEvent)
 				{
-					if(!mConsole.IsBusy)
+					mConsole.SaveCursorPosition();
+					mConsole.SetCursorPosition(0, 0);
+					mConsole.Write(
+						$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
+					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						mConsole.SaveCursorPosition();
-						mConsole.SetCursorPosition(0, 0);
-						mConsole.Write(
-							$" Size: {resizeEvent.Width}, {resizeEvent.Height} ");
-						if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-						{
-							mConsole.Write("Win");
-						}
-						else
-						{
-							mConsole.Write("Non-Win");
-						}
-						mConsole.Update();
-						mConsole.RestoreCursorPosition();
-						mConsole.HideCursor();
+						mConsole.Write("Win");
 					}
+					else
+					{
+						mConsole.Write("Non-Win");
+					}
+					mConsole.Update();
+					mConsole.RestoreCursorPosition();
+					mConsole.HideCursor();
 				}
 				e.Handled = true;
 			}

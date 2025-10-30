@@ -487,6 +487,22 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ResourceLock																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ResourceLock">ResourceLock</see>.
+		/// </summary>
+		private static readonly object mResourceLock = new object();
+		/// <summary>
+		/// Get a reference to the thread-safe resource lock for this context.
+		/// </summary>
+		internal static object ResourceLock
+		{
+			get { return mResourceLock; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* SetPropertyByName																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

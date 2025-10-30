@@ -114,10 +114,6 @@ namespace ConsolunaLib
 		/// Value indicating whether the shape list events are active.
 		/// </summary>
 		private bool mShapeEventsActive = true;
-		/// <summary>
-		/// Value indicating whether the update method is busy.
-		/// </summary>
-		private bool mUpdateBusy = false;
 
 		//*-----------------------------------------------------------------------*
 		//* GetInput																															*
@@ -726,7 +722,7 @@ namespace ConsolunaLib
 			mCharacters.ItemPropertyChanged +=
 				mScreenCharacters_ItemPropertyChanged;
 
-			mShapes = new ConsolunaShapeCollection();
+			mShapes = new SafeConsolunaShapeCollection();
 			mShapes.CollectionChanged +=
 				mScreenShapes_CollectionChanged;
 			mShapes.ItemPropertyChanged +=
@@ -1054,12 +1050,12 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="Characters">Characters</see>.
 		/// </summary>
-		private ConsolunaCharacterCollection mCharacters =
-			new ConsolunaCharacterCollection();
+		private SafeConsolunaCharacterCollection mCharacters =
+			new SafeConsolunaCharacterCollection();
 		/// <summary>
 		/// Get a reference to the collection of characters in the buffer.
 		/// </summary>
-		public ConsolunaCharacterCollection Characters
+		public SafeConsolunaCharacterCollection Characters
 		{
 			get { return mCharacters; }
 		}
@@ -1479,18 +1475,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	IsBusy																																*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Get a value indicating whether this session is busy processing.
-		/// </summary>
-		public bool IsBusy
-		{
-			get { return mUpdateBusy; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//* KeyboardInputReceived																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1823,11 +1807,11 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="Shapes">Shapes</see>.
 		/// </summary>
-		private ConsolunaShapeCollection mShapes = null;
+		private SafeConsolunaShapeCollection mShapes = null;
 		/// <summary>
 		/// Get a reference to the collection of screen shapes in this instance.
 		/// </summary>
-		public ConsolunaShapeCollection Shapes
+		public SafeConsolunaShapeCollection Shapes
 		{
 			get { return mShapes; }
 		}
@@ -1967,9 +1951,8 @@ namespace ConsolunaLib
 			int startX = 0;
 			//int width = Console.WindowWidth;
 
-			if(!mUpdateBusy)
+			lock(ResourceLock)
 			{
-				mUpdateBusy = true;
 				mWidth = Console.WindowWidth;
 				mHeight = Console.WindowHeight;
 				if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -2143,7 +2126,6 @@ namespace ConsolunaLib
 					ShowCursor();
 					SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 				}
-				mUpdateBusy = false;
 			}
 		}
 		//*-----------------------------------------------------------------------*
