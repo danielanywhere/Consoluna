@@ -425,6 +425,45 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* ToString																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a string representation of this object.
+		/// </summary>
+		/// <returns>
+		/// The string representation of this object.
+		/// </returns>
+		public override string ToString()
+		{
+			return $"#{mRed:x2}{mGreen:x2}{mBlue:x2}";
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferValues																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer the primitive member values of the source object to the
+		/// target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source object containing values to transfer.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target object that will receive the update.
+		/// </param>
+		public static void TransferValues(ColorInfo source, ColorInfo target)
+		{
+			if(source != null && target != null)
+			{
+				target.mBlue = source.mBlue;
+				target.mGreen = source.mGreen;
+				target.mRed = source.mRed;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 	}
 	//*-------------------------------------------------------------------------*
 

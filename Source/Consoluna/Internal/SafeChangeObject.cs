@@ -239,6 +239,33 @@ namespace ConsolunaLib.Internal
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* SafeAddRange																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Add a range of items to the collection during a safe time.
+		/// </summary>
+		/// <param name="collection">
+		/// Reference to the collection of new items to add to this collection.
+		/// </param>
+		internal void SafeAddRange(IEnumerable<T> collection)
+		{
+			base.AddRange(collection);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SafeClear																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clear the contents of the collection during safe time.
+		/// </summary>
+		internal void SafeClear()
+		{
+			base.Clear();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* Sort																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

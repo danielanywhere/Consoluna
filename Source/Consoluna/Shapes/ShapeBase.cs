@@ -290,6 +290,24 @@ namespace ConsolunaLib.Shapes
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* AfterRender																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Called after the shape has been rendered to the buffer.
+		/// </summary>
+		/// <param name="screenBuffer">
+		/// Reference to the screen buffer.
+		/// </param>
+		public virtual void AfterRender(Consoluna screenBuffer)
+		{
+			if(mDirty)
+			{
+				mDirty = false;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	BackColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -316,32 +334,6 @@ namespace ConsolunaLib.Shapes
 					{
 						mBackColor.PropertyChanged += mBackColor_PropertyChanged;
 					}
-					OnPropertyChanged();
-				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	StyleType																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for
-		/// <see cref="CharacterStyleType">CharacterStyleType</see>.
-		/// </summary>
-		private CharacterStyleType mStyleType = CharacterStyleType.Normal;
-		/// <summary>
-		/// Get/Set the current character style.
-		/// </summary>
-		public CharacterStyleType StyleType
-		{
-			get { return mStyleType; }
-			set
-			{
-				bool bChanged = mStyleType != value;
-				mStyleType = value;
-				if(bChanged)
-				{
 					OnPropertyChanged();
 				}
 			}
@@ -563,7 +555,6 @@ namespace ConsolunaLib.Shapes
 			}
 			mLastPosition = mPosition;
 			mLastSize = mSize;
-			mDirty = false;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -767,6 +758,32 @@ namespace ConsolunaLib.Shapes
 			{
 				bool bChanged = mStyleName != value;
 				mStyleName = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	StyleType																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for
+		/// <see cref="CharacterStyleType">CharacterStyleType</see>.
+		/// </summary>
+		private CharacterStyleType mStyleType = CharacterStyleType.Normal;
+		/// <summary>
+		/// Get/Set the current character style.
+		/// </summary>
+		public CharacterStyleType StyleType
+		{
+			get { return mStyleType; }
+			set
+			{
+				bool bChanged = mStyleType != value;
+				mStyleType = value;
 				if(bChanged)
 				{
 					OnPropertyChanged();

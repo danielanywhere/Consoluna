@@ -321,17 +321,24 @@ namespace ConsolunaLib
 			int colIndex = 0;
 			int minHeight = 0;
 			int minWidth = 0;
-			List<CharacterItem> newDisplay = null;
+			List<CharacterItem> newCharacterDisplay = null;
+			List<CharacterItem> newScreenDisplay = null;
 			int rowIndex = 0;
 
 			if(oldWidth != newWidth || oldHeight != newHeight)
 			{
-				newDisplay =
+				mCharacterEventsActive = false;
+				newCharacterDisplay =
 				Enumerable.Range(0, newHeight * newWidth)
-					.Select(i => new CharacterItem()
+					.Select(i => new CharacterItem(mForeColor, mBackColor)
 					{
-						BackColor = mBackColor,
-						ForeColor = mForeColor,
+						Dirty = false
+					})
+					.ToList();
+				newScreenDisplay =
+				Enumerable.Range(0, newHeight * newWidth)
+					.Select(i => new CharacterItem(mForeColor, mBackColor)
+					{
 						Dirty = false
 					})
 					.ToList();
@@ -341,15 +348,18 @@ namespace ConsolunaLib
 				{
 					for(colIndex = 0; colIndex < minWidth; colIndex ++)
 					{
-						newDisplay[rowIndex * newWidth + colIndex] =
+						newCharacterDisplay[rowIndex * newWidth + colIndex] =
 							mCharacters[rowIndex * oldWidth + colIndex];
+						newScreenDisplay[rowIndex * newWidth + colIndex] =
+							mPhysicalBuffer[rowIndex * oldWidth + colIndex];
 					}
 				}
+				mCharacters.SafeClear();
+				mCharacters.SafeAddRange(newCharacterDisplay);
+				mPhysicalBuffer.SafeClear();
+				mPhysicalBuffer.SafeAddRange(newScreenDisplay);
+				mCharacterEventsActive = bCharacterEvents;
 			}
-			mCharacterEventsActive = false;
-			mCharacters.Clear();
-			mCharacters.AddRange(newDisplay);
-			mCharacterEventsActive = bCharacterEvents;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1103,6 +1113,7 @@ namespace ConsolunaLib
 					{
 						characterItem.BackColor = mBackColor;
 					}
+					characterItem.Shadowed = false;
 					characterItem.Character = '\0';
 				}
 			}
@@ -1516,6 +1527,24 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	PhysicalBuffer																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="PhysicalBuffer">PhysicalBuffer</see>.
+		/// </summary>
+		private SafeCharacterCollection mPhysicalBuffer =
+			new SafeCharacterCollection();
+		/// <summary>
+		/// Get a reference to the collection of characters in the final screen
+		/// buffer.
+		/// </summary>
+		internal SafeCharacterCollection PhysicalBuffer
+		{
+			get { return mPhysicalBuffer; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	PollInterval																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1806,6 +1835,30 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* SetUnshaded																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set all of the characters in the supplied list to unshaded.
+		/// </summary>
+		/// <param name="characters">
+		/// Reference to a collection of characters to set unshaded.
+		/// </param>
+		public static void SetUnshaded(List<CharacterItem> characters)
+		{
+			if(characters?.Count > 0)
+			{
+				foreach(CharacterItem characterItem in characters)
+				{
+					if(characterItem.Shadowed)
+					{
+						characterItem.Shadowed = false;
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Shapes																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1879,46 +1932,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* WaitForFilter																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Wait for a specified filter condition to be met on input and return the
-		/// filtered value.
-		/// </summary>
-		/// <param name="filter">
-		/// Reference to the filter to apply.
-		/// </param>
-		/// <returns>
-		/// Reference to the matching event received.
-		/// </returns>
-		/// <remarks>
-		/// In this version, non-matching input leading up to the filter is
-		/// discarded.
-		/// </remarks>
-		public InputEventArgs WaitForFilter(InputEventArgs filter)
-		{
-			InputEventArgs e = null;
-			InputEventArgs result = null;
-
-			if(filter != null && mInputMode == InputMode.FilterWait)
-			{
-				while(result == null)
-				{
-					e = WaitForInput();
-					if(e != null)
-					{
-						if(e.EventType == filter.EventType)
-						{
-							result = e;
-						}
-					}
-				}
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//* Update																																*
 		//*-----------------------------------------------------------------------*
 		private int mLastUpdateHeight = 0;
@@ -1953,6 +1966,7 @@ namespace ConsolunaLib
 			int rowIndex = 0;
 			List<int> rows = null;
 			int startX = 0;
+			CharacterItem target = null;
 			//int width = Console.WindowWidth;
 
 			lock(ResourceLock)
@@ -1995,24 +2009,47 @@ namespace ConsolunaLib
 				else
 				{
 					//	Rebuild grid.
-					mCharacters.Clear();
-					mCharacters.AddRange(
+					mCharacters.SafeClear();
+					mCharacters.SafeAddRange(
 						Enumerable.Range(0, mHeight * mWidth)
-							.Select(i => new CharacterItem()
+							.Select(i => new CharacterItem(mForeColor, mBackColor)
 							{
-								BackColor = mBackColor,
-								ForeColor = mForeColor,
-								Dirty = false
+								Dirty = true
+							}));
+					mPhysicalBuffer.SafeClear();
+					mPhysicalBuffer.SafeAddRange(
+						Enumerable.Range(0, mHeight * mWidth)
+							.Select(i => new CharacterItem(mForeColor, mBackColor)
+							{
+								Dirty = true
 							}));
 					bFullRefresh = true;
 				}
 				//	The screen pattern matches the display pattern.
 				rowCount = mHeight;
+
+				//	** Draw Shapes **
+				SetUnshaded(mCharacters);
 				foreach(ShapeBase shapeItem in mShapes)
 				{
 					shapeItem.Render(this);
+					shapeItem.AfterRender(this);
 				}
-				//	Render the characters in every row.
+
+				//	** Virtual Update **
+				//	Transfer dirty character buffer to physical.
+				count = mCharacters.Count;
+				for(index = 0; index < count; index ++)
+				{
+					character = mCharacters[index];
+					if(character.Dirty)
+					{
+						CharacterItem.TransferValues(character, mPhysicalBuffer[index]);
+						character.Dirty = false;
+					}
+				}
+
+				//	** Physical Update **
 				if(bFullRefresh)
 				{
 					Console.Write(AnsiBackColorStart(mBackColor));
@@ -2021,17 +2058,13 @@ namespace ConsolunaLib
 					//Console.Write(AnsiCursorHide());
 					SetTerminalPosition(0, 0);
 				}
-				//rows = mScreenCharacters
-				//	.Where(x => x.Dirty)
-				//	.Select(y => y.Position.Y)
-				//	.Distinct()
-				//	.ToList();
+				//	Render the characters in every row.
 				rows = new List<int>();
 				index = 0;
-				count = mCharacters.Count;
+				count = mPhysicalBuffer.Count;
 				for(index = 0; index < count; index++)
 				{
-					character = mCharacters[index];
+					character = mPhysicalBuffer[index];
 					if(bFullRefresh || character.Dirty)
 					{
 						row = (index / mWidth);
@@ -2051,7 +2084,7 @@ namespace ConsolunaLib
 						endIndex = index + mWidth;
 						index < endIndex; index++, colIndex++)
 					{
-						character = mCharacters[index];
+						character = mPhysicalBuffer[index];
 						if(bFound)
 						{
 							//	Check to see if the current style still matches.
@@ -2122,6 +2155,7 @@ namespace ConsolunaLib
 						Console.Write(AnsiResetStyles());
 					}
 				}
+
 				mCharacterEventsActive = bCharacterEventsActive;
 				mLastUpdateWidth = mWidth;
 				mLastUpdateHeight = mHeight;
@@ -2131,6 +2165,46 @@ namespace ConsolunaLib
 					SetTerminalPosition(mCursorPosition.X, mCursorPosition.Y);
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* WaitForFilter																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Wait for a specified filter condition to be met on input and return the
+		/// filtered value.
+		/// </summary>
+		/// <param name="filter">
+		/// Reference to the filter to apply.
+		/// </param>
+		/// <returns>
+		/// Reference to the matching event received.
+		/// </returns>
+		/// <remarks>
+		/// In this version, non-matching input leading up to the filter is
+		/// discarded.
+		/// </remarks>
+		public InputEventArgs WaitForFilter(InputEventArgs filter)
+		{
+			InputEventArgs e = null;
+			InputEventArgs result = null;
+
+			if(filter != null && mInputMode == InputMode.FilterWait)
+			{
+				while(result == null)
+				{
+					e = WaitForInput();
+					if(e != null)
+					{
+						if(e.EventType == filter.EventType)
+						{
+							result = e;
+						}
+					}
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

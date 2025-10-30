@@ -144,6 +144,21 @@ namespace ConsolunaLib
 			};
 			mForeColor.PropertyChanged += mForeColor_PropertyChanged;
 		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the CharacterItem item.
+		/// </summary>
+		/// <param name="foreColor">
+		/// Foreground color information for the character.
+		/// </param>
+		/// <param name="backColor">
+		/// Background color information for the character.
+		/// </param>
+		public CharacterItem(ColorInfo foreColor, ColorInfo backColor) : this()
+		{
+			ColorInfo.TransferValues(foreColor, mForeColor);
+			ColorInfo.TransferValues(backColor, mBackColor);
+		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -314,6 +329,32 @@ namespace ConsolunaLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* TransferValues																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer the primitive member values of the source object to the
+		/// target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source object containing values to transfer.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target object that will receive the update.
+		/// </param>
+		public static void TransferValues(CharacterItem source,
+			CharacterItem target)
+		{
+			if(source != null && target != null)
+			{
+				ColorInfo.TransferValues(source.BackColor, target.BackColor);
+				ColorInfo.TransferValues(source.ForeColor, target.ForeColor);
+				target.Character = source.Character;
+				target.CharacterStyle = source.CharacterStyle;
+				target.Shadowed = source.Shadowed;
+			}
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*
@@ -336,7 +377,6 @@ namespace ConsolunaLib
 		//*************************************************************************
 		//*	Public																																*
 		//*************************************************************************
-
 	}
 	//*-------------------------------------------------------------------------*
 
