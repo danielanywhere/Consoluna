@@ -22,6 +22,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ConsolunaLib.Events;
@@ -58,7 +59,7 @@ namespace ConsolunaLib.Shapes
 	/// Information about a shape directive that will be rendered as a set of
 	/// characters.
 	/// </summary>
-	public abstract class ShapeBase : ChangeObjectItem
+	public abstract class ShapeBase : ChangeObjectItem, IForeBack
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -231,6 +232,46 @@ namespace ConsolunaLib.Shapes
 				}
 				base.OnPropertyChanged(sender, e);
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SetCharacter																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the content and style of the character at the specified column and
+		/// row.
+		/// </summary>
+		/// <param name="colIndex">
+		/// 0-based index of the column containing the character to set.
+		/// </param>
+		/// <param name="rowIndex">
+		/// 0-based index of the row containing the character to set.
+		/// </param>
+		/// <param name="symbol">
+		/// The symbol to apply on the character.
+		/// </param>
+		/// <param name="style">
+		/// The color style to apply on the character.
+		/// </param>
+		protected virtual void SetCharacter(int colIndex, int rowIndex,
+			char symbol, IForeBack style)
+		{
+			CharacterItem character = null;
+
+			if(colIndex > -1 && rowIndex > -1 &&
+				colIndex < mCharacterWindow.GetLength(0) &&
+				rowIndex < mCharacterWindow.GetLength(1))
+			{
+				character = mCharacterWindow[colIndex, rowIndex];
+				character.Symbol = symbol;
+				if(style != null)
+				{
+					character.BackColor = style.BackColor ?? BackColor;
+					character.ForeColor = style.ForeColor ?? ForeColor;
+				}
+			}
+
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -483,46 +524,13 @@ namespace ConsolunaLib.Shapes
 		{
 			int colCount = 0;
 			int rowCount = 0;
-			string styleNameLower = "";
 
 			if(screenBuffer != null && mPosition != null &&
 				SizeInfo.HasVolume(mSize))
 			{
 				//	Update the local styling properties from explicit style names.
-				if(mStyleName?.Length > 0)
-				{
-					styleNameLower = mStyleName.ToLower();
-					mStyleItem = screenBuffer.Styles.FirstOrDefault(x =>
-						x.Name.ToLower() == styleNameLower);
-					if(mStyleItem != null)
-					{
-						if(mStyleItem.BackColor != null)
-						{
-							mBackColor = mStyleItem.BackColor;
-						}
-						if(mStyleItem.ForeColor != null)
-						{
-							mForeColor = mStyleItem.ForeColor;
-						}
-					}
-				}
-				if(mShortcutStyleName?.Length > 0)
-				{
-					styleNameLower = mShortcutStyleName.ToLower();
-					mShortcutStyleItem = screenBuffer.Styles.FirstOrDefault(x =>
-						x.Name.ToLower() == styleNameLower);
-					if(mShortcutStyleItem != null)
-					{
-						if(mShortcutStyleItem.BackColor != null)
-						{
-							mShortcutBackColor = mShortcutStyleItem.BackColor;
-						}
-						if(mShortcutStyleItem.ForeColor != null)
-						{
-							mShortcutForeColor = mShortcutStyleItem.ForeColor;
-						}
-					}
-				}
+				screenBuffer.AssignColorFromStyle(this, mStyleName);
+				screenBuffer.AssignColorFromStyle(mShortcutStyle, mShortcutStyleName);
 				//	Any inherited class can use this window.
 				if(!mShadow)
 				{
@@ -618,74 +626,99 @@ namespace ConsolunaLib.Shapes
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//*	ShortcutBackColor																											*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for
-		/// <see cref="ShortcutBackColor">ShortcutBackColor</see>.
-		/// </summary>
-		private ColorInfo mShortcutBackColor = null;
-		/// <summary>
-		/// Get/Set a reference to the background color for shortcut chaaracters
-		/// on this shape.
-		/// </summary>
-		public ColorInfo ShortcutBackColor
-		{
-			get { return mShortcutBackColor; }
-			set
-			{
-				bool bChanged = mShortcutBackColor != value;
-				if(bChanged && mShortcutBackColor != null)
-				{
-					mShortcutBackColor.PropertyChanged -=
-						mShortcutBackColor_PropertyChanged;
-				}
-				mShortcutBackColor = value;
-				if(bChanged)
-				{
-					if(mShortcutBackColor != null)
-					{
-						mShortcutBackColor.PropertyChanged +=
-							mShortcutBackColor_PropertyChanged;
-					}
-					OnPropertyChanged();
-				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////*	ShortcutBackColor																											*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for
+		///// <see cref="ShortcutBackColor">ShortcutBackColor</see>.
+		///// </summary>
+		//private ColorInfo mShortcutBackColor = null;
+		///// <summary>
+		///// Get/Set a reference to the background color for shortcut chaaracters
+		///// on this shape.
+		///// </summary>
+		//public ColorInfo ShortcutBackColor
+		//{
+		//	get { return mShortcutBackColor; }
+		//	set
+		//	{
+		//		bool bChanged = mShortcutBackColor != value;
+		//		if(bChanged && mShortcutBackColor != null)
+		//		{
+		//			mShortcutBackColor.PropertyChanged -=
+		//				mShortcutBackColor_PropertyChanged;
+		//		}
+		//		mShortcutBackColor = value;
+		//		if(bChanged)
+		//		{
+		//			if(mShortcutBackColor != null)
+		//			{
+		//				mShortcutBackColor.PropertyChanged +=
+		//					mShortcutBackColor_PropertyChanged;
+		//			}
+		//			OnPropertyChanged();
+		//		}
+		//	}
+		//}
+		////*-----------------------------------------------------------------------*
+
+		////*-----------------------------------------------------------------------*
+		////*	ShortcutForeColor																											*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for
+		///// <see cref="ShortcutForeColor">ShortcutForeColor</see>.
+		///// </summary>
+		//private ColorInfo mShortcutForeColor = null;
+		///// <summary>
+		///// Get/Set a reference to the foreground color for shortcut keys on this
+		///// shape.
+		///// </summary>
+		//public ColorInfo ShortcutForeColor
+		//{
+		//	get { return mShortcutForeColor; }
+		//	set
+		//	{
+		//		bool bChanged = mShortcutForeColor != value;
+		//		if(mShortcutForeColor != null)
+		//		{
+		//			mShortcutForeColor.PropertyChanged -=
+		//				mShortcutForeColor_PropertyChanged;
+		//		}
+		//		mShortcutForeColor = value;
+		//		if(bChanged)
+		//		{
+		//			if(mShortcutForeColor != null)
+		//			{
+		//				mShortcutForeColor.PropertyChanged +=
+		//					mShortcutForeColor_PropertyChanged;
+		//			}
+		//			OnPropertyChanged();
+		//		}
+		//	}
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ShortcutForeColor																											*
+		//*	ShortcutStyle																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for
-		/// <see cref="ShortcutForeColor">ShortcutForeColor</see>.
+		/// Private member for <see cref="ShortcutStyle">ShortcutStyle</see>.
 		/// </summary>
-		private ColorInfo mShortcutForeColor = null;
+		private CharacterStyle mShortcutStyle = null;
 		/// <summary>
-		/// Get/Set a reference to the foreground color for shortcut keys on this
-		/// shape.
+		/// Get/Set a reference to the shortcut key style.
 		/// </summary>
-		public ColorInfo ShortcutForeColor
+		public CharacterStyle ShortcutStyle
 		{
-			get { return mShortcutForeColor; }
+			get { return mShortcutStyle; }
 			set
 			{
-				bool bChanged = mShortcutForeColor != value;
-				if(mShortcutForeColor != null)
-				{
-					mShortcutForeColor.PropertyChanged -=
-						mShortcutForeColor_PropertyChanged;
-				}
-				mShortcutForeColor = value;
+				bool bChanged = (mShortcutStyle != value);
+				mShortcutStyle = value;
 				if(bChanged)
 				{
-					if(mShortcutForeColor != null)
-					{
-						mShortcutForeColor.PropertyChanged +=
-							mShortcutForeColor_PropertyChanged;
-					}
 					OnPropertyChanged();
 				}
 			}
@@ -695,12 +728,14 @@ namespace ConsolunaLib.Shapes
 		//*-----------------------------------------------------------------------*
 		//*	ShortcutStyleName																											*
 		//*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for
+		///// <see cref="ShortcutStyleName">ShortcutStyleName</see>.
+		///// </summary>
+		//protected ScreenStyleItem mShortcutStyleItem = null;
 		/// <summary>
-		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
-		/// </summary>
-		protected ScreenStyleItem mShortcutStyleItem = null;
-		/// <summary>
-		/// Private member for <see cref="ShortcutStyleName">ShortcutStyleName</see>.
+		/// Private member for
+		/// <see cref="ShortcutStyleName">ShortcutStyleName</see>.
 		/// </summary>
 		private string mShortcutStyleName = "";
 		/// <summary>
@@ -758,10 +793,10 @@ namespace ConsolunaLib.Shapes
 		//*-----------------------------------------------------------------------*
 		//*	StyleName																															*
 		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="StyleName">StyleName</see>.
-		/// </summary>
-		protected ScreenStyleItem mStyleItem = null;
+		///// <summary>
+		///// Private member for <see cref="StyleName">StyleName</see>.
+		///// </summary>
+		//protected ScreenStyleItem mStyleItem = null;
 		/// <summary>
 		/// Private member for <see cref="StyleName">StyleName</see>.
 		/// </summary>

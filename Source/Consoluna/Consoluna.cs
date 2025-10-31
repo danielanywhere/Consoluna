@@ -648,19 +648,19 @@ namespace ConsolunaLib
 					foreColor: new ColorInfo("#333300"),
 					backColor: new ColorInfo("#01af00")),
 
-				new ScreenStyleItem("DialogColor",
+				new ScreenStyleItem("BoxColor",
 					foreColor: new ColorInfo("#010101"),
 					backColor: new ColorInfo("#b4b3b1")),
-				new ScreenStyleItem("DialogBorderColor",
+				new ScreenStyleItem("BoxBorderColor",
 					foreColor: new ColorInfo("#fffeff"),
 					backColor: new ColorInfo("#b4b3b1")),
-				new ScreenStyleItem("DialogListBoxColor",
+				new ScreenStyleItem("BoxListBoxColor",
 					foreColor: new ColorInfo("#002427"),
 					backColor: new ColorInfo("#03b1ba")),
-				new ScreenStyleItem("DialogListBoxHighlightColor",
+				new ScreenStyleItem("BoxListBoxHighlightColor",
 					foreColor: new ColorInfo("#eeffe1"),
 					backColor: new ColorInfo("#01ae04")),
-				new ScreenStyleItem("DialogTextBoxColor",
+				new ScreenStyleItem("BoxTextBoxColor",
 					foreColor: new ColorInfo("#f2fcff"),
 					backColor: new ColorInfo("#0001ab")),
 
@@ -690,17 +690,26 @@ namespace ConsolunaLib
 					backColor: new ColorInfo("#0001ab")),
 
 				new ScreenStyleItem("WindowColor",
-					foreColor: new ColorInfo("#002593"),
-					backColor: new ColorInfo("#04b0b0")),
+					foreColor: new ColorInfo("#052792"),
+					backColor: new ColorInfo("#04b1b0")),
 				new ScreenStyleItem("WindowBorderColor",
-					foreColor: new ColorInfo("#b2ffff"),
-					backColor: new ColorInfo("#04b0b0")),
+					foreColor: new ColorInfo("#aaffff"),
+					backColor: new ColorInfo("#04b1b0")),
+				new ScreenStyleItem("WindowButtonColor",
+					foreColor: new ColorInfo("#48f988"),
+					backColor: new ColorInfo("#04b1b0")),
 				new ScreenStyleItem("WindowListBoxColor",
-					foreColor: new ColorInfo("#bfffff"),
-					backColor: new ColorInfo("#0300ac")),
+					foreColor: new ColorInfo("#e7f1ff"),
+					backColor: new ColorInfo("#0200ae")),
+				new ScreenStyleItem("WindowListBoxHeaderColor",
+					foreColor: new ColorInfo("#052792"),
+					backColor: new ColorInfo("#04b1b0")),
 				new ScreenStyleItem("WindowListBoxHighlightColor",
-					foreColor: new ColorInfo("#ffc3a1"),
-					backColor: new ColorInfo("#ad0100"))
+					foreColor: new ColorInfo("#ffc398"),
+					backColor: new ColorInfo("#ad0100")),
+				new ScreenStyleItem("WindowTitleColor",
+					foreColor: new ColorInfo("#e7f1ff"),
+					backColor: new ColorInfo("#04b1b0"))
 
 			});
 
@@ -973,6 +982,50 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* AssignColorFromStyle																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Assign a color item's foreground and background colors from the
+		/// named style.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the item whose colors will be stylized.
+		/// </param>
+		/// <param name="styleName">
+		/// Name of the style to retrieve.
+		/// </param>
+		/// <returns>
+		/// Reference to the specified screen style, if found. Otherwise,
+		/// null.
+		/// </returns>
+		public ScreenStyleItem AssignColorFromStyle(IForeBack item,
+			string styleName)
+		{
+			ScreenStyleItem result = null;
+			string styleNameLower = "";
+
+			if(item != null && styleName?.Length > 0)
+			{
+				styleNameLower = styleName.ToLower();
+				result = mStyles.FirstOrDefault(x =>
+					x.Name.ToLower() == styleNameLower);
+				if(result != null)
+				{
+					if(result.BackColor != null)
+					{
+						ColorInfo.TransferValues(result.BackColor, item.BackColor);
+					}
+					if(result.ForeColor != null)
+					{
+						ColorInfo.TransferValues(result.ForeColor, item.ForeColor);
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	BackColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1038,7 +1091,7 @@ namespace ConsolunaLib
 			for(index = startIndex; index > -1 && index > endIndex; index --)
 			{
 				character = characters[index];
-				character.Character = char.MinValue;
+				character.Symbol = char.MinValue;
 				mCursorPosition.X--;
 			}
 			EnsureLegal(mWidth, mHeight, mCursorPosition);
@@ -1119,7 +1172,7 @@ namespace ConsolunaLib
 						characterItem.BackColor = mBackColor;
 					}
 					characterItem.Shadowed = false;
-					characterItem.Character = '\0';
+					characterItem.Symbol = '\0';
 				}
 			}
 		}
@@ -1190,7 +1243,7 @@ namespace ConsolunaLib
 								{
 									character.BackColor = mBackColor;
 								}
-								character.Character = '\0';
+								character.Symbol = '\0';
 							}
 						}
 					}
@@ -1631,7 +1684,7 @@ namespace ConsolunaLib
 		//* ScreenCharacterItemChanged																						*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Fired when the contents of a Screen Character have changed.
+		/// Fired when the contents of a Screen Symbol have changed.
 		/// </summary>
 		public event EventHandler<PropertyChangeEventArgs>
 			ScreenCharacterItemChanged;
@@ -2252,7 +2305,7 @@ namespace ConsolunaLib
 				mCharacters[mCursorPosition.Y * mWidth + mCursorPosition.X];
 			if(character != null)
 			{
-				character.Character = value;
+				character.Symbol = value;
 				character.BackColor = mBackColor;
 				character.ForeColor = mForeColor;
 				AdvanceCursor(1);
@@ -2284,7 +2337,7 @@ namespace ConsolunaLib
 						chars = value.ToCharArray();
 						foreach(char charItem in chars)
 						{
-							character.Character = charItem;
+							character.Symbol = charItem;
 							character.BackColor = mBackColor;
 							character.ForeColor = mForeColor;
 							index++;

@@ -260,7 +260,6 @@ namespace ConsolunaTest
 						"A box",
 						32, 10, 10, 5)
 					{
-						StyleName = "DialogColor",
 						BorderStyle = BoxBorderStyle.Single,
 						Shadow = true
 					});
@@ -268,6 +267,9 @@ namespace ConsolunaTest
 						42, 10, 5, CartesianOrientation.Vertical));
 					mConsole.Shapes.Add(new ScrollBarShape("scrlHorz",
 						43, 10, 5, CartesianOrientation.Horizontal));
+					mConsole.Shapes.Add(new DialogShape("dlgScrn",
+						"~/textfiles/hellodialog.txt",
+						43, 11, 33, 10));
 
 					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{

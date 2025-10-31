@@ -195,31 +195,6 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Character																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Character">Character</see>.
-		/// </summary>
-		private char mCharacter = char.MinValue;
-		/// <summary>
-		/// Get/Set the printable character for this position.
-		/// </summary>
-		public char Character
-		{
-			get { return mCharacter; }
-			set
-			{
-				bool bChanged = (mCharacter != value);
-				mCharacter = value;
-				if(bChanged)
-				{
-					OnPropertyChanged();
-				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	CharacterStyle																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -330,6 +305,31 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Symbol																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Symbol">Symbol</see>.
+		/// </summary>
+		private char mSymbol = char.MinValue;
+		/// <summary>
+		/// Get/Set the printable character for this position.
+		/// </summary>
+		public char Symbol
+		{
+			get { return mSymbol; }
+			set
+			{
+				bool bChanged = (mSymbol != value);
+				mSymbol = value;
+				if(bChanged)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* TransferValues																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -349,7 +349,7 @@ namespace ConsolunaLib
 			{
 				ColorInfo.TransferValues(source.BackColor, target.BackColor);
 				ColorInfo.TransferValues(source.ForeColor, target.ForeColor);
-				target.Character = source.Character;
+				target.Symbol = source.Symbol;
 				target.CharacterStyle = source.CharacterStyle;
 				target.Shadowed = source.Shadowed;
 			}

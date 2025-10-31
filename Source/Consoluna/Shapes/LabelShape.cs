@@ -165,22 +165,22 @@ namespace ConsolunaLib.Shapes
 								else if(colIndex < colCount)
 								{
 									character = mCharacterWindow[colIndex, rowIndex];
-									if(index == shortcutKeyIndex && mShortcutStyleItem != null)
+									if(index == shortcutKeyIndex && ShortcutStyle != null)
 									{
-										if(mShortcutStyleItem.BackColor != null)
+										if(ShortcutStyle.BackColor != null)
 										{
-											character.BackColor = mShortcutStyleItem.BackColor;
+											character.BackColor = ShortcutStyle.BackColor;
 										}
-										if(mShortcutStyleItem.ForeColor != null)
+										if(ShortcutStyle.ForeColor != null)
 										{
-											character.ForeColor = mShortcutStyleItem.ForeColor;
+											character.ForeColor = ShortcutStyle.ForeColor;
 										}
 									}
 									else if(ForeColor != null)
 									{
 										character.ForeColor = ForeColor;
 									}
-									character.Character = charItem;
+									character.Symbol = charItem;
 									colIndex++;
 								}
 								else
@@ -196,22 +196,22 @@ namespace ConsolunaLib.Shapes
 							foreach(char charItem in chars)
 							{
 								character = mCharacterWindow[colIndex, rowIndex];
-								if(index == shortcutKeyIndex && mShortcutStyleItem != null)
+								if(index == shortcutKeyIndex && ShortcutStyle != null)
 								{
-									if(mShortcutStyleItem.BackColor != null)
+									if(ShortcutStyle.BackColor != null)
 									{
-										character.BackColor = mShortcutStyleItem.BackColor;
+										character.BackColor = ShortcutStyle.BackColor;
 									}
-									if(mShortcutStyleItem.ForeColor != null)
+									if(ShortcutStyle.ForeColor != null)
 									{
-										character.ForeColor = mShortcutStyleItem.ForeColor;
+										character.ForeColor = ShortcutStyle.ForeColor;
 									}
 								}
 								else if(ForeColor != null)
 								{
 									character.ForeColor = ForeColor;
 								}
-								character.Character = charItem;
+								character.Symbol = charItem;
 								index++;
 								colIndex++;
 								if(colIndex >= colCount)
@@ -228,7 +228,7 @@ namespace ConsolunaLib.Shapes
 					{
 						for(colIndex = 0; colIndex < colCount; colIndex++)
 						{
-							character.Character = '\0';
+							character.Symbol = '\0';
 						}
 					}
 				}

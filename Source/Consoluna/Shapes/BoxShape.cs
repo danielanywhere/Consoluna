@@ -37,156 +37,18 @@ namespace ConsolunaLib.Shapes
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
-		////*-----------------------------------------------------------------------*
-		////* BLC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box bottom left corner character.
-		///// </summary>
-		///// <returns>
-		///// Box bottom left corner character.
-		///// </returns>
-		//private char BLC()
-		//{
-		//	char result = '\0';
-
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '╚';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '└';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* BRC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box bottom right corner character.
-		///// </summary>
-		///// <returns>
-		///// Box bottom right corner character.
-		///// </returns>
-		//private char BRC()
-		//{
-		//	char result = '\0';
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '╝';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '┘';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* HLC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box horizontal line character.
-		///// </summary>
-		///// <returns>
-		///// Box horizontal line character.
-		///// </returns>
-		//private char HLC()
-		//{
-		//	char result = '\0';
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '═';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '─';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* TLC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box top left corner character.
-		///// </summary>
-		///// <returns>
-		///// Box top left corner character.
-		///// </returns>
-		//private char TLC()
-		//{
-		//	char result = '\0';
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '╔';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '┌';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* TRC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box top right corner character.
-		///// </summary>
-		///// <returns>
-		///// Box top right corner character.
-		///// </returns>
-		//private char TRC()
-		//{
-		//	char result = '\0';
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '╗';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '┐';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* VLC																																		*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Return the active box vertical line character.
-		///// </summary>
-		///// <returns>
-		///// Box vertical line character.
-		///// </returns>
-		//private char VLC()
-		//{
-		//	char result = '\0';
-		//	switch(mBorderStyle)
-		//	{
-		//		case BoxBorderStyle.Double:
-		//			result = '║';
-		//			break;
-		//		case BoxBorderStyle.Single:
-		//			result = '│';
-		//			break;
-		//	}
-		//	return result;
-		//}
-		////*-----------------------------------------------------------------------*
+		//*-----------------------------------------------------------------------*
+		//* CommonInit																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Common initialization.
+		/// </summary>
+		private void CommonInit()
+		{
+			StyleName = "BoxColor";
+			ShapeType = ShapeType.Box;
+		}
+		//*-----------------------------------------------------------------------*
 
 		//*************************************************************************
 		//*	Protected																															*
@@ -202,7 +64,7 @@ namespace ConsolunaLib.Shapes
 		/// </summary>
 		public BoxShape()
 		{
-			ShapeType = ShapeType.Text;
+			CommonInit();
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -231,6 +93,7 @@ namespace ConsolunaLib.Shapes
 			int width = 1, int height = 1) :
 			base(name, x, y, width, height)
 		{
+			CommonInit();
 			if(title?.Length > 0)
 			{
 				mTitle = title;
@@ -239,20 +102,20 @@ namespace ConsolunaLib.Shapes
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	BorderStyle																														*
+		//*	BoxBorderStyle																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Private member for <see cref="BorderStyle">BorderStyle</see>.
 		/// </summary>
-		private BoxBorderStyle mBorderStyle =
+		private BoxBorderStyle mBoxBorderStyle =
 			BoxBorderStyle.Double;
 		/// <summary>
 		/// Get/Set the border style for the box.
 		/// </summary>
 		public BoxBorderStyle BorderStyle
 		{
-			get { return mBorderStyle; }
-			set { mBorderStyle = value; }
+			get { return mBoxBorderStyle; }
+			set { mBoxBorderStyle = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -268,12 +131,12 @@ namespace ConsolunaLib.Shapes
 		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
-			char charBLCorner = GetBoxBottomLeftCorner(mBorderStyle);
-			char charBRCorner = GetBoxBottomRightCorner(mBorderStyle);
-			char charHLine = GetBoxHorizontalLine(mBorderStyle);
-			char charTLCorner = GetBoxTopLeftCorner(mBorderStyle);
-			char charTRCorner = GetBoxTopRightCorner(mBorderStyle);
-			char charVLine = GetBoxVerticalLine(mBorderStyle);
+			char charBLCorner = GetBoxBottomLeftCorner(mBoxBorderStyle);
+			char charBRCorner = GetBoxBottomRightCorner(mBoxBorderStyle);
+			char charHLine = GetBoxHorizontalLine(mBoxBorderStyle);
+			char charTLCorner = GetBoxTopLeftCorner(mBoxBorderStyle);
+			char charTRCorner = GetBoxTopRightCorner(mBoxBorderStyle);
+			char charVLine = GetBoxVerticalLine(mBoxBorderStyle);
 			char[] chars = null;
 			int colCount = 0;
 			int colEnd = 0;
@@ -303,23 +166,23 @@ namespace ConsolunaLib.Shapes
 					ForeColor, BackColor);
 				colEnd = colCount - 1;
 				rowEnd = rowCount - 1;
-				mCharacterWindow[0, 0].Character = charTLCorner;
+				mCharacterWindow[0, 0].Symbol = charTLCorner;
 				for(colIndex = 1; colIndex < colEnd; colIndex++)
 				{
-					mCharacterWindow[colIndex, 0].Character = charHLine;
+					mCharacterWindow[colIndex, 0].Symbol = charHLine;
 				}
-				mCharacterWindow[colIndex, 0].Character = charTRCorner;
+				mCharacterWindow[colIndex, 0].Symbol = charTRCorner;
 				for(rowIndex = 1; rowIndex < rowEnd; rowIndex++)
 				{
-					mCharacterWindow[0, rowIndex].Character = charVLine;
-					mCharacterWindow[colEnd, rowIndex].Character = charVLine;
+					mCharacterWindow[0, rowIndex].Symbol = charVLine;
+					mCharacterWindow[colEnd, rowIndex].Symbol = charVLine;
 				}
-				mCharacterWindow[0, rowIndex].Character = charBLCorner;
+				mCharacterWindow[0, rowIndex].Symbol = charBLCorner;
 				for(colIndex = 1; colIndex < colEnd; colIndex++)
 				{
-					mCharacterWindow[colIndex, rowIndex].Character = charHLine;
+					mCharacterWindow[colIndex, rowIndex].Symbol = charHLine;
 				}
-				mCharacterWindow[colIndex, rowIndex].Character = charBRCorner;
+				mCharacterWindow[colIndex, rowIndex].Symbol = charBRCorner;
 
 				if(title.Length > 0)
 				{
@@ -327,7 +190,7 @@ namespace ConsolunaLib.Shapes
 					chars = title.ToCharArray();
 					foreach(char charItem in chars)
 					{
-						mCharacterWindow[colIndex, 0].Character = GetPrintable(charItem);
+						mCharacterWindow[colIndex, 0].Symbol = GetPrintable(charItem);
 						colIndex++;
 						if(colIndex >= colEnd)
 						{

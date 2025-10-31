@@ -45,6 +45,7 @@ namespace ConsolunaLib.Shapes
 		private void CommonInit()
 		{
 			StyleName = "ScrollBarColor";
+			ShapeType = ShapeType.ScrollBar;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -270,37 +271,37 @@ namespace ConsolunaLib.Shapes
 							{
 								case 1:
 									//	First arrow only at X, Y.
-									mCharacterWindow[0, 0].Character = charLArrow;
+									mCharacterWindow[0, 0].Symbol = charLArrow;
 									break;
 								case 2:
 									//	Both arrows only.
-									mCharacterWindow[0, 0].Character = charLArrow;
-									mCharacterWindow[1, 0].Character = charRArrow;
+									mCharacterWindow[0, 0].Symbol = charLArrow;
+									mCharacterWindow[1, 0].Symbol = charRArrow;
 									break;
 								case 3:
 									//	Both arrows and positioner only.
-									mCharacterWindow[0, 0].Character = charLArrow;
-									mCharacterWindow[1, 0].Character = charPositioner;
-									mCharacterWindow[2, 0].Character = charRArrow;
+									mCharacterWindow[0, 0].Symbol = charLArrow;
+									mCharacterWindow[1, 0].Symbol = charPositioner;
+									mCharacterWindow[2, 0].Symbol = charRArrow;
 									break;
 								default:
 									//	Both arrows, positioner and at least one space.
 									count = mLength - 2;
 									position = (int)ConvertRange(mValue,
 										mMinValue, mMaxValue, 1f, count);
-									mCharacterWindow[0, 0].Character = charLArrow;
+									mCharacterWindow[0, 0].Symbol = charLArrow;
 									for(index = 1; index <= count; index ++)
 									{
 										if(index == position)
 										{
-											mCharacterWindow[index, 0].Character = charPositioner;
+											mCharacterWindow[index, 0].Symbol = charPositioner;
 										}
 										else
 										{
-											mCharacterWindow[index, 0].Character = charBuffer;
+											mCharacterWindow[index, 0].Symbol = charBuffer;
 										}
 									}
-									mCharacterWindow[index, 0].Character = charRArrow;
+									mCharacterWindow[index, 0].Symbol = charRArrow;
 									break;
 							}
 							break;
@@ -310,37 +311,37 @@ namespace ConsolunaLib.Shapes
 							{
 								case 1:
 									//	First arrow only at X, Y.
-									mCharacterWindow[0, 0].Character = charUArrow;
+									mCharacterWindow[0, 0].Symbol = charUArrow;
 									break;
 								case 2:
 									//	Both arrows only.
-									mCharacterWindow[0, 0].Character = charUArrow;
-									mCharacterWindow[0, 1].Character = charDArrow;
+									mCharacterWindow[0, 0].Symbol = charUArrow;
+									mCharacterWindow[0, 1].Symbol = charDArrow;
 									break;
 								case 3:
 									//	Both arrows and positioner only.
-									mCharacterWindow[0, 0].Character = charUArrow;
-									mCharacterWindow[0, 1].Character = charPositioner;
-									mCharacterWindow[0, 2].Character = charDArrow;
+									mCharacterWindow[0, 0].Symbol = charUArrow;
+									mCharacterWindow[0, 1].Symbol = charPositioner;
+									mCharacterWindow[0, 2].Symbol = charDArrow;
 									break;
 								default:
 									//	Both arrows, positioner and at least one space.
 									count = mLength - 2;
 									position = (int)ConvertRange(mValue,
 										mMinValue, mMaxValue, 1f, count);
-									mCharacterWindow[0, 0].Character = charUArrow;
+									mCharacterWindow[0, 0].Symbol = charUArrow;
 									for(index = 1; index <= count; index++)
 									{
 										if(index == position)
 										{
-											mCharacterWindow[0, index].Character = charPositioner;
+											mCharacterWindow[0, index].Symbol = charPositioner;
 										}
 										else
 										{
-											mCharacterWindow[0, index].Character = charBuffer;
+											mCharacterWindow[0, index].Symbol = charBuffer;
 										}
 									}
-									mCharacterWindow[0, index].Character = charDArrow;
+									mCharacterWindow[0, index].Symbol = charDArrow;
 									break;
 							}
 							break;

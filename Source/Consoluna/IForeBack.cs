@@ -22,47 +22,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolunaLib.Shapes
+namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	ShapeType																																*
+	//*	IForeBack																																*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of recognized shape types.
+	/// An object that has foreground and background color objects.
 	/// </summary>
-	public enum ShapeType
+	public interface IForeBack
 	{
+		//*-----------------------------------------------------------------------*
+		//*	BackColor																															*
+		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// No shape specified or unknown.
+		/// Get/Set a reference to the background color for this character.
 		/// </summary>
-		None = 0,
+		ColorInfo BackColor { get; set; }
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ForeColor																															*
+		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Text in the area.
+		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>
-		Text,
-		/// <summary>
-		/// Label in the area. Text and label differ in that upon the text
-		/// shape, the full foreground and background areas are written,
-		/// while on the label, only foreground for the present data is written.
-		/// </summary>
-		Label,
-		/// <summary>
-		///	A box, with or without borders.
-		/// </summary>
-		Box,
-		/// <summary>
-		/// A dialog box with border, close icon, optional maximize icon,
-		/// and optional button.
-		/// </summary>
-		Dialog,
-		/// <summary>
-		/// A scrollbar shape.
-		/// </summary>
-		ScrollBar,
-		/// <summary>
-		/// A custom shape using a series of character sequences.
-		/// </summary>
-		Custom
+		ColorInfo ForeColor { get; set; }
+		//*-----------------------------------------------------------------------*
+
 	}
 	//*-------------------------------------------------------------------------*
 

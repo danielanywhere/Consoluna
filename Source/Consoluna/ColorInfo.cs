@@ -462,6 +462,42 @@ namespace ConsolunaLib
 				target.mRed = source.mRed;
 			}
 		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Transfer the primitive member values of the source object to the
+		/// target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source object containing values to transfer.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target object that will receive the update.
+		/// </param>
+		public static void TransferValues(IForeBack source, IForeBack target)
+		{
+			ColorInfo sourceColor = null;
+			ColorInfo targetColor = null;
+
+			if(source != null && target != null)
+			{
+				sourceColor = source.BackColor;
+				targetColor = target.BackColor;
+				if(sourceColor != null && targetColor != null)
+				{
+					targetColor.mBlue = sourceColor.mBlue;
+					targetColor.mGreen = sourceColor.mGreen;
+					targetColor.mRed = sourceColor.mRed;
+				}
+				sourceColor = source.ForeColor;
+				targetColor = target.ForeColor;
+				if(sourceColor != null && targetColor != null)
+				{
+					targetColor.mBlue = sourceColor.mBlue;
+					targetColor.mGreen = sourceColor.mGreen;
+					targetColor.mRed = sourceColor.mRed;
+				}
+			}
+		}
 		//*-----------------------------------------------------------------------*
 
 	}

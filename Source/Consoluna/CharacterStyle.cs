@@ -30,7 +30,7 @@ namespace ConsolunaLib
 	/// <summary>
 	/// Generic styling for one or more characters, typically of a given group.
 	/// </summary>
-	public class CharacterStyle
+	public class CharacterStyle : IForeBack
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,7 +47,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="BackColor">BackColor</see>.
 		/// </summary>
-		private ColorInfo mBackColor = null;
+		private ColorInfo mBackColor = new ColorInfo();
 		/// <summary>
 		/// Get/Set a reference to the background color for this character.
 		/// </summary>
@@ -85,7 +85,7 @@ namespace ConsolunaLib
 		/// <summary>
 		/// Private member for <see cref="ForeColor">ForeColor</see>.
 		/// </summary>
-		private ColorInfo mForeColor = null;
+		private ColorInfo mForeColor = new ColorInfo();
 		/// <summary>
 		/// Get/Set a reference to the foreground color for this character.
 		/// </summary>

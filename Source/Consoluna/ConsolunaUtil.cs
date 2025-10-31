@@ -242,6 +242,21 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetArrowDown																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the down arrow character.
+		/// </summary>
+		/// <returns>
+		/// A unicode down arrow character.
+		/// </returns>
+		public static char GetArrowDown()
+		{
+			return '↓';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetArrowheadDown																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -298,6 +313,51 @@ namespace ConsolunaLib
 		public static char GetArrowheadUp()
 		{
 			return '▲';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowLeft																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the left arrow character.
+		/// </summary>
+		/// <returns>
+		/// A unicode left arrow character.
+		/// </returns>
+		public static char GetArrowLeft()
+		{
+			return '←';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowRight																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the right arrow character.
+		/// </summary>
+		/// <returns>
+		/// A unicode right arrow character.
+		/// </returns>
+		public static char GetArrowRight()
+		{
+			return '→';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowUp																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the up arrow character.
+		/// </summary>
+		/// <returns>
+		/// A unicode up arrow character.
+		/// </returns>
+		public static char GetArrowUp()
+		{
+			return '↑';
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -503,6 +563,21 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetDialogCloseButton																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the close button character for the dialog.
+		/// </summary>
+		/// <returns>
+		/// Unicode close button symbol used on a dialog.
+		/// </returns>
+		public static char GetDialogCloseButton()
+		{
+			return '■';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetIndex																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -605,7 +680,7 @@ namespace ConsolunaLib
 		/// printable code.
 		/// </param>
 		/// <returns>
-		/// The printable version of the item's Character property.
+		/// The printable version of the item's Symbol property.
 		/// </returns>
 		public static char GetPrintable(CharacterItem character)
 		{
@@ -614,7 +689,7 @@ namespace ConsolunaLib
 
 			if(character != null)
 			{
-				value = ((int)character.Character);
+				value = ((int)character.Symbol);
 				if(value == 9 || value == 10 || value == 13 ||
 					(value > 31 && value < 127) || value > 128)
 				{
@@ -802,6 +877,44 @@ namespace ConsolunaLib
 		internal static object ResourceLock
 		{
 			get { return mResourceLock; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* Right																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the specified length of characters from the right side of the
+		/// provided string.
+		/// </summary>
+		/// <param name="source">
+		/// The string to inspect.
+		/// </param>
+		/// <param name="length">
+		/// The length of characters to return.
+		/// </param>
+		/// <returns>
+		/// The rightmost number of characters from the caller's string specified
+		/// in the length parameter, if available, otherwise, the full content of
+		/// the string, if provided. Otherwise, an empty string.
+		/// </returns>
+		public static string Right(string source, int length)
+		{
+			string result = "";
+
+			if(source?.Length > 0 && length > 0)
+			{
+				if(length >= source.Length)
+				{
+					result = source;
+				}
+				else
+				{
+					//	The return value is narrower than the source.
+					result = source.Substring(source.Length - length, length);
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
