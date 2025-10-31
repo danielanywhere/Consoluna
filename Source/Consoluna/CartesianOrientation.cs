@@ -25,25 +25,25 @@ using System.Threading.Tasks;
 namespace ConsolunaLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	BoxBorderStyle																													*
+	//*	CartesianOrientation																										*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of available box border styles.
+	/// Enumeration of available orientation axes in a Cartesian view.
 	/// </summary>
-	public enum BoxBorderStyle
+	public enum CartesianOrientation
 	{
 		/// <summary>
-		/// No box border style defined or unknown.
+		/// No axis defined or unknown.
 		/// </summary>
 		None = 0,
 		/// <summary>
-		/// Single box border style.
+		/// Aligned by the horizontal axis.
 		/// </summary>
-		Single,
+		Horizontal,
 		/// <summary>
-		/// Double box border style.
+		/// Aligned by the vertical axis.
 		/// </summary>
-		Double
+		Vertical
 	}
 	//*-------------------------------------------------------------------------*
 

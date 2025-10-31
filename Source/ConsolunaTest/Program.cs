@@ -264,6 +264,10 @@ namespace ConsolunaTest
 						BorderStyle = BoxBorderStyle.Single,
 						Shadow = true
 					});
+					mConsole.Shapes.Add(new ScrollBarShape("scrlVert",
+						42, 10, 5, CartesianOrientation.Vertical));
+					mConsole.Shapes.Add(new ScrollBarShape("scrlHorz",
+						43, 10, 5, CartesianOrientation.Horizontal));
 
 					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{

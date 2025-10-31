@@ -223,11 +223,14 @@ namespace ConsolunaLib.Shapes
 		protected override void OnPropertyChanged(object sender,
 			PropertyChangeEventArgs e)
 		{
-			if(e?.PropertyName != "Dirty")
+			if(mEventsActive)
 			{
-				mDirty = true;
+				if(e?.PropertyName != "Dirty")
+				{
+					mDirty = true;
+				}
+				base.OnPropertyChanged(sender, e);
 			}
-			base.OnPropertyChanged(sender, e);
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -367,6 +370,24 @@ namespace ConsolunaLib.Shapes
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	EventsActive																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="EventsActive">EventsActive</see>.
+		/// </summary>
+		private bool mEventsActive = true;
+		/// <summary>
+		/// Get/Set a value indicating whether event processing is active on this
+		/// object.
+		/// </summary>
+		public bool EventsActive
+		{
+			get { return mEventsActive; }
+			set { mEventsActive = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ForeColor																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -460,11 +481,8 @@ namespace ConsolunaLib.Shapes
 		/// </param>
 		public virtual void Render(Consoluna screenBuffer)
 		{
-			CharacterItem character = null;
 			int colCount = 0;
-			int colIndex = 0;
 			int rowCount = 0;
-			int rowIndex = 0;
 			string styleNameLower = "";
 
 			if(screenBuffer != null && mPosition != null &&

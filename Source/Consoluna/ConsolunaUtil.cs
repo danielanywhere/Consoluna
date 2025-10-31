@@ -167,6 +167,50 @@ namespace ConsolunaLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ConvertRange																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Convert from one numeric range to another.
+		/// </summary>
+		/// <param name="value">
+		/// The value to convert.
+		/// </param>
+		/// <param name="fromMin">
+		/// Original range minimum limit.
+		/// </param>
+		/// <param name="fromMax">
+		/// Original range maximum limit.
+		/// </param>
+		/// <param name="toMin">
+		/// New range minimum limit.
+		/// </param>
+		/// <param name="toMax">
+		/// New range maximum limit.
+		/// </param>
+		/// <returns>
+		/// Specified value, converted to the new range.
+		/// </returns>
+		public static float ConvertRange(float value,
+			float fromMin, float fromMax, float toMin, float toMax)
+		{
+			float fromRange = (fromMax - fromMin);
+			float result = 0;
+			float toRange = 0f;
+
+			if(fromRange == 0f)
+			{
+				result = toMin;
+			}
+			else
+			{
+				toRange = (toMax - toMin);
+				result = (((value - fromMin) * toRange) / fromRange) + toMin;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* EnsureLegal																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -194,6 +238,235 @@ namespace ConsolunaLib
 				position.X = index % bufferWidth;
 				position.Y = index / bufferWidth;
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowheadDown																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the down arrowhead character.
+		/// </summary>
+		/// <returns>
+		/// A unicode down arrowhead character.
+		/// </returns>
+		public static char GetArrowheadDown()
+		{
+			return '▼';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowheadLeft																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the left arrowhead character.
+		/// </summary>
+		/// <returns>
+		/// A unicode left arrowhead character.
+		/// </returns>
+		public static char GetArrowheadLeft()
+		{
+			return '◄';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowheadRight																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the right arrowhead character.
+		/// </summary>
+		/// <returns>
+		/// A unicode right arrowhead character.
+		/// </returns>
+		public static char GetArrowheadRight()
+		{
+			return '►';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArrowheadUp																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the up arrowhead character.
+		/// </summary>
+		/// <returns>
+		/// A unicode up arrowhead character.
+		/// </returns>
+		public static char GetArrowheadUp()
+		{
+			return '▲';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxBottomLeftCorner																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box bottom left corner character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the bottom left corner of a box.
+		/// </returns>
+		public static char GetBoxBottomLeftCorner(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '╚';
+					break;
+				case BoxBorderStyle.Single:
+					result = '└';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxBottomRightCorner																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box bottom right corner character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the bottom right corner of a box.
+		/// </returns>
+		public static char GetBoxBottomRightCorner(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '╝';
+					break;
+				case BoxBorderStyle.Single:
+					result = '┘';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxHorizontalLine																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box horizontal line character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the horizontal line of a box.
+		/// </returns>
+		public static char GetBoxHorizontalLine(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '═';
+					break;
+				case BoxBorderStyle.Single:
+					result = '─';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxTopLeftCorner																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box top left corner character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the top left corner of a box.
+		/// </returns>
+		public static char GetBoxTopLeftCorner(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '╔';
+					break;
+				case BoxBorderStyle.Single:
+					result = '┌';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxTopRightCorner																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box top right corner character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the top right corner of a box.
+		/// </returns>
+		public static char GetBoxTopRightCorner(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '╗';
+					break;
+				case BoxBorderStyle.Single:
+					result = '┐';
+					break;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetBoxVerticalLine																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the box vertical line character in the specified style.
+		/// </summary>
+		/// <param name="borderStyle">
+		/// The border style of the character to retrieve.
+		/// </param>
+		/// <returns>
+		/// A unicode box-drawing character for the vertical line of a box.
+		/// </returns>
+		public static char GetBoxVerticalLine(BoxBorderStyle borderStyle)
+		{
+			char result = '\0';
+			switch(borderStyle)
+			{
+				case BoxBorderStyle.Double:
+					result = '║';
+					break;
+				case BoxBorderStyle.Single:
+					result = '│';
+					break;
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -420,6 +693,36 @@ namespace ConsolunaLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetScrollBuffer																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the scroll buffer character.
+		/// </summary>
+		/// <returns>
+		/// Unicode scroll buffer character.
+		/// </returns>
+		public static char GetScrollBuffer()
+		{
+			return '▒';
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetScrollPositioner																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the scroll positioning character.
+		/// </summary>
+		/// <returns>
+		/// Unicode scroll positioning character.
+		/// </returns>
+		public static char GetScrollPositioner()
+		{
+			return '■';
 		}
 		//*-----------------------------------------------------------------------*
 

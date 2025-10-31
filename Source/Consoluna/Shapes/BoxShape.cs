@@ -37,156 +37,156 @@ namespace ConsolunaLib.Shapes
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
-		//*-----------------------------------------------------------------------*
-		//* BLC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box bottom left corner character.
-		/// </summary>
-		/// <returns>
-		/// Box bottom left corner character.
-		/// </returns>
-		private char BLC()
-		{
-			char result = '\0';
+		////*-----------------------------------------------------------------------*
+		////* BLC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box bottom left corner character.
+		///// </summary>
+		///// <returns>
+		///// Box bottom left corner character.
+		///// </returns>
+		//private char BLC()
+		//{
+		//	char result = '\0';
 
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '╚';
-					break;
-				case BoxBorderStyle.Single:
-					result = '└';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '╚';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '└';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* BRC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box bottom right corner character.
-		/// </summary>
-		/// <returns>
-		/// Box bottom right corner character.
-		/// </returns>
-		private char BRC()
-		{
-			char result = '\0';
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '╝';
-					break;
-				case BoxBorderStyle.Single:
-					result = '┘';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* BRC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box bottom right corner character.
+		///// </summary>
+		///// <returns>
+		///// Box bottom right corner character.
+		///// </returns>
+		//private char BRC()
+		//{
+		//	char result = '\0';
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '╝';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '┘';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* HLC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box horizontal line character.
-		/// </summary>
-		/// <returns>
-		/// Box horizontal line character.
-		/// </returns>
-		private char HLC()
-		{
-			char result = '\0';
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '═';
-					break;
-				case BoxBorderStyle.Single:
-					result = '─';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* HLC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box horizontal line character.
+		///// </summary>
+		///// <returns>
+		///// Box horizontal line character.
+		///// </returns>
+		//private char HLC()
+		//{
+		//	char result = '\0';
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '═';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '─';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* TLC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box top left corner character.
-		/// </summary>
-		/// <returns>
-		/// Box top left corner character.
-		/// </returns>
-		private char TLC()
-		{
-			char result = '\0';
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '╔';
-					break;
-				case BoxBorderStyle.Single:
-					result = '┌';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* TLC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box top left corner character.
+		///// </summary>
+		///// <returns>
+		///// Box top left corner character.
+		///// </returns>
+		//private char TLC()
+		//{
+		//	char result = '\0';
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '╔';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '┌';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* TRC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box top right corner character.
-		/// </summary>
-		/// <returns>
-		/// Box top right corner character.
-		/// </returns>
-		private char TRC()
-		{
-			char result = '\0';
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '╗';
-					break;
-				case BoxBorderStyle.Single:
-					result = '┐';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* TRC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box top right corner character.
+		///// </summary>
+		///// <returns>
+		///// Box top right corner character.
+		///// </returns>
+		//private char TRC()
+		//{
+		//	char result = '\0';
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '╗';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '┐';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* VLC																																		*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the active box vertical line character.
-		/// </summary>
-		/// <returns>
-		/// Box vertical line character.
-		/// </returns>
-		private char VLC()
-		{
-			char result = '\0';
-			switch(mBorderStyle)
-			{
-				case BoxBorderStyle.Double:
-					result = '║';
-					break;
-				case BoxBorderStyle.Single:
-					result = '│';
-					break;
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* VLC																																		*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the active box vertical line character.
+		///// </summary>
+		///// <returns>
+		///// Box vertical line character.
+		///// </returns>
+		//private char VLC()
+		//{
+		//	char result = '\0';
+		//	switch(mBorderStyle)
+		//	{
+		//		case BoxBorderStyle.Double:
+		//			result = '║';
+		//			break;
+		//		case BoxBorderStyle.Single:
+		//			result = '│';
+		//			break;
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*************************************************************************
 		//*	Protected																															*
@@ -268,12 +268,12 @@ namespace ConsolunaLib.Shapes
 		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
-			char charBLCorner = BLC();
-			char charBRCorner = BRC();
-			char charHLine = HLC();
-			char charTLCorner = TLC();
-			char charTRCorner = TRC();
-			char charVLine = VLC();
+			char charBLCorner = GetBoxBottomLeftCorner(mBorderStyle);
+			char charBRCorner = GetBoxBottomRightCorner(mBorderStyle);
+			char charHLine = GetBoxHorizontalLine(mBorderStyle);
+			char charTLCorner = GetBoxTopLeftCorner(mBorderStyle);
+			char charTRCorner = GetBoxTopRightCorner(mBorderStyle);
+			char charVLine = GetBoxVerticalLine(mBorderStyle);
 			char[] chars = null;
 			int colCount = 0;
 			int colEnd = 0;

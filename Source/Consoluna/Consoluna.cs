@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -679,6 +680,10 @@ namespace ConsolunaLib
 
 				new ScreenStyleItem("ShortcutColor",
 					foreColor: new ColorInfo("#912120")),
+
+				new ScreenStyleItem("ScrollBarColor",
+					foreColor: new ColorInfo("#2a90c9"),
+					backColor: new ColorInfo("#02138f")),
 
 				new ScreenStyleItem("TextColor",
 					foreColor: new ColorInfo("#f2fcff"),
