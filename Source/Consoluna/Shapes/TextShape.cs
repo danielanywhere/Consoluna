@@ -37,6 +37,18 @@ namespace ConsolunaLib.Shapes
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* CommonInit																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Common initialization for this object.
+		/// </summary>
+		private void CommonInit()
+		{
+			ShapeType = ShapeType.Text;
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -51,7 +63,7 @@ namespace ConsolunaLib.Shapes
 		/// </summary>
 		public TextShape()
 		{
-			ShapeType = ShapeType.Text;
+			CommonInit();
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -80,6 +92,7 @@ namespace ConsolunaLib.Shapes
 			int width = 1, int height = 1, bool wordWrap = false) :
 			base(name, x, y, width, height)
 		{
+			CommonInit();
 			if(text?.Length > 0)
 			{
 				mText = text;
@@ -139,8 +152,6 @@ namespace ConsolunaLib.Shapes
 						Clear(builder);
 					}
 
-					//screenBuffer.SetForeColor(mCharacterWindow, ForeColor);
-					//screenBuffer.SetBackColor(mCharacterWindow, BackColor);
 					screenBuffer.ClearCharacterWindow(mCharacterWindow,
 						ForeColor, BackColor);
 

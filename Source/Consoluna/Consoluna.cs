@@ -630,13 +630,49 @@ namespace ConsolunaLib
 		/// </summary>
 		public Consoluna()
 		{
+
+			//	Define the drawing symbols.
+			lock(ResourceLock)
+			{
+				if(DrawingSymbols.Count == 0)
+				{
+					DrawingSymbols.AddRange(new DrawingSymbolItem[]
+					{
+						new DrawingSymbolItem("ArrowDown", '↓'),
+						new DrawingSymbolItem("ArrowLeft", '←'),
+						new DrawingSymbolItem("ArrowRight", '→'),
+						new DrawingSymbolItem("ArrowUp", '↑'),
+						new DrawingSymbolItem("ArrowheadDown", '▼'),
+						new DrawingSymbolItem("ArrowheadLeft", '◄'),
+						new DrawingSymbolItem("ArrowheadRight", '►'),
+						new DrawingSymbolItem("ArrowheadUp", '▲'),
+						new DrawingSymbolItem("BoxBottomLeftCornerDouble", '╚'),
+						new DrawingSymbolItem("BoxBottomLeftCornerSingle", '└'),
+						new DrawingSymbolItem("BoxBottomRightCornerDouble", '╝'),
+						new DrawingSymbolItem("BoxBottomRightCornerSingle", '┘'),
+						new DrawingSymbolItem("BoxHorizontalLineDouble", '═'),
+						new DrawingSymbolItem("BoxHorizontalLineSingle", '─'),
+						new DrawingSymbolItem("BoxTopLeftCornerDouble", '╔'),
+						new DrawingSymbolItem("BoxTopLeftCornerSingle", '┌'),
+						new DrawingSymbolItem("BoxTopRightCornerDouble", '╗'),
+						new DrawingSymbolItem("BoxTopRightCornerSingle", '┐'),
+						new DrawingSymbolItem("BoxVerticalLineDouble", '║'),
+						new DrawingSymbolItem("BoxVerticalLineSingle", '│'),
+						new DrawingSymbolItem("DialogCloseButton", '■'),
+						new DrawingSymbolItem("ScreenBackground", '░'),
+						new DrawingSymbolItem("ScrollBuffer", '▒'),
+						new DrawingSymbolItem("ScrollPositioner", '■')
+					});
+				}
+			}
+
 			//	Set the default styles.
 			mStyles = new ScreenStyleCollection();
 			mStyles.AddRange(new ScreenStyleItem[]
 			{
 				new ScreenStyleItem("ScreenColor",
-					foreColor: new ColorInfo("#b0aedd"),
-					backColor: new ColorInfo("#0b0938")),
+					backColor: new ColorInfo("#d0d0ff"),
+					foreColor: new ColorInfo("#161543")),
 
 				new ScreenStyleItem("ButtonColor",
 					foreColor: new ColorInfo("#003300"),
@@ -1173,6 +1209,50 @@ namespace ConsolunaLib
 					}
 					characterItem.Shadowed = false;
 					characterItem.Symbol = '\0';
+				}
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Clear the entire character window to the specified default values.
+		/// </summary>
+		/// <param name="characterWindow">
+		/// Reference to the cartesian-style character window to dirty.
+		/// </param>
+		/// <param name="foreColor">
+		/// Optional foreground color.
+		/// </param>
+		/// <param name="backColor">
+		/// Optional background color.
+		/// </param>
+		/// <param name="symbol">
+		/// The symbol to place on each character in the buffer.
+		/// </param>
+		public void ClearCharacterWindow(CharacterItem[,] characterWindow,
+			ColorInfo foreColor, ColorInfo backColor, char symbol)
+		{
+			if(characterWindow?.Length > 0)
+			{
+				foreach(CharacterItem characterItem in characterWindow)
+				{
+					if(foreColor != null)
+					{
+						characterItem.ForeColor = foreColor;
+					}
+					else
+					{
+						characterItem.ForeColor = mForeColor;
+					}
+					if(backColor != null)
+					{
+						characterItem.BackColor = backColor;
+					}
+					else
+					{
+						characterItem.BackColor = mBackColor;
+					}
+					characterItem.Shadowed = false;
+					characterItem.Symbol = symbol;
 				}
 			}
 		}

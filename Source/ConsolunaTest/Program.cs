@@ -240,7 +240,10 @@ namespace ConsolunaTest
 					};
 					mConsole.InputReceived += console_InputReceived;
 					mConsole.BackColor = new ColorInfo("#000050");
-					mConsole.ForeColor = new ColorInfo("#d0d000");
+					mConsole.ForeColor = new ColorInfo("#d0d0d0");
+
+					mConsole.Shapes.Add(
+						new ScreenShape(mConsole.Width, mConsole.Height));
 
 					mConsole.Shapes.Add(new TextShape("txtThis",
 						"The words you are currently reading are precisely the ones " +
@@ -256,20 +259,23 @@ namespace ConsolunaTest
 					{
 						StyleName = "LabelColor"
 					});
+					mConsole.Shapes.Add(new DialogShape("dlgScrn",
+						"~/textfiles/hellodialog.txt",
+						43, 11, 33, 10)
+					{
+						Shadow = true
+					});
+					mConsole.Shapes.Add(new ScrollBarShape("scrlVert",
+						75, 12, 8, CartesianOrientation.Vertical));
+					mConsole.Shapes.Add(new ScrollBarShape("scrlHorz",
+						44, 20, 31, CartesianOrientation.Horizontal));
 					mConsole.Shapes.Add(new BoxShape("boxArea",
 						"A box",
-						32, 10, 10, 5)
+						34, 10, 10, 5)
 					{
 						BorderStyle = BoxBorderStyle.Single,
 						Shadow = true
 					});
-					mConsole.Shapes.Add(new ScrollBarShape("scrlVert",
-						42, 10, 5, CartesianOrientation.Vertical));
-					mConsole.Shapes.Add(new ScrollBarShape("scrlHorz",
-						43, 10, 5, CartesianOrientation.Horizontal));
-					mConsole.Shapes.Add(new DialogShape("dlgScrn",
-						"~/textfiles/hellodialog.txt",
-						43, 11, 33, 10));
 
 					if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{

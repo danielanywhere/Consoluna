@@ -214,12 +214,12 @@ namespace ConsolunaLib.Shapes
 		public override void Render(Consoluna screenBuffer)
 		{
 			bool bEventsActive = EventsActive;
-			char charBuffer = GetScrollBuffer();
-			char charDArrow = GetArrowheadDown();
-			char charLArrow = GetArrowheadLeft();
-			char charPositioner = GetScrollPositioner();
-			char charRArrow = GetArrowheadRight();
-			char charUArrow = GetArrowheadUp();
+			char charBuffer = DrawingSymbols.GetSymbolValue("ScrollBuffer");
+			char charDArrow = DrawingSymbols.GetSymbolValue("ArrowheadDown");
+			char charLArrow = DrawingSymbols.GetSymbolValue("ArrowheadLeft");
+			char charPositioner = DrawingSymbols.GetSymbolValue("ScrollPositioner");
+			char charRArrow = DrawingSymbols.GetSymbolValue("ArrowheadRight");
+			char charUArrow = DrawingSymbols.GetSymbolValue("ArrowheadUp");
 			int count = 0;
 			int index = 0;
 			int position = 0;

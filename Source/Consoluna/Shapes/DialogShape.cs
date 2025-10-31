@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
+
 using static ConsolunaLib.ConsolunaUtil;
 
 namespace ConsolunaLib.Shapes
@@ -44,6 +44,7 @@ namespace ConsolunaLib.Shapes
 		/// </summary>
 		private void CommonInit()
 		{
+			BoxBorderStyle = BoxBorderStyle.Double;
 			StyleName = "WindowColor";
 			mBorderColorStyleName = "WindowBorderColor";
 			mWindowButtonColorStyleName = "WindowButtonColor";
@@ -351,14 +352,21 @@ namespace ConsolunaLib.Shapes
 		public override void Render(Consoluna screenBuffer)
 		{
 			StringBuilder builder = new StringBuilder();
-			char charBLCorner = GetBoxBottomLeftCorner(mBoxBorderStyle);
-			char charBRCorner = GetBoxBottomRightCorner(mBoxBorderStyle);
-			char charCloseButton = GetDialogCloseButton();
-			char charHLine = GetBoxHorizontalLine(mBoxBorderStyle);
-			char charMaxButton = GetArrowUp();
-			char charTLCorner = GetBoxTopLeftCorner(mBoxBorderStyle);
-			char charTRCorner = GetBoxTopRightCorner(mBoxBorderStyle);
-			char charVLine = GetBoxVerticalLine(mBoxBorderStyle);
+			char charBLCorner = DrawingSymbols.GetSymbolValue(
+				$"BoxBottomLeftCorner{mBoxBorderStyle}");
+			char charBRCorner = DrawingSymbols.GetSymbolValue(
+				$"BoxBottomRightCorner{mBoxBorderStyle}");
+			char charCloseButton = DrawingSymbols.GetSymbolValue(
+				"DialogCloseButton");
+			char charHLine = DrawingSymbols.GetSymbolValue(
+				$"BoxHorizontalLine{mBoxBorderStyle}");
+			char charMaxButton = DrawingSymbols.GetSymbolValue("ArrowUp");
+			char charTLCorner = DrawingSymbols.GetSymbolValue(
+				$"BoxTopLeftCorner{mBoxBorderStyle}");
+			char charTRCorner = DrawingSymbols.GetSymbolValue(
+				$"BoxTopRightCorner{mBoxBorderStyle}");
+			char charVLine = DrawingSymbols.GetSymbolValue(
+				$"BoxVerticalLine{mBoxBorderStyle}");
 			char[] chars = null;
 			int colCount = 0;
 			int colEnd = 0;

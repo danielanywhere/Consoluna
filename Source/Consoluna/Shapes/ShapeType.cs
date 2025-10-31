@@ -56,6 +56,10 @@ namespace ConsolunaLib.Shapes
 		/// </summary>
 		Dialog,
 		/// <summary>
+		/// A backing screen shape.
+		/// </summary>
+		Screen,
+		/// <summary>
 		/// A scrollbar shape.
 		/// </summary>
 		ScrollBar,
