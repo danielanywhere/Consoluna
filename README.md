@@ -40,15 +40,19 @@ Elements on each layer are able to fire events when changed and all of the eleme
 
 ## Known Limitations
 
-<u>.NET Version 8+ Required</u>
+<b>.NET Version 8+ Required</b>
 
 Keyboard and mouse input on Linux, Unix, and Mac are generously provided by MV10/dotnet-curses, which uses .NET 8 to resolve a previous issue with resolving the current host platform. If you need to have that choice reconsidered in favor of .NET Standard support, please create an issue at the \[dotnet-curses Issues page\](https://github.com/MV10/dotnet-curses/issues).
 
-<u>Visual Studio Launch + Windows Subsystem for Linux</u>
+<p>&nbsp;</p>
+
+<b>Visual Studio Launch + Windows Subsystem for Linux</b>
 
 This library is known not to function well in a Visual Studio -&gt; WSL debugging session because of the limitations imposed by Visual Studio itself when rerouting the standard input device away. However, the library has been tested and works fine when WSL has been started from the Command Prompt or from within Windows Terminal (wt.exe).
 
-<u>JetBrains Rider Launch</u>
+<p>&nbsp;</p>
+
+<b>JetBrains Rider Launch</b>
 
 Similar limitations have also been experienced when launching this library from within a JetBrains Rider development environment.
 
